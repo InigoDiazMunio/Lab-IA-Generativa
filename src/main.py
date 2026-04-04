@@ -1,16 +1,12 @@
-from ingestion.pdf_loader import load_pdfs_from_folder
-from ingestion.chunking import split_documents
-from embeddings.vector_store import build_vector_store, load_vector_store
-from retrieval.retriever import retrieve_context
-from generation.prompt_builder import build_prompt
-from generation.llm import generate_answer
-
-
 RAW_DATA_PATH = "data/raw"
 VECTOR_STORE_PATH = "data/embeddings/faiss_index"
 
 
 def build_index():
+    from ingestion.pdf_loader import load_pdfs_from_folder
+    from ingestion.chunking import split_documents
+    from embeddings.vector_store import build_vector_store
+
     print("Cargando PDFs...")
     docs = load_pdfs_from_folder(RAW_DATA_PATH)
 
@@ -31,6 +27,11 @@ def build_index():
 
 
 def ask_question():
+    from embeddings.vector_store import load_vector_store
+    from retrieval.retriever import retrieve_context
+    from generation.prompt_builder import build_prompt
+    from generation.llm import generate_answer
+
     print("Cargando índice vectorial...")
     vector_store = load_vector_store(VECTOR_STORE_PATH)
 

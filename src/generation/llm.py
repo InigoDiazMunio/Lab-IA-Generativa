@@ -2,7 +2,7 @@ from transformers import pipeline
 
 
 class LocalLLM:
-    def __init__(self, model_name: str = "google/flan-t5-base"):
+    def __init__(self, model_name: str = "google/flan-t5-small"):
         self.pipe = pipeline(
             "text2text-generation",
             model=model_name,
