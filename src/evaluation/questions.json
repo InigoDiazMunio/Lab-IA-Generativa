@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "question": "¿Qué es Retrieval-Augmented Generation?",
+    "reference_answer": "Es un enfoque que combina recuperación de información y generación con modelos de lenguaje.",
+    "source_hint": "Documento teórico de RAG"
+  },
+  {
+    "id": 2,
+    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
+    "reference_answer": "El textual trabaja con texto, mientras que el multimodal también incorpora imágenes u otros contenidos visuales.",
+    "source_hint": "Documento sobre multimodalidad"
+  }
+]
