@@ -1,18 +1,30 @@
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
 class LocalLLM:
-    def __init__(self, model_name: str = "google/flan-t5-small"):
-        self.pipe = pipeline(
-            "text2text-generation",
-            model=model_name,
-            tokenizer=model_name,
-            max_new_tokens=256
-        )
+    def __init__(self, model_name: str = "google/flan-t5-base"):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
     def generate(self, prompt: str) -> str:
-        result = self.pipe(prompt)
-        return result[0]["generated_text"]
+        inputs = self.tokenizer(
+            prompt,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512
+        )
+
+        outputs = self.model.generate(
+            **inputs,
+            max_new_tokens=80,
+            do_sample=False,
+            num_beams=4,
+            early_stopping=True,
+            no_repeat_ngram_size=2
+        )
+
+        text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return " ".join(text.split()).strip()
 
 
 _llm_instance = None

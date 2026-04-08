@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "id": 1,
+    "question": "¿Qué es Retrieval-Augmented Generation?",
+    "category": "teoria",
+    "answer": "Retrieval-Augmented Generation",
+    "metrics": {
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length": 2
+    }
+  },
+  {
+    "id": 2,
+    "question": "¿Para qué sirven los embeddings en un sistema RAG?",
+    "category": "teoria",
+    "answer": "For what do embeddings in a RAG system?",
+    "metrics": {
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length": 8
+    }
+  },
+  {
+    "id": 3,
+    "question": "¿Qué papel tiene una base de datos vectorial en este sistema?",
+    "category": "teoria",
+    "answer": "A base of vectorial data in this system",
+    "metrics": {
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length": 8
+    }
+  },
+  {
+    "id": 4,
+    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
+    "category": "comparacion",
+    "answer": "Qué diferencia existe entre un sistema RAG textual y un multimodal?",
+    "metrics": {
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length": 11
+    }
+  },
+  {
+    "id": 5,
+    "question": "¿Por qué el contenido visual puede ser problemático para un RAG puramente textual?",
+    "category": "multimodalidad",
+    "answer": "Porque el contenido visual puede ser problemaático para un RAG puramente textual?",
+    "metrics": {
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length": 12
+    }
+  }
+]

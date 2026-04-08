@@ -6,22 +6,22 @@
   },
   {
     "id": 2,
-    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
-    "category": "comparacion"
-  },
-  {
-    "id": 3,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria"
   },
   {
-    "id": 4,
-    "question": "¿Qué papel tiene una base de datos vectorial en este tipo de sistemas?",
+    "id": 3,
+    "question": "¿Qué papel tiene una base de datos vectorial en este sistema?",
     "category": "teoria"
   },
   {
+    "id": 4,
+    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
+    "category": "comparacion"
+  },
+  {
     "id": 5,
-    "question": "¿Por qué el contenido visual puede ser un problema para un RAG puramente textual?",
+    "question": "¿Por qué el contenido visual puede ser problemático para un RAG puramente textual?",
     "category": "multimodalidad"
   }
 ]
