@@ -3,7 +3,7 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+    "answer": "Retrieval-Augmented Generation (RAG) es una técnica que combina la capacidad de los modelos de lenguaje grande con conocimientos externos de bases de datos para mejorar la precisión y credibilidad de las respuestas.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -25,14 +25,14 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 8
+      "answer_length": 32
     }
   },
   {
     "id": 2,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria",
-    "answer": "A review of RAG research within the landscape of LLMs",
+    "answer": "Los embeddings se utilizan para optimizar la búsqueda (retrieval) en un sistema RAG.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -54,14 +54,14 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 10
+      "answer_length": 13
     }
   },
   {
     "id": 3,
     "question": "¿Qué papel tiene una base de datos vectorial en este sistema?",
     "category": "teoria",
-    "answer": "ALBEF (Li et al., 2021) 233M 94.1 99.5 99.7 82.8 96.3 98.1 77.6 94.3 97.2 60.7 84.3",
+    "answer": "No hay mención explícita a una \"base de datos vectorial\" en el texto proporcionado. Sin embargo, se menciona un \"corpus de entrenamiento\" (fine-tuning training corpus) que consiste en pares de entrada/salida (input/output pairs). Este corpus parece ser utilizado para entrenar los componentes del sistema, pero no se especifica si es una base de datos vectorial.",
     "sources": [
       {
         "source_file": "paper 1.pdf",
@@ -83,14 +83,14 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 17
+      "answer_length": 55
     }
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
     "category": "comparacion",
-    "answer": "Qué diferencia existe entre un sistema RAG textual y uno multimodal?",
+    "answer": "La principal diferencia es que el sistema RAG multimodal puede procesar datos de diferentes modalidades como imágenes, videos y audio, mientras que el sistema RAG textual se limita a procesar texto.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -112,14 +112,14 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 11
+      "answer_length": 31
     }
   },
   {
     "id": 5,
     "question": "¿Por qué el contenido visual puede ser problemático para un RAG puramente textual?",
     "category": "multimodalidad",
-    "answer": "LLaVA\"",
+    "answer": "El contenido visual puede ser problemático para un RAG (Retriever-Generator) puramente textual porque requiere una comprensión más profunda de la imagen, que no siempre se puede capturar con palabras.",
     "sources": [
       {
         "source_file": "paper 3.pdf",
@@ -141,7 +141,7 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 1
+      "answer_length": 29
     }
   }
 ]

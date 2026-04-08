@@ -4,5 +4,4 @@ from src.generation.llm import generate_answer
 
 def answer_without_rag(query: str) -> str:
     prompt = build_baseline_prompt(query)
-    answer = generate_answer(prompt)
-    return answer.strip()
+    return generate_answer(prompt).strip()

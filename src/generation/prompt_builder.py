@@ -1,6 +1,6 @@
 def build_baseline_prompt(query: str) -> str:
     return f"""Pregunta: {query}
-Respuesta breve en español:"""
+Respuesta breve y clara en español:"""
 
 
 def build_rag_prompt(query: str, retrieved_docs: list) -> str:
@@ -16,4 +16,4 @@ def build_rag_prompt(query: str, retrieved_docs: list) -> str:
 {context}
 
 Pregunta: {query}
-Respuesta breve en español usando solo el contexto:"""
+Respuesta breve y clara en español usando solo el contexto:"""

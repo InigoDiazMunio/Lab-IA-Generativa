@@ -5,8 +5,8 @@ from src.generation.llm import generate_answer
 
 def answer_with_rag(query: str, vector_store, k: int = 3):
     retrieved_docs = retrieve_context(vector_store, query, k=k)
-
-    answer = generate_answer(build_rag_prompt(query, retrieved_docs)).strip()
+    prompt = build_rag_prompt(query, retrieved_docs)
+    answer = generate_answer(prompt).strip()
 
     sources = []
     for doc in retrieved_docs:
