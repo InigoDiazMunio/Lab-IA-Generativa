@@ -1,0 +1,16 @@
+paths:
+  raw_data: "data/raw"
+  vector_store: "data/embeddings/faiss_index"
+  experiments: "experiments"
+  questions: "src/evaluation/questions.json"
+
+models:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  generation_model: "google/flan-t5-small"
+
+retrieval:
+  top_k: 4
+
+chunking:
+  chunk_size: 800
+  chunk_overlap: 150
