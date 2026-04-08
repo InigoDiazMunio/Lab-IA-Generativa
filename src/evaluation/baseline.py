@@ -1,16 +1,5 @@
-from generation.llm import generate_answer
-
-
-def build_baseline_prompt(query: str) -> str:
-    return f"""
-Responde a la siguiente pregunta usando únicamente tu conocimiento general.
-Si no estás seguro, indícalo de forma explícita.
-
-Pregunta:
-{query}
-
-Respuesta:
-"""
+from src.generation.prompt_builder import build_baseline_prompt
+from src.generation.llm import generate_answer
 
 
 def answer_without_rag(query: str) -> str:

@@ -6,17 +6,22 @@ def compare_results(path="experiments/evaluation_results.json"):
         results = json.load(f)
 
     for item in results:
-        print("=" * 80)
+        print("=" * 100)
+        print(f"ID: {item['id']}")
         print(f"Pregunta: {item['question']}")
-        print("\n--- Respuesta RAG ---")
-        print(item["rag_answer"])
-        print("\n--- Fuentes RAG ---")
-        for src in item["rag_sources"]:
-            print(f"- {src['source_file']} | página {src['page']}")
+        print(f"Categoría: {item.get('category', '')}")
 
-        print("\n--- Respuesta baseline ---")
+        print("\n--- RESPUESTA RAG ---")
+        print(item["rag_answer"])
+
+        print("\n--- FUENTES RAG ---")
+        for src in item["rag_sources"]:
+            print(f"- Archivo: {src['source_file']} | Página: {src['page']}")
+            print(f"  Preview: {src['content_preview'][:150]}...")
+
+        print("\n--- RESPUESTA BASELINE ---")
         print(item["baseline_answer"])
-        print("=" * 80)
+        print("=" * 100 + "\n")
 
 
 if __name__ == "__main__":

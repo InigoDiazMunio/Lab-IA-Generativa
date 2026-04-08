@@ -3,9 +3,9 @@ VECTOR_STORE_PATH = "data/embeddings/faiss_index"
 
 
 def build_index():
-    from ingestion.pdf_loader import load_pdfs_from_folder
-    from ingestion.chunking import split_documents
-    from embeddings.vector_store import build_vector_store
+    from src.ingestion.pdf_loader import load_pdfs_from_folder
+    from src.ingestion.chunking import split_documents
+    from src.embeddings.vector_store import build_vector_store
 
     print("Cargando PDFs...")
     docs = load_pdfs_from_folder(RAW_DATA_PATH)
@@ -27,10 +27,8 @@ def build_index():
 
 
 def ask_question():
-    from embeddings.vector_store import load_vector_store
-    from retrieval.retriever import retrieve_context
-    from generation.prompt_builder import build_prompt
-    from generation.llm import generate_answer
+    from src.embeddings.vector_store import load_vector_store
+    from src.evaluation.rag_pipeline import answer_with_rag
 
     print("Cargando índice vectorial...")
     vector_store = load_vector_store(VECTOR_STORE_PATH)
@@ -41,24 +39,19 @@ def ask_question():
         if query.lower() == "salir":
             break
 
-        retrieved_docs = retrieve_context(vector_store, query, k=4)
-        prompt = build_prompt(query, retrieved_docs)
-        answer = generate_answer(prompt)
+        answer, sources = answer_with_rag(query, vector_store)
 
         print("\n--- RESPUESTA ---")
         print(answer)
 
         print("\n--- FUENTES RECUPERADAS ---")
-        for i, doc in enumerate(retrieved_docs, start=1):
-            print(
-                f"{i}. Archivo: {doc.metadata.get('source_file', 'desconocido')} | "
-                f"Página: {doc.metadata.get('page', 'N/A')}"
-            )
+        for i, src in enumerate(sources, start=1):
+            print(f"{i}. Archivo: {src['source_file']} | Página: {src['page']}")
 
 
 if __name__ == "__main__":
     print("1. Construir índice")
-    print("2. Hacer preguntas")
+    print("2. Hacer preguntas con RAG")
     option = input("Selecciona una opción: ").strip()
 
     if option == "1":
