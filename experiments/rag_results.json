@@ -3,7 +3,7 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "No se menciona explícitamente qué es Retrieval-Augmented Generation. Sin embargo, según el Fragmento 4, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y una tercera opción no descrita en este contexto.",
+    "answer": "Retrieval-Augmented Generation se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 4, RAG incluye tres tipos de procesos de mejora de recuperación: iterativa, recursiva y una vez (una sola vez).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -33,21 +33,21 @@
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
-      "mentions_no_info": 1,
-      "answer_length_words": 36,
+      "mentions_no_info": 0,
+      "answer_length_words": 40,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.3265,
-      "rouge2_f1": 0.0625,
-      "rougeL_f1": 0.2041,
-      "rouge1_vs_context": 0.0227,
-      "rougeL_vs_context": 0.0227
+      "rouge1_f1": 0.3883,
+      "rouge2_f1": 0.1584,
+      "rougeL_f1": 0.2913,
+      "rouge1_vs_context": 0.0297,
+      "rougeL_vs_context": 0.0297
     }
   },
   {
     "id": 2,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria",
-    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del título de la pregunta y los bloques de texto del documento. Esto permite lograr la recuperación de información mediante la comparación de estas representaciones (Fragmento 1).",
+    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del título de una pregunta y los bloques de texto de un documento. Esto permite lograr la recuperación mediante la comparación de estas representaciones (Fragmento 1).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -78,20 +78,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 43,
+      "answer_length_words": 42,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.466,
-      "rouge2_f1": 0.1782,
-      "rougeL_f1": 0.2913,
-      "rouge1_vs_context": 0.0135,
-      "rougeL_vs_context": 0.0135
+      "rouge1_f1": 0.4554,
+      "rouge2_f1": 0.1616,
+      "rougeL_f1": 0.297,
+      "rouge1_vs_context": 0.0136,
+      "rougeL_vs_context": 0.0136
     }
   },
   {
     "id": 3,
     "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
     "category": "comparacion",
-    "answer": "Según el Fragmento 1, un sistema RAG multimodal es aquel que ha trascendido sus confines iniciales de pregunta-respuesta basados en texto y ahora abarca una diversa variedad de modalidades de datos.",
+    "answer": "Un sistema RAG textual se limita a la pregunta-respuesta basada en texto, mientras que un sistema multimodal RAG puede manejar una variedad de tipos de datos no solo textuales. Según el Fragmento 1, \"RAG ha trascendido sus confines iniciales de pregunta-respuesta basados en texto, abrazando una diversidad de modalidades de datos\".",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -122,20 +122,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 31,
+      "answer_length_words": 51,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.2151,
-      "rouge2_f1": 0.0659,
-      "rougeL_f1": 0.172,
-      "rouge1_vs_context": 0.0218,
-      "rougeL_vs_context": 0.0145
+      "rouge1_f1": 0.3509,
+      "rouge2_f1": 0.0714,
+      "rougeL_f1": 0.2105,
+      "rouge1_vs_context": 0.0405,
+      "rougeL_vs_context": 0.0338
     }
   },
   {
     "id": 4,
     "question": "¿Qué problemas tiene el RAG con datos semiestructurados como PDFs con tablas e imágenes?",
     "category": "multimodalidad",
-    "answer": "El RAG tiene problemas con datos semiestructurados como PDFs con tablas e imágenes debido a dos razones principales. Primero, los procesos de división de texto pueden separar inadvertidamente las tablas, lo que lleva a la corrupción de datos durante la recuperación (Fragmento 2). Segundo, incorporar tablas en el dato puede complicar las búsquedas de similitud semántica (Fragmento 2). Además, se menciona que el RAG tiene dificultades para manejar semi-estructurados datos debido a estos problemas (Fragmento 1).",
+    "answer": "El RAG tiene problemas con datos semiestructurados como PDFs con tablas e imágenes debido a dos razones principales. Primero, los procesos de división de texto pueden separar inadvertidamente las tablas, lo que lleva a la corrupción de datos durante la recuperación (Fragmento 2). Segundo, incorporar tablas en el dato puede complicar las búsquedas de similitud semántica (Fragmento 2).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -166,20 +166,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 76,
+      "answer_length_words": 58,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.4361,
-      "rouge2_f1": 0.1985,
-      "rougeL_f1": 0.3308,
-      "rouge1_vs_context": 0.0364,
-      "rougeL_vs_context": 0.0242
+      "rouge1_f1": 0.4425,
+      "rouge2_f1": 0.1982,
+      "rougeL_f1": 0.3363,
+      "rouge1_vs_context": 0.0258,
+      "rougeL_vs_context": 0.0129
     }
   },
   {
     "id": 5,
     "question": "¿Qué es BLIP-2 y cuál es su aportación principal?",
     "category": "multimodalidad",
-    "answer": "BLIP-2 es una estrategia de preentrenamiento genérica y eficiente para la visión-lenguaje. Su aportación principal es poder alcanzar un rendimiento de estado del arte en diversas tareas de visión-lenguaje con un pequeño número de parámetros entrenables durante el preentrenamiento (Fragmento 2).",
+    "answer": "BLIP-2 es una estrategia de preentrenamiento genérica y eficiente para la visión-lenguaje. Su aportación principal es poder alcanzar un rendimiento de estado del arte en diversas tareas de visión-lenguaje mientras tiene un pequeño número de parámetros entrenables durante el preentrenamiento (Fragmento 2).",
     "sources": [
       {
         "source_file": "paper 2.pdf",
@@ -210,20 +210,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 41,
+      "answer_length_words": 42,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.4038,
-      "rouge2_f1": 0.1765,
-      "rougeL_f1": 0.2885,
-      "rouge1_vs_context": 0.0188,
-      "rougeL_vs_context": 0.0188
+      "rouge1_f1": 0.4,
+      "rouge2_f1": 0.1748,
+      "rougeL_f1": 0.2857,
+      "rouge1_vs_context": 0.0187,
+      "rougeL_vs_context": 0.0187
     }
   },
   {
     "id": 6,
     "question": "¿Qué es LLaVA y cómo se entrena?",
     "category": "multimodalidad",
-    "answer": "Lo siento, pero no tengo suficiente información para responder a tu pregunta. Los fragmentos proporcionados mencionan a LLaVA como una herramienta o modelo, pero no se explica cómo se entrena. Sin embargo, en el Fragmento 1 se menciona que LLaVA sirve como un punto de referencia sólido (baseline) en los benchmarks, lo que sugiere que ha sido entrenado y evaluado en ciertas tareas.",
+    "answer": "No dispongo de esa información.",
     "sources": [
       {
         "source_file": "paper 3.pdf",
@@ -253,21 +253,21 @@
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 63,
+      "mentions_no_info": 1,
+      "answer_length_words": 5,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.2034,
-      "rouge2_f1": 0.0345,
-      "rougeL_f1": 0.1186,
-      "rouge1_vs_context": 0.0296,
-      "rougeL_vs_context": 0.0296
+      "rouge1_f1": 0.069,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.069,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
     "id": 7,
     "question": "¿Qué es RAGAS y qué métricas define para evaluar sistemas RAG?",
     "category": "evaluacion",
-    "answer": "No dispongo de esa información en los documentos.",
+    "answer": "No dispongo de esa información.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -298,11 +298,11 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 1,
-      "answer_length_words": 8,
+      "answer_length_words": 5,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.1159,
+      "rouge1_f1": 0.0909,
       "rouge2_f1": 0.0,
-      "rougeL_f1": 0.087,
+      "rougeL_f1": 0.0606,
       "rouge1_vs_context": 0.0,
       "rougeL_vs_context": 0.0
     }
@@ -311,7 +311,7 @@
     "id": 8,
     "question": "¿Qué limitaciones tienen los LLMs que RAG intenta resolver, como las alucinaciones o el conocimiento desactualizado?",
     "category": "teoria",
-    "answer": "Los LLMs tienen varias limitaciones que RAG intenta resolver. Según el Fragmento 1, los LLMs enfrentan desafíos en tareas específicas del dominio o intensivas en conocimiento [1], y producen \"alucinaciones\" cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada. Además, según el Fragmento 2, los LLMs también enfrentan desafíos como la falta de transparencia en sus procesos de razonamiento y el conocimiento desactualizado.",
+    "answer": "Los LLMs tienen varias limitaciones que RAG intenta resolver. Según el Fragmento 1, los LLMs enfrentan importantes limitaciones, especialmente en tareas específicas del dominio o intensivas en conocimiento [1], y producen \"alucinaciones\" [2] cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada. Además, según el Fragmento 2, los LLMs también enfrentan desafíos como la producción de alucinaciones, el conocimiento desactualizado y procesos de razonamiento no transparentes e inverificables.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -342,13 +342,13 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 68,
+      "answer_length_words": 73,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.2742,
-      "rouge2_f1": 0.082,
-      "rougeL_f1": 0.1935,
-      "rouge1_vs_context": 0.0379,
-      "rougeL_vs_context": 0.0315
+      "rouge1_f1": 0.2946,
+      "rouge2_f1": 0.0787,
+      "rougeL_f1": 0.186,
+      "rouge1_vs_context": 0.0435,
+      "rougeL_vs_context": 0.0311
     }
   },
   {
@@ -399,7 +399,7 @@
     "id": 10,
     "question": "¿Qué tipos de RAG existen según el survey de RAG para LLMs?",
     "category": "teoria",
-    "answer": "Según el Fragmento 1, existen tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
+    "answer": "Según el fragmento 1, se categorizan tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -430,13 +430,13 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 16,
+      "answer_length_words": 17,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.3889,
-      "rouge2_f1": 0.2571,
-      "rougeL_f1": 0.3889,
-      "rouge1_vs_context": 0.052,
-      "rougeL_vs_context": 0.052
+      "rouge1_f1": 0.3562,
+      "rouge2_f1": 0.2254,
+      "rougeL_f1": 0.3562,
+      "rouge1_vs_context": 0.0519,
+      "rougeL_vs_context": 0.0519
     }
   }
 ]
