@@ -10,3 +10,8 @@ pypdf
 pymupdf
 
 sentence-transformers
+
+rouge-score
+sentencepiece
+
+pyyaml

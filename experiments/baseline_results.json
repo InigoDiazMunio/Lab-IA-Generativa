@@ -3,55 +3,150 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en la inteligencia artificial que combina el procesamiento del lenguaje natural con la búsqueda de información. Funciona buscando en una base de datos para encontrar texto relevante relacionado con la pregunta o tema, y luego utiliza ese texto como input para generar una respuesta más detallada.",
+    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en aprendizaje profundo que combina la búsqueda y generación de texto. Funciona buscando en una base de datos de texto relacionada con el contexto dado, para luego generar texto nuevo basándose en esa información.",
     "metrics": {
+      "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 55
+      "answer_length_words": 43,
+      "rouge1_f1": 0.4952,
+      "rouge2_f1": 0.2718,
+      "rougeL_f1": 0.3238
     }
   },
   {
     "id": 2,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria",
-    "answer": "Los embeddings en un sistema RAG (Retrieval-Augmented Generation) se utilizan para representar las entradas de texto en un espacio vectorial. Estos vectores capturan la semántica del texto, permitiendo que el modelo genere respuestas relevantes al buscar en una base de conocimiento.",
+    "answer": "Los embeddings en un sistema RAG (Retrieval-Augmented Generation) se utilizan para representar las entradas de entrada y salida como vectores numéricos en un espacio de alta dimensión. Esto permite a la red neuronal entrenada asociar patrones y relaciones entre las diferentes entradas, lo que mejora la precisión del modelo al realizar tareas de recuperación y generación. En particular, los embeddings se utilizan para: 1. Representar las palabras o tokens como vectores en el espacio de embeddings. 2. Capturar las relaciones semánticas entre las palabras o tokens. 3. Permitir a la red neuronal entrenada aprender patrones y relaciones complejas entre las entradas. De esta manera, los embeddings son una herramienta fundamental para mejorar la precisión del modelo RAG al realizar tareas como recuperación de información, generación de texto y otros tipos de tareas que requieren la asociación de patrones y relaciones en grandes",
     "metrics": {
+      "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 41
+      "answer_length_words": 142,
+      "rouge1_f1": 0.2775,
+      "rouge2_f1": 0.0483,
+      "rougeL_f1": 0.1914
     }
   },
   {
     "id": 3,
-    "question": "¿Qué papel tiene una base de datos vectorial en este sistema?",
-    "category": "teoria",
-    "answer": "Una base de datos vectorial es un tipo de almacenamiento de datos que permite la búsqueda eficiente de vectores similares. En el contexto del sistema, se utiliza para almacenar las características visuales de los objetos detectados por la cámara. Esto permite a la plataforma identificar y clasificar objetos en tiempo real con alta precisión.",
+    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
+    "category": "comparacion",
+    "answer": "Un sistema RAG (Retrieval-Augmented Generation) es una técnica de inteligencia artificial que combina la búsqueda de información con la generación de texto. Un sistema RAG textual busca en una base de datos de texto para encontrar información relevante y luego utiliza esa información para generar un texto nuevo. Por otro lado, un sistema multimodal RAG no solo busca en bases de datos de texto, sino que también puede buscar en otras fuentes de información como imágenes, videos o audios. Luego, utiliza la información encontrada para generar contenido multimodal, es decir, contenido que incluye diferentes tipos de medios. En resumen, la principal diferencia entre un sistema RAG textual y uno multimodal es el tipo de información que busca y genera: mientras que el primero se limita a texto, el segundo puede buscar y generar contenido en diferentes formatos.",
     "metrics": {
+      "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 54
+      "answer_length_words": 137,
+      "rouge1_f1": 0.2871,
+      "rouge2_f1": 0.0966,
+      "rougeL_f1": 0.201
     }
   },
   {
     "id": 4,
-    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
-    "category": "comparacion",
-    "answer": "Un sistema RAG (Retrieval-Augmented Generation) textual busca información en una base de datos para generar texto, mientras que un sistema multimodal puede buscar información tanto en bases de datos textuales como visuales.",
+    "question": "¿Qué problemas tiene el RAG con datos semiestructurados como PDFs con tablas e imágenes?",
+    "category": "multimodalidad",
+    "answer": "El RAG (Reconocimiento Automático de la Información) puede tener dificultades para procesar datos semiestructurados como PDFs con tablas e imágenes debido a su complejidad y variedad. Algunos problemas específicos que pueden surgir son: 1. **Detección de estructura**: Los RAG pueden encontrar difícil identificar la estructura de los datos en documentos con tablas e imágenes, ya que no siempre se ajustan a un formato predefinido. 2. **Extracción de información**: La extracción de información relevante de tablas y gráficos puede ser complicada debido a la variedad de formatos y estilos utilizados. 3. **Comprensión del contexto**: Los RAG pueden tener dificultades para comprender el contexto en que se presentan los datos, lo que puede llevar a interpretaciones incorrectas o incompletas. Es importante destacar que existen téc",
     "metrics": {
+      "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 32
+      "answer_length_words": 123,
+      "rouge1_f1": 0.2366,
+      "rouge2_f1": 0.0435,
+      "rougeL_f1": 0.1398
     }
   },
   {
     "id": 5,
-    "question": "¿Por qué el contenido visual puede ser problemático para un RAG puramente textual?",
+    "question": "¿Qué es BLIP-2 y cuál es su aportación principal?",
     "category": "multimodalidad",
-    "answer": "El contenido visual puede ser problemático porque no se ajusta a la naturaleza textual de un RAG.",
+    "answer": "Lo siento, pero no tengo información sobre lo que es BLIP-2 o su aportación principal. Si necesitas ayuda con otra pregunta o tema relacionado con la universidad o educación en general, estaré encantado de asistirte.",
     "metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 1,
+      "answer_length_words": 35,
+      "rouge1_f1": 0.2391,
+      "rouge2_f1": 0.0889,
+      "rougeL_f1": 0.1522
+    }
+  },
+  {
+    "id": 6,
+    "question": "¿Qué es LLaVA y cómo se entrena?",
+    "category": "multimodalidad",
+    "answer": "Lo siento, pero no tengo información sobre lo que es \"LLaVA\" o cómo se entrena. Si proporcionas más contexto o detalles sobre qué es LLaVA, estaré encantado de intentar ayudarte a encontrar la respuesta correcta.",
+    "metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 1,
+      "answer_length_words": 35,
+      "rouge1_f1": 0.2,
+      "rouge2_f1": 0.0455,
+      "rougeL_f1": 0.1333
+    }
+  },
+  {
+    "id": 7,
+    "question": "¿Qué es RAGAS y qué métricas define para evaluar sistemas RAG?",
+    "category": "evaluacion",
+    "answer": "RAGAS es un framework (conjunto de herramientas) utilizado para evaluar la calidad de los sistemas de recomendación. Define varias métricas para evaluar el rendimiento de estos sistemas, como: - Precisión - Recuperación - F1-score (combinación de precisión y recuperación) - Índice de F1-macro (para clasificadores con múltiples clases) Estas métricas permiten comparar y evaluar el desempeño de diferentes sistemas de recomendación.",
+    "metrics": {
+      "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 17
+      "answer_length_words": 61,
+      "rouge1_f1": 0.2462,
+      "rouge2_f1": 0.0625,
+      "rougeL_f1": 0.2154
+    }
+  },
+  {
+    "id": 8,
+    "question": "¿Qué limitaciones tienen los LLMs que RAG intenta resolver, como las alucinaciones o el conocimiento desactualizado?",
+    "category": "teoria",
+    "answer": "Los LLMs (Modelos de Lenguaje de Largo Recuerdo) tienen varias limitaciones que RAG (Retrieval-Augmented Generation) intenta resolver. Algunas de estas limitaciones incluyen: 1. **Alucinaciones**: Los LLMs pueden generar respuestas que no están basadas en la información real, sino en suposiciones o conjeturas. Esto puede llevar a respuestas inexactas o incluso falsas. 2. **Conocimiento desactualizado**: Los LLMs se entrenan en grandes conjuntos de datos, pero estos pueden estar desactualizados o incompletos. Esto puede llevar a que los modelos generen respuestas que no están al día con la información más reciente. 3. **Falta de contexto**: Los LLMs pueden tener dificultades para comprender el contexto en el que se está utilizando una pregunta o tema específico. 4. **Limitaciones en la comprensión",
+    "metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 118,
+      "rouge1_f1": 0.2414,
+      "rouge2_f1": 0.0349,
+      "rougeL_f1": 0.1494
+    }
+  },
+  {
+    "id": 9,
+    "question": "¿Qué es el Q-Former en BLIP-2?",
+    "category": "multimodalidad",
+    "answer": "Lo siento, pero no tengo información sobre lo que es el \"Q-Former\" en el contexto del proyecto BLIP-2. Si necesitas más detalles o una respuesta precisa, te recomendaría consultar fuentes oficiales o expertos en el campo relacionado con el proyecto BLIP-2.",
+    "metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 1,
+      "answer_length_words": 41,
+      "rouge1_f1": 0.3048,
+      "rouge2_f1": 0.0971,
+      "rougeL_f1": 0.1714
+    }
+  },
+  {
+    "id": 10,
+    "question": "¿Qué tipos de RAG existen según el survey de RAG para LLMs?",
+    "category": "teoria",
+    "answer": "Lo siento, pero no tengo información específica sobre un \"survey de RAG para LLMs\" que describa los diferentes tipos de RAG (Rationale-Action Graph). Sin embargo, puedo proporcionarte una definición general de RAG y mencionar algunos conceptos relacionados con la investigación en LLMs (Large Language Models). Un RAG es un tipo de modelo de lenguaje basado en gráficos que combina el beneficio de los modelos de lenguaje condicional y los modelos de razonamiento. Los RAG pueden ser utilizados para realizar tareas como la generación de texto, la clasificación de texto y la comprensión del lenguaje. En cuanto a tipos específicos de RAG según un \"survey\" que no puedo identificar con precisión, no tengo información disponible. La investigación en LLMs es activa y constante, y nuevos modelos y técnicas se desarrollan continuamente. Si",
+    "metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 1,
+      "answer_length_words": 131,
+      "rouge1_f1": 0.2587,
+      "rouge2_f1": 0.0201,
+      "rougeL_f1": 0.1692
     }
   }
 ]

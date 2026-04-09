@@ -3,145 +3,440 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) es una técnica que combina la capacidad de los modelos de lenguaje grande con conocimientos externos de bases de datos para mejorar la precisión y credibilidad de las respuestas.",
+    "answer": "No se menciona explícitamente qué es Retrieval-Augmented Generation. Sin embargo, según el Fragmento 4, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y una tercera opción no descrita en este contexto.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
-        "page": 16,
-        "content_preview": "multi-hop evidence retrieval,” arXiv preprint arXiv:2311.02616 , 2023.\n[32] Q. Gou, Z. Xia, B. Yu, H. Yu, F. Huang, Y . Li, and N. Cam-Tu,\n“Diversify question generation with retrieval-augmented style transfer,”\narXiv preprint arXiv:2310.14503 , 2023.\n[33] Z. Guo, S. Cheng, Y . Wang, P. Li, and Y . "
+        "page": 10,
+        "content_preview": "ages “retrieval-enhanced generation” alongside “generation-\nenhanced retrieval” for tasks that necessitate the reproduction\nof specific information. The model harnesses the content\nrequired to address the input task as a contextual basis for\nretrieving pertinent knowledge, which in turn facilitates ",
+        "type": "texto"
       },
       {
         "source_file": "paper 5.pdf",
-        "page": 0,
-        "content_preview": "1\nRetrieval-Augmented Generation for Large\nLanguage Models: A Survey\nYunfan Gaoa, Yun Xiong b, Xinyu Gao b, Kangxiang Jia b, Jinliu Pan b, Yuxi Bi c, Yi Dai a, Jiawei Sun a, Meng\nWangc, and Haofen Wang a,c\naShanghai Research Institute for Intelligent Autonomous Systems, Tongji University\nbShanghai K"
+        "page": 10,
+        "content_preview": "base for LLMs. This approach has been shown to enhance\nthe robustness of subsequent answer generation by offering\nadditional contextual references through multiple retrieval\niterations. However, it may be affected by semantic discon-\ntinuity and the accumulation of irrelevant information. ITER-\nRETG",
+        "type": "texto"
       },
       {
-        "source_file": "paper 10.pdf",
-        "page": 0,
-        "content_preview": "Ragas: Automated Evaluation of Retrieval Augmented Generation\nShahul Es†, Jithin James †, Luis Espinosa-Anke ∗♢, Steven Schockaert ∗\n†Exploding Gradients\n∗CardiffNLP, Cardiff University, United Kingdom\n♢AMPLYFI, United Kingdom\nshahules786@gmail.com,jamesjithin97@gmail.com\n{espinosa-ankel,schockaerts"
+        "source_file": "paper 5.pdf",
+        "page": 6,
+        "content_preview": "enhancement selectively. GenRead [13] replaces the retriever\nwith an LLM generator, finding that LLM-generated contexts\noften contain more accurate answers due to better alignment\nwith the pre-training objectives of causal language modeling.\nSelfmem [17] iteratively creates an unbounded memory pool\n",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 10,
+        "content_preview": "11\nFig. 5. In addition to the most common once retrieval, RAG also includes three types of retrieval augmentation processes. (left) Iterative retrieval involves\nalternating between retrieval and generation, allowing for richer and more targeted context from the knowledge base at each step. (Middle) ",
+        "type": "texto"
       }
     ],
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length": 32
+      "mentions_no_info": 1,
+      "answer_length_words": 36,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.3265,
+      "rouge2_f1": 0.0625,
+      "rougeL_f1": 0.2041,
+      "rouge1_vs_context": 0.0227,
+      "rougeL_vs_context": 0.0227
     }
   },
   {
     "id": 2,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria",
-    "answer": "Los embeddings se utilizan para optimizar la búsqueda (retrieval) en un sistema RAG.",
+    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del título de la pregunta y los bloques de texto del documento. Esto permite lograr la recuperación de información mediante la comparación de estas representaciones (Fragmento 1).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
-        "page": 1,
-        "content_preview": "The paper unfolds as follows: Section II introduces the\nmain concept and current paradigms of RAG. The following\nthree sections explore core components—“Retrieval”, “Gen-\neration” and “Augmentation”, respectively. Section III focuses\non optimization methods in retrieval,including indexing, query\nand"
+        "page": 8,
+        "content_preview": "approach can also be employed, combining both semantic and\nmetadata-based methods for enhanced query routing.\nD. Embedding\nIn RAG, retrieval is achieved by calculating the similarity\n(e.g. cosine similarity) between the embeddings of the ques-\ntion and document chunks, where the semantic representat",
+        "type": "texto"
       },
       {
         "source_file": "paper 5.pdf",
-        "page": 1,
-        "content_preview": "2\nFig. 1. Technology tree of RAG research. The stages of involving RAG mainly include pre-training, fine-tuning, and inference. With the emergence of LLMs,\nresearch on RAG initially focused on leveraging the powerful in context learning abilities of LLMs, primarily concentrating on the inference sta"
+        "page": 13,
+        "content_preview": "references for LLMs to help users verify the generated an-\nswers. The entire retrieval and reasoning process is observable,\nwhile generation solely relying on long context remains a\nblack box. Conversely, the expansion of context provides new\nopportunities for the development of RAG, enabling it to\n",
+        "type": "texto"
       },
       {
         "source_file": "paper 5.pdf",
+        "page": 15,
+        "content_preview": "of RAG capabilities. RAG toolkits are converging into a\nfoundational technology stack, laying the groundwork for\nadvanced enterprise applications. However, a fully integrated,\ncomprehensive platform concept is still in the future, requiring\nfurther innovation and development.\nF . Multi-modal RAG\nRAG",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 10.pdf",
         "page": 1,
-        "content_preview": "concludes in Section VIII.\nII. O VERVIEW OF RAG\nA typical application of RAG is illustrated in Figure 2.\nHere, a user poses a question to ChatGPT about a recent,\nwidely discussed news. Given ChatGPT’s reliance on pre-\ntraining data, it initially lacks the capacity to provide up-\ndates on recent deve"
+        "content_preview": "of retrieval augmented generation systems. We fo-\ncus on settings where reference answers may not be\navailable, and where we want to estimate different\nproxies for correctness, in addition to the useful-\nness of the retrieved passages. The Ragas frame-\nwork provides an integration with both llama-in",
+        "type": "texto"
       }
     ],
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 13
+      "answer_length_words": 43,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.466,
+      "rouge2_f1": 0.1782,
+      "rougeL_f1": 0.2913,
+      "rouge1_vs_context": 0.0135,
+      "rougeL_vs_context": 0.0135
     }
   },
   {
     "id": 3,
-    "question": "¿Qué papel tiene una base de datos vectorial en este sistema?",
-    "category": "teoria",
-    "answer": "No hay mención explícita a una \"base de datos vectorial\" en el texto proporcionado. Sin embargo, se menciona un \"corpus de entrenamiento\" (fine-tuning training corpus) que consiste en pares de entrada/salida (input/output pairs). Este corpus parece ser utilizado para entrenar los componentes del sistema, pero no se especifica si es una base de datos vectorial.",
+    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
+    "category": "comparacion",
+    "answer": "Según el Fragmento 1, un sistema RAG multimodal es aquel que ha trascendido sus confines iniciales de pregunta-respuesta basados en texto y ahora abarca una diversa variedad de modalidades de datos.",
     "sources": [
       {
-        "source_file": "paper 1.pdf",
-        "page": 2,
-        "content_preview": "models [32]. We refer to the BART generator parametersθ as the parametric memory henceforth.\n2.4 Training\nWe jointly train the retriever and generator components without any direct supervision on what\ndocument should be retrieved. Given a ﬁne-tuning training corpus of input/output pairs(xj,yj), we\n3"
+        "source_file": "paper 5.pdf",
+        "page": 15,
+        "content_preview": "of RAG capabilities. RAG toolkits are converging into a\nfoundational technology stack, laying the groundwork for\nadvanced enterprise applications. However, a fully integrated,\ncomprehensive platform concept is still in the future, requiring\nfurther innovation and development.\nF . Multi-modal RAG\nRAG",
+        "type": "texto"
       },
       {
-        "source_file": "paper 3.pdf",
-        "page": 14,
-        "content_preview": "LLaV A. LLaV A also demonstrates impressive OCR (optical character recognition) ability in Table 9\nand Fig. 2, which is rarely covered in our training data.\nWe hope these additional results and observations showcase the potential of LLaV A in various\napplication areas. In future work, it is importan"
+        "source_file": "paper 5.pdf",
+        "page": 3,
+        "content_preview": "challenges. The shift towards a modular RAG approach is\nbecoming prevalent, supporting both sequential processing and\nintegrated end-to-end training across its components. Despite\nits distinctiveness, Modular RAG builds upon the foundational\nprinciples of Advanced and Naive RAG, illustrating a progr",
+        "type": "texto"
       },
       {
-        "source_file": "paper 2.pdf",
-        "page": 7,
-        "content_preview": "BEIT-3(Wang et al., 2022b) 1.9B 94.9 99.9 100.0 81.5 95.6 97.8 84.8 96.5 98.3 67.2 87.7 92.8\nFusion-encoder models\nUNITER (Chen et al., 2020) 303M 83.6 95.7 97.7 68.7 89.2 93.9 65.7 88.6 93.8 52.9 79.9 88.0\nOSCAR (Li et al., 2020) 345M - - - - - - 70.0 91.1 95.5 54.0 80.8 88.5\nVinVL (Zhang et al., 2"
+        "source_file": "paper 5.pdf",
+        "page": 3,
+        "content_preview": "chain-like structure. (Right) Modular RAG inherits and develops from the previous paradigm, showcasing greater flexibility overall. This is evident in the\nintroduction of multiple specific functional modules and the replacement of existing modules. The overall process is not limited to sequential re",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 4,
+        "content_preview": "structures of Naive and Advanced RAG, characterized by a\nsimple “Retrieve” and “Read” mechanism. Moreover, Modular\nRAG expands this flexibility by integrating new modules or\nadjusting interaction flow among existing ones, enhancing its\napplicability across different tasks.\nInnovations such as the Re",
+        "type": "texto"
       }
     ],
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 55
+      "answer_length_words": 31,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.2151,
+      "rouge2_f1": 0.0659,
+      "rougeL_f1": 0.172,
+      "rouge1_vs_context": 0.0218,
+      "rougeL_vs_context": 0.0145
     }
   },
   {
     "id": 4,
-    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
-    "category": "comparacion",
-    "answer": "La principal diferencia es que el sistema RAG multimodal puede procesar datos de diferentes modalidades como imágenes, videos y audio, mientras que el sistema RAG textual se limita a procesar texto.",
+    "question": "¿Qué problemas tiene el RAG con datos semiestructurados como PDFs con tablas e imágenes?",
+    "category": "multimodalidad",
+    "answer": "El RAG tiene problemas con datos semiestructurados como PDFs con tablas e imágenes debido a dos razones principales. Primero, los procesos de división de texto pueden separar inadvertidamente las tablas, lo que lleva a la corrupción de datos durante la recuperación (Fragmento 2). Segundo, incorporar tablas en el dato puede complicar las búsquedas de similitud semántica (Fragmento 2). Además, se menciona que el RAG tiene dificultades para manejar semi-estructurados datos debido a estos problemas (Fragmento 1).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
-        "page": 15,
-        "content_preview": "F . Multi-modal RAG\nRAG has transcended its initial text-based question-\nanswering confines, embracing a diverse array of modal data.\nThis expansion has spawned innovative multimodal models\nthat integrate RAG concepts across various domains:\nImage. RA-CM3 [176] stands as a pioneering multimodal\nmode"
+        "page": 6,
+        "content_preview": "December, 2018). In addition to encyclopedic data, common\nunstructured data includes cross-lingual text [19] and domain-\nspecific data (such as medical [67]and legal domains [29]).\nSemi-structured data. typically refers to data that contains a\ncombination of text and table information, such as PDF. ",
+        "type": "texto"
       },
       {
         "source_file": "paper 5.pdf",
-        "page": 15,
-        "content_preview": "RAG technology, there are research opportunities to improve\nits robustness and its ability to handle extended contexts.\nRAG’s application scope is expanding into multimodal do-\nmains, adapting its principles to interpret and process diverse\ndata forms like images, videos, and code. This expansion hi"
+        "page": 6,
+        "content_preview": "RAG systems due to two main reasons. Firstly, text splitting\nprocesses may inadvertently separate tables, leading to data\ncorruption during retrieval. Secondly, incorporating tables into\nthe data can complicate semantic similarity searches. When\ndealing with semi-structured data, one approach involv",
+        "type": "texto"
       },
       {
         "source_file": "paper 5.pdf",
-        "page": 2,
-        "content_preview": "3\nFig. 2. A representative instance of the RAG process applied to question answering. It mainly consists of 3 steps. 1) Indexing. Documents are split into chunks,\nencoded into vectors, and stored in a vector database. 2) Retrieval. Retrieve the Top k chunks most relevant to the question based on sem"
+        "page": 7,
+        "content_preview": "consists of nodes (representing paragraphs or structures in the\ndocuments, such as pages and tables) and edges (indicating\nsemantic/lexical similarity between paragraphs or relationships\nwithin the document structure), effectively addressing knowl-\nedge retrieval and reasoning problems in a multi-do",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 6,
+        "content_preview": "progresses, Modular RAG has become more integrated with fine-tuning techniques.\nUnstructured Data , such as text, is the most widely used\nretrieval source, which are mainly gathered from corpus. For\nopen-domain question-answering (ODQA) tasks, the primary\nretrieval sources are Wikipedia Dump with th",
+        "type": "texto"
       }
     ],
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 31
+      "answer_length_words": 76,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.4361,
+      "rouge2_f1": 0.1985,
+      "rougeL_f1": 0.3308,
+      "rouge1_vs_context": 0.0364,
+      "rougeL_vs_context": 0.0242
     }
   },
   {
     "id": 5,
-    "question": "¿Por qué el contenido visual puede ser problemático para un RAG puramente textual?",
+    "question": "¿Qué es BLIP-2 y cuál es su aportación principal?",
     "category": "multimodalidad",
-    "answer": "El contenido visual puede ser problemático para un RAG (Retriever-Generator) puramente textual porque requiere una comprensión más profunda de la imagen, que no siempre se puede capturar con palabras.",
+    "answer": "BLIP-2 es una estrategia de preentrenamiento genérica y eficiente para la visión-lenguaje. Su aportación principal es poder alcanzar un rendimiento de estado del arte en diversas tareas de visión-lenguaje con un pequeño número de parámetros entrenables durante el preentrenamiento (Fragmento 2).",
     "sources": [
       {
-        "source_file": "paper 3.pdf",
-        "page": 16,
-        "content_preview": "sceneries, joyful experiences, and include possible anecdotes.\nUser\nUser\nLLaVA\nLLaVA\nFigure 3: LLaV A is capable of recognizing the visual content following the user’s intent, without\ndirectly prompting for visual recognition. It also provides a detailed response when prompted with a\nfollow-up reque"
+        "source_file": "paper 2.pdf",
+        "page": 0,
+        "content_preview": "proposes BLIP-2, a generic and efficient pre-\ntraining strategy that bootstraps vision-language\npre-training from off-the-shelf frozen pre-trained\nimage encoders and frozen large language mod-\nels. BLIP-2 bridges the modality gap with a\nlightweight Querying Transformer, which is pre-\ntrained in two ",
+        "type": "texto"
       },
       {
         "source_file": "paper 2.pdf",
-        "page": 8,
-        "content_preview": "Parikh, D. Making the V in VQA matter: Elevating the\nrole of image understanding in visual question answering.\nIn CVPR, pp. 6325–6334, 2017.\nGuo, J., Li, J., Li, D., Tiong, A. M. H., Li, B., Tao, D., and\nHoi, S. C. H. From images to textual prompts: Zero-shot\nVQA with frozen large language models. I"
+        "page": 7,
+        "content_preview": "on a filtered dataset with harmful content removed.\n6. Conclusion\nWe propose BLIP-2, a generic and compute-efficient method\nfor vision-language pre-training that leverages frozen pre-\ntrained image encoders and LLMs. BLIP-2 achieves state-\nof-the-art performance on various vision-language tasks\nwhil",
+        "type": "texto"
       },
       {
-        "source_file": "paper 3.pdf",
-        "page": 20,
-        "content_preview": "• \"Describe the following image in detail\"\n• \"Provide a detailed description of the given image\"\n• \"Give an elaborate explanation of the image you see\"\n• \"Share a comprehensive rundown of the presented image\"\n• \"Offer a thorough analysis of the image\"\n• \"Explain the various aspects of the image befo"
+        "source_file": "paper 2.pdf",
+        "page": 1,
+        "content_preview": "• BLIP-2 effectively leverages both frozen pre-trained im-\nage models and language models. We bridge the modality\ngap using a Q-Former pre-trained in two-stages: repre-\nsentation learning stage and generative learning stage.\nBLIP-2 achieves state-of-the-art performance on various\nvision-language tas",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 2.pdf",
+        "page": 1,
+        "content_preview": "• Powered by LLMs ( e.g. OPT (Zhang et al., 2022),\nFlanT5 (Chung et al., 2022)), BLIP-2 can be prompted to\nperform zero-shot image-to-text generation that follows\nnatural language instructions, which enables emerging\ncapabilities such as visual knowledge reasoning, visual\nconversation, etc. (see Fig",
+        "type": "texto"
       }
     ],
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length": 29
+      "answer_length_words": 41,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.4038,
+      "rouge2_f1": 0.1765,
+      "rougeL_f1": 0.2885,
+      "rouge1_vs_context": 0.0188,
+      "rougeL_vs_context": 0.0188
+    }
+  },
+  {
+    "id": 6,
+    "question": "¿Qué es LLaVA y cómo se entrena?",
+    "category": "multimodalidad",
+    "answer": "Lo siento, pero no tengo suficiente información para responder a tu pregunta. Los fragmentos proporcionados mencionan a LLaVA como una herramienta o modelo, pero no se explica cómo se entrena. Sin embargo, en el Fragmento 1 se menciona que LLaVA sirve como un punto de referencia sólido (baseline) en los benchmarks, lo que sugiere que ha sido entrenado y evaluado en ciertas tareas.",
+    "sources": [
+      {
+        "source_file": "paper 3.pdf",
+        "page": 6,
+        "content_preview": "LLaV A serves as a solid baseline on the benchmarks, on which our findings can inspire future work\nin developing more capable LMMs.\n7",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 3.pdf",
+        "page": 13,
+        "content_preview": "A Broader Impact\nThe broader impact of LLaV A, a general-purpose visual assistant, has potential benefits and risks\nassociated with its deployment and release. Some considerations are unique to LLaV A due to its\nvisual nature, while others share similarities with existing instruction-following LLMs ",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 3.pdf",
+        "page": 13,
+        "content_preview": "Evaluation complexities. Assessing the performance of LLaV A is challenging as it involves both\nlanguage and visual tasks. Our evaluation benchmark covers several aspects, including accuracy,\nconcept coverage, reasoning ability, and creativity. However, additional aspects need consideration,\nsuch as",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 3.pdf",
+        "page": 13,
+        "content_preview": "engages the community in developing better mitigation strategies to address these concerns. Moreover,\nthe release of LLaV A can spur the development of new applications and research directions, ultimately\ncontributing to the progress and responsible deployment of foundation models in vision-language",
+        "type": "texto"
+      }
+    ],
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 63,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.2034,
+      "rouge2_f1": 0.0345,
+      "rougeL_f1": 0.1186,
+      "rouge1_vs_context": 0.0296,
+      "rougeL_vs_context": 0.0296
+    }
+  },
+  {
+    "id": 7,
+    "question": "¿Qué es RAGAS y qué métricas define para evaluar sistemas RAG?",
+    "category": "evaluacion",
+    "answer": "No dispongo de esa información en los documentos.",
+    "sources": [
+      {
+        "source_file": "paper 5.pdf",
+        "page": 11,
+        "content_preview": "specific metrics [160]. Despite this, there is a notable paucity\nof research dedicated to evaluating the distinct characteristics\nof RAG models.The main evaluation objectives include:\nRetrieval Quality. Evaluating the retrieval quality is crucial\nfor determining the effectiveness of the context sour",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 11,
+        "content_preview": "of search engines, recommendation systems, and information\nretrieval systems are employed to measure the performance of\nthe RAG retrieval module. Metrics such as Hit Rate, MRR, and\nNDCG are commonly utilized for this purpose [161], [162].\nGeneration Quality . The assessment of generation quality\ncen",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 11,
+        "content_preview": "in the field of NLP have propelled the evaluation of RAG\nmodels to the forefront of research in the LLMs community.\nThe primary objective of this evaluation is to comprehend\nand optimize the performance of RAG models across diverse\napplication scenarios.This chapter will mainly introduce the\nmain do",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 13,
+        "content_preview": "ROUGE/ROUGE-L ✓ ✓ ✓\nThe specific metrics for each evaluation aspect are sum-\nmarized in Table III. It is essential to recognize that these\nmetrics, derived from related work, are traditional measures\nand do not yet represent a mature or standardized approach for\nquantifying RAG evaluation aspects. C",
+        "type": "texto"
+      }
+    ],
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 1,
+      "answer_length_words": 8,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.1159,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.087,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
+    }
+  },
+  {
+    "id": 8,
+    "question": "¿Qué limitaciones tienen los LLMs que RAG intenta resolver, como las alucinaciones o el conocimiento desactualizado?",
+    "category": "teoria",
+    "answer": "Los LLMs tienen varias limitaciones que RAG intenta resolver. Según el Fragmento 1, los LLMs enfrentan desafíos en tareas específicas del dominio o intensivas en conocimiento [1], y producen \"alucinaciones\" cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada. Además, según el Fragmento 2, los LLMs también enfrentan desafíos como la falta de transparencia en sus procesos de razonamiento y el conocimiento desactualizado.",
+    "sources": [
+      {
+        "source_file": "paper 5.pdf",
+        "page": 0,
+        "content_preview": "eration, natural language processing, information retrieval\nI. I NTRODUCTION\nL\nARGE language models (LLMs) have achieved remark-\nable success, though they still face significant limitations,\nespecially in domain-specific or knowledge-intensive tasks [1],\nnotably producing “hallucinations” [2] when h",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 0,
+        "content_preview": "cCollege of Design and Innovation, Tongji University\nAbstract—Large Language Models (LLMs) showcase impres-\nsive capabilities but encounter challenges like hallucination,\noutdated knowledge, and non-transparent, untraceable reasoning\nprocesses. Retrieval-Augmented Generation (RAG) has emerged\nas a p",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 10.pdf",
+        "page": 0,
+        "content_preview": "reference-free evaluation of Retrieval Aug-\nmented Generation (RAG) pipelines. RAG\nsystems are composed of a retrieval and an\nLLM based generation module, and provide\nLLMs with knowledge from a reference textual\ndatabase, which enables them to act as a natu-\nral language layer between a user and tex",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 10.pdf",
+        "page": 1,
+        "content_preview": "for building RAG solutions, thus enabling devel-\nopers to easily integrate Ragas into their standard\nworkflow.\n2 Related Work\nEstimating faithfulness using LLMs The prob-\nlem of detecting hallucinations in LLM generated\nresponses has been extensively studied (Ji et al.,\n2023). Several authors have s",
+        "type": "texto"
+      }
+    ],
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 68,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.2742,
+      "rouge2_f1": 0.082,
+      "rougeL_f1": 0.1935,
+      "rouge1_vs_context": 0.0379,
+      "rougeL_vs_context": 0.0315
+    }
+  },
+  {
+    "id": 9,
+    "question": "¿Qué es el Q-Former en BLIP-2?",
+    "category": "multimodalidad",
+    "answer": "El Q-Former en BLIP-2 es un Querying Transformer (Q-Former) preentrenado con una nueva estrategia de dos etapas. Según el Fragmento 4, se trata de un transformador ligero que emplea un conjunto de vectores de consulta aprendibles para extraer características visuales del codificador de imágenes congelado.",
+    "sources": [
+      {
+        "source_file": "paper 2.pdf",
+        "page": 1,
+        "content_preview": "lightweight Q-Former, BLIP-2 is more compute-efficient\nthan exisiting state-of-the-arts. For example, BLIP-2 out-\nperforms Flamingo (Alayrac et al., 2022) by 8.7% on\nzero-shot VQAv2, while using 54 × fewer trainable pa-\nrameters. Furthermore, our results show that BLIP-2 is a\ngeneric method that can",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 2.pdf",
+        "page": 1,
+        "content_preview": "• BLIP-2 effectively leverages both frozen pre-trained im-\nage models and language models. We bridge the modality\ngap using a Q-Former pre-trained in two-stages: repre-\nsentation learning stage and generative learning stage.\nBLIP-2 achieves state-of-the-art performance on various\nvision-language tas",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 2.pdf",
+        "page": 1,
+        "content_preview": "• Powered by LLMs ( e.g. OPT (Zhang et al., 2022),\nFlanT5 (Chung et al., 2022)), BLIP-2 can be prompted to\nperform zero-shot image-to-text generation that follows\nnatural language instructions, which enables emerging\ncapabilities such as visual knowledge reasoning, visual\nconversation, etc. (see Fig",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 2.pdf",
+        "page": 0,
+        "content_preview": "unimodal models, we propose a Querying Transformer (Q-\nFormer) pre-trained with a new two-stage pre-training strat-\negy. As shown in Figure 1, Q-Former is a lightweight trans-\nformer which employs a set of learnable query vectors to\nextract visual features from the frozen image encoder. It\nacts as a",
+        "type": "texto"
+      }
+    ],
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 45,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.422,
+      "rouge2_f1": 0.1682,
+      "rougeL_f1": 0.2569,
+      "rouge1_vs_context": 0.0585,
+      "rougeL_vs_context": 0.0468
+    }
+  },
+  {
+    "id": 10,
+    "question": "¿Qué tipos de RAG existen según el survey de RAG para LLMs?",
+    "category": "teoria",
+    "answer": "Según el Fragmento 1, existen tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
+    "sources": [
+      {
+        "source_file": "paper 5.pdf",
+        "page": 1,
+        "content_preview": "question, form a comprehensive prompt that empowers LLMs\nto generate a well-informed answer.\nThe RAG research paradigm is continuously evolving, and\nwe categorize it into three stages: Naive RAG, Advanced\nRAG, and Modular RAG, as showed in Figure 3. Despite\nRAG method are cost-effective and surpass ",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 15,
+        "content_preview": "VIII. C ONCLUSION\nThe summary of this paper, as depicted in Figure 6, empha-\nsizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcas",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 1,
+        "content_preview": "landscape of LLMs.\n• We identify and discuss the central technologies integral\nto the RAG process, specifically focusing on the aspects\nof “Retrieval”, “Generation” and “Augmentation”, and\ndelve into their synergies, elucidating how these com-\nponents intricately collaborate to form a cohesive and\ne",
+        "type": "texto"
+      },
+      {
+        "source_file": "paper 5.pdf",
+        "page": 0,
+        "content_preview": "foundational technical concepts, historical progression, and\nthe spectrum of RAG methodologies and applications that\nhave emerged post-LLMs. It is designed to equip readers and\nprofessionals with a detailed and structured understanding of\nboth large models and RAG. It aims to illuminate the evolutio",
+        "type": "texto"
+      }
+    ],
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 16,
+      "faithfulness": 0.0,
+      "rouge1_f1": 0.3889,
+      "rouge2_f1": 0.2571,
+      "rougeL_f1": 0.3889,
+      "rouge1_vs_context": 0.052,
+      "rougeL_vs_context": 0.052
     }
   }
 ]
