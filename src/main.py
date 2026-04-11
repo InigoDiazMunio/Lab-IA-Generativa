@@ -9,13 +9,34 @@ Cambios respecto al original:
 
 import sys
 import os
+import logging
+import warnings
 from pathlib import Path
 
-# Añadir la raíz del proyecto al path automáticamente
-# Esto permite ejecutar con: python3 src/main.py desde cualquier sitio
+
+os.environ["TRANSFORMERS_NO_ADVISORY_WARNINGS"] = "true"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+warnings.filterwarnings("ignore", message=".*symlinks.*")
+warnings.filterwarnings("ignore", message=".*position_ids.*")
+warnings.filterwarnings("ignore", category=UserWarning)
+
+logging.getLogger("transformers").setLevel(logging.ERROR)
+logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
+logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
+
+try:
+    from transformers import logging as hf_logging
+    hf_logging.set_verbosity_error()
+except:
+    pass
+
+# ==============================
+# PATH DEL PROYECTO
+# ==============================
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-os.chdir(PROJECT_ROOT)  # para que config.yaml y data/ se encuentren siempre
+os.chdir(PROJECT_ROOT)
 
 import yaml
 
@@ -31,6 +52,9 @@ RAW_DATA_PATH     = CONFIG["paths"]["raw_data"]
 VECTOR_STORE_PATH = CONFIG["paths"]["vector_store"]
 
 
+# ==============================
+# INDEXACIÓN
+# ==============================
 def build_index(multimodal: bool = False):
     from src.ingestion.pdf_loader import load_pdfs_from_folder
     from src.ingestion.chunking import split_documents
@@ -59,6 +83,9 @@ def build_index(multimodal: bool = False):
     print("Índice creado correctamente.")
 
 
+# ==============================
+# RAG
+# ==============================
 def ask_question_with_rag():
     from src.embeddings.vector_store import load_vector_store
     from src.evaluation.rag_pipeline import answer_with_rag_multimodal
@@ -81,6 +108,9 @@ def ask_question_with_rag():
             print(f"{i}. {src['source_file']} | Pág. {src['page']}")
 
 
+# ==============================
+# BASELINE
+# ==============================
 def ask_question_baseline():
     from src.evaluation.baseline import answer_without_rag
 
@@ -94,16 +124,25 @@ def ask_question_baseline():
         print(answer)
 
 
+# ==============================
+# DATASET
+# ==============================
 def build_questions_dataset():
     from src.evaluation.dataset_builder import build_default_dataset
     build_default_dataset()
 
 
+# ==============================
+# COMPARACIÓN
+# ==============================
 def run_comparison():
     from src.evaluation.rag_vs_baseline import run_comparison as _run
     _run()
 
 
+# ==============================
+# PIPELINE COMPLETO
+# ==============================
 def run_all():
     print("\n[1/3] Construyendo índice...")
     build_index(multimodal=False)
@@ -118,6 +157,9 @@ def run_all():
     print("Revisa la carpeta experiments/ para ver los resultados.")
 
 
+# ==============================
+# MENÚ
+# ==============================
 if __name__ == "__main__":
     while True:
         print("\n" + "=" * 50)

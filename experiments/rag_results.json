@@ -3,7 +3,7 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 4, RAG incluye tres tipos de procesos de mejora de recuperación: iterativa, recursiva y una vez (una sola vez).",
+    "answer": "Retrieval-Augmented Generation se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el Fragmento 4, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y una vez (una sola vez).",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -34,20 +34,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 40,
+      "answer_length_words": 41,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.3883,
-      "rouge2_f1": 0.1584,
-      "rougeL_f1": 0.2913,
-      "rouge1_vs_context": 0.0297,
-      "rougeL_vs_context": 0.0297
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
     "id": 2,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
     "category": "teoria",
-    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del título de una pregunta y los bloques de texto de un documento. Esto permite lograr la recuperación mediante la comparación de estas representaciones (Fragmento 1).",
+    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del pregunta y los documentos. Según el Fragmento 1, esto se logra mediante la comparación de las similitudes (por ejemplo, la similitud coseno) entre las representaciones de embeddings de los fragmentos de pregunta y documento.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -78,20 +78,20 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 42,
+      "answer_length_words": 51,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.4554,
-      "rouge2_f1": 0.1616,
-      "rougeL_f1": 0.297,
-      "rouge1_vs_context": 0.0136,
-      "rougeL_vs_context": 0.0136
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
     "id": 3,
     "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
     "category": "comparacion",
-    "answer": "Un sistema RAG textual se limita a la pregunta-respuesta basada en texto, mientras que un sistema multimodal RAG puede manejar una variedad de tipos de datos no solo textuales. Según el Fragmento 1, \"RAG ha trascendido sus confines iniciales de pregunta-respuesta basados en texto, abrazando una diversidad de modalidades de datos\".",
+    "answer": "Un sistema RAG textual se limita a responder preguntas basadas en texto, mientras que un sistema multimodal RAG puede procesar y responder preguntas con modalidades de datos más diversas. Según el Fragmento 1, RAG ha \"transcendido sus confines iniciales de pregunta-respuesta basados en texto\" para abarcar una variedad de tipos de datos.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -122,13 +122,13 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 51,
+      "answer_length_words": 52,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.3509,
-      "rouge2_f1": 0.0714,
-      "rougeL_f1": 0.2105,
-      "rouge1_vs_context": 0.0405,
-      "rougeL_vs_context": 0.0338
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
@@ -168,11 +168,11 @@
       "mentions_no_info": 0,
       "answer_length_words": 58,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.4425,
-      "rouge2_f1": 0.1982,
-      "rougeL_f1": 0.3363,
-      "rouge1_vs_context": 0.0258,
-      "rougeL_vs_context": 0.0129
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
@@ -212,11 +212,11 @@
       "mentions_no_info": 0,
       "answer_length_words": 42,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.4,
-      "rouge2_f1": 0.1748,
-      "rougeL_f1": 0.2857,
-      "rouge1_vs_context": 0.0187,
-      "rougeL_vs_context": 0.0187
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
@@ -256,9 +256,9 @@
       "mentions_no_info": 1,
       "answer_length_words": 5,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.069,
+      "rouge1_f1": 0.0,
       "rouge2_f1": 0.0,
-      "rougeL_f1": 0.069,
+      "rougeL_f1": 0.0,
       "rouge1_vs_context": 0.0,
       "rougeL_vs_context": 0.0
     }
@@ -267,7 +267,7 @@
     "id": 7,
     "question": "¿Qué es RAGAS y qué métricas define para evaluar sistemas RAG?",
     "category": "evaluacion",
-    "answer": "No dispongo de esa información.",
+    "answer": "No dispongo de información sobre lo que son las RAGAS. Sin embargo, sí puedo decirte qué métricas se utilizan para evaluar sistemas RAG. Según el Fragmento 1, los objetivos principales de la evaluación incluyen la calidad de recuperación y la calidad de generación. Para evaluar la calidad de recuperación, se emplean métricas como Hit Rate, MRR (Mean Reciprocal Rank) y NDCG (Normalized Discounted Cumulative Gain), según el Fragmento 2. Para evaluar la calidad de generación, se centra en la capacidad del generador para sintetizar respuestas coherentes y relevantes a partir del contexto recuperado. El Fragmento 4 menciona que ROUGE/ROUGE-L son métricas utilizadas para evaluar la calidad de generación. Es importante destacar que estas métricas no representan una aproximación madura o estándar para",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -298,11 +298,11 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 1,
-      "answer_length_words": 5,
+      "answer_length_words": 122,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.0909,
+      "rouge1_f1": 0.0,
       "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0606,
+      "rougeL_f1": 0.0,
       "rouge1_vs_context": 0.0,
       "rougeL_vs_context": 0.0
     }
@@ -311,7 +311,7 @@
     "id": 8,
     "question": "¿Qué limitaciones tienen los LLMs que RAG intenta resolver, como las alucinaciones o el conocimiento desactualizado?",
     "category": "teoria",
-    "answer": "Los LLMs tienen varias limitaciones que RAG intenta resolver. Según el Fragmento 1, los LLMs enfrentan importantes limitaciones, especialmente en tareas específicas del dominio o intensivas en conocimiento [1], y producen \"alucinaciones\" [2] cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada. Además, según el Fragmento 2, los LLMs también enfrentan desafíos como la producción de alucinaciones, el conocimiento desactualizado y procesos de razonamiento no transparentes e inverificables.",
+    "answer": "Los LLMs enfrentan limitaciones significativas, especialmente en tareas específicas del dominio o intensivas en conocimiento. Según el Fragmento 1, estos modelos aún enfrentan desafíos importantes, como la producción de \"alucinaciones\" cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
@@ -342,13 +342,13 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 73,
+      "answer_length_words": 44,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.2946,
-      "rouge2_f1": 0.0787,
-      "rougeL_f1": 0.186,
-      "rouge1_vs_context": 0.0435,
-      "rougeL_vs_context": 0.0311
+      "rouge1_f1": 0.0,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.0,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
@@ -399,7 +399,7 @@
     "id": 10,
     "question": "¿Qué tipos de RAG existen según el survey de RAG para LLMs?",
     "category": "teoria",
-    "answer": "Según el fragmento 1, se categorizan tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
+    "answer": "Según el fragmento 1, se mencionan tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
     "sources": [
       {
         "source_file": "paper 5.pdf",
