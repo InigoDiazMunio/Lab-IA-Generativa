@@ -104,9 +104,18 @@ def ask_question_with_rag():
         print(answer)
 
         print("\n--- FUENTES RECUPERADAS ---")
-        for i, src in enumerate(sources, start=1):
-            print(f"{i}. {src['source_file']} | Pág. {src['page']}")
 
+        seen = set()
+        unique_sources = []
+
+        for s in sources:
+            key = (s["source_file"], s["page"])
+            if key not in seen:
+                seen.add(key)
+                unique_sources.append(s)
+
+        for i, src in enumerate(unique_sources, start=1):
+            print(f"{i}. {src['source_file']} | Pág. {src['page']}")
 
 # ==============================
 # BASELINE

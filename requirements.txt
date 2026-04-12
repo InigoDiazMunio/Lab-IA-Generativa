@@ -15,5 +15,6 @@ rouge-score
 sentencepiece
 rouge-score
 pyyaml
-
+flask
+pyyaml
 flask
