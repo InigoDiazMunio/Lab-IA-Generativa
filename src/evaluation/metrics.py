@@ -7,9 +7,12 @@ Mejoras respecto a la versión anterior:
 2. ROUGE se calcula también contra reference_answer cuando existe,
    no solo contra el contexto recuperado
 3. Se añade rouge1_f1 y rougeL_f1 vs referencia como métricas principales
+4. El aviso de rouge-score no instalado se muestra solo una vez
 """
 
-from typing import List, Optional
+from typing import Optional
+
+_ROUGE_IMPORT_WARNING_SHOWN = False
 
 
 # ── Métricas básicas ─────────────────────────────────────────────────────────
@@ -55,6 +58,8 @@ def compute_rouge(hypothesis: str, reference: str) -> dict:
     Nota: con respuestas en español y contexto en inglés el ROUGE léxico
     será bajo estructuralmente. Bajamos el umbral de faithfulness a 0.10.
     """
+    global _ROUGE_IMPORT_WARNING_SHOWN
+
     try:
         from rouge_score import rouge_scorer
 
@@ -71,8 +76,11 @@ def compute_rouge(hypothesis: str, reference: str) -> dict:
         }
 
     except ImportError:
-        print("[AVISO] rouge-score no instalado. Ejecuta: pip install rouge-score")
+        if not _ROUGE_IMPORT_WARNING_SHOWN:
+            print("[AVISO] rouge-score no instalado. Ejecuta: pip install rouge-score")
+            _ROUGE_IMPORT_WARNING_SHOWN = True
         return {"rouge1_f1": 0.0, "rouge2_f1": 0.0, "rougeL_f1": 0.0}
+
     except Exception as e:
         print(f"[AVISO] Error calculando ROUGE: {e}")
         return {"rouge1_f1": 0.0, "rouge2_f1": 0.0, "rougeL_f1": 0.0}
@@ -103,7 +111,7 @@ def compute_faithfulness(answer: str, retrieved_docs: list) -> float:
     supported = 0
     for sentence in sentences:
         rouge = compute_rouge(sentence, full_context)
-        if rouge["rouge1_f1"] > 0.10:  # umbral reducido por gap idiomático
+        if rouge["rouge1_f1"] > 0.10:
             supported += 1
 
     return round(supported / len(sentences), 4)
@@ -131,24 +139,21 @@ def compute_all_metrics(
                                     (solo si reference_answer está disponible)
     """
     metrics = {
-        "has_sources":         has_sources(rag_sources) if rag_sources is not None else 0,
-        "is_empty":            answer_is_empty(answer),
-        "mentions_no_info":    mentions_no_info(answer),
+        "has_sources": has_sources(rag_sources) if rag_sources is not None else 0,
+        "is_empty": answer_is_empty(answer),
+        "mentions_no_info": mentions_no_info(answer),
         "answer_length_words": simple_answer_length(answer),
     }
 
-    # Faithfulness al contexto recuperado
     if retrieved_docs:
         metrics["faithfulness"] = compute_faithfulness(answer, retrieved_docs)
 
-    # ROUGE contra respuesta de referencia (métrica principal de calidad)
     if reference_answer:
         rouge_ref = compute_rouge(answer, reference_answer)
-        metrics["rouge1_f1"]  = rouge_ref["rouge1_f1"]
-        metrics["rouge2_f1"]  = rouge_ref["rouge2_f1"]
-        metrics["rougeL_f1"]  = rouge_ref["rougeL_f1"]
+        metrics["rouge1_f1"] = rouge_ref["rouge1_f1"]
+        metrics["rouge2_f1"] = rouge_ref["rouge2_f1"]
+        metrics["rougeL_f1"] = rouge_ref["rougeL_f1"]
 
-    # ROUGE contra el contexto recuperado (mide uso del contexto)
     if retrieved_docs:
         full_context = " ".join(doc.page_content for doc in retrieved_docs)
         rouge_ctx = compute_rouge(answer, full_context)

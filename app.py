@@ -21,13 +21,14 @@ import yaml
 
 app = Flask(__name__)
 
-with open("config.yaml") as f:
+with open("config.yaml", encoding="utf-8") as f:
     CONFIG = yaml.safe_load(f)
 
 VECTOR_STORE_PATH = CONFIG["paths"]["vector_store"]
-EXPERIMENTS_DIR   = CONFIG["paths"]["experiments"]
+EXPERIMENTS_DIR = CONFIG["paths"]["experiments"]
 
 _vector_store = None
+
 
 def get_vector_store():
     global _vector_store
@@ -35,6 +36,23 @@ def get_vector_store():
         from src.embeddings.vector_store import load_vector_store
         _vector_store = load_vector_store(VECTOR_STORE_PATH)
     return _vector_store
+
+
+def deduplicate_sources(sources: list) -> list:
+    seen = set()
+    unique = []
+
+    for s in sources or []:
+        key = (
+            s.get("source_file", "desconocido"),
+            s.get("page", "N/A"),
+            s.get("type", "texto")
+        )
+        if key not in seen:
+            seen.add(key)
+            unique.append(s)
+
+    return unique
 
 
 HTML = r"""<!DOCTYPE html>
@@ -210,7 +228,7 @@ textarea:focus{border-color:var(--accent)}
   <div style="border-top:1px solid var(--border);padding-top:2rem;margin-top:2rem">
     <div class="section-title" style="font-size:1.1rem">Comparación RAG vs Baseline</div>
     <div class="answer" style="font-size:.88rem;color:var(--text-dim);margin-bottom:1.25rem">
-      Ejecuta las 10 preguntas del dataset, calcula métricas ROUGE y guarda los resultados en
+      Ejecuta el dataset completo de evaluación, calcula métricas ROUGE y guarda los resultados en
       <span class="mono" style="color:var(--accent)">experiments/</span>.
     </div>
     <div class="grid2" style="margin-bottom:1.25rem">
@@ -253,9 +271,11 @@ function setMode(m, btn) {
 function setFilter(cat, btn) {
   compFilter = cat;
   document.querySelectorAll('.filter-row .btn').forEach(function(b){
-    b.style.borderColor = ''; b.style.color = '';
+    b.style.borderColor = '';
+    b.style.color = '';
   });
-  btn.style.borderColor = 'var(--accent)'; btn.style.color = 'var(--accent)';
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.color = 'var(--accent)';
   renderComp();
 }
 
@@ -304,10 +324,23 @@ function buildGrid(ragAns, ragSrc, blAns, blSrc) {
 
 function srcHtml(sources) {
   if (!sources || !sources.length) return '';
-  var chips = sources.map(function(s){
+
+  const seen = new Set();
+  const unique = [];
+
+  sources.forEach(function(s) {
+    const key = `${s.source_file}||${s.page}||${s.type || 'text'}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(s);
+    }
+  });
+
+  var chips = unique.map(function(s){
     var isVis = s.type === 'image_caption';
     return '<span class="chip' + (isVis ? ' visual' : '') + '">' + (isVis ? '🖼' : '📄') + ' ' + s.source_file + ' · pág. ' + s.page + '</span>';
   }).join('');
+
   return '<div class="sources"><div class="label">Fuentes</div>' + chips + '</div>';
 }
 
@@ -324,7 +357,11 @@ function loadComp() {
 function renderComp() {
   var cont = document.getElementById('res-comp');
   var data = compFilter === 'todas' ? compData : compData.filter(function(d){return d.category === compFilter});
-  if (!data.length) { cont.innerHTML = '<div class="empty">No hay preguntas en esta categoría.</div>'; return; }
+  if (!data.length) {
+    cont.innerHTML = '<div class="empty">No hay preguntas en esta categoría.</div>';
+    return;
+  }
+
   cont.innerHTML = data.map(function(item){
     var rm = item.rag_metrics || {};
     var bm = item.baseline_metrics || {};
@@ -333,10 +370,22 @@ function renderComp() {
     var ragWins = r1 >= b1;
     var rColor = ragWins ? 'var(--accent2)' : 'var(--accent3)';
     var bColor = !ragWins ? 'var(--accent2)' : 'var(--accent3)';
-    var chips = (item.rag_sources || []).map(function(s){
+
+    var seen = new Set();
+    var uniqueSources = [];
+    (item.rag_sources || []).forEach(function(s){
+      var key = `${s.source_file}||${s.page}||${s.type || 'text'}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueSources.push(s);
+      }
+    });
+
+    var chips = uniqueSources.map(function(s){
       var isVis = s.type === 'image_caption';
       return '<span class="chip' + (isVis ? ' visual' : '') + '">' + (isVis ? '🖼' : '📄') + ' ' + s.source_file + ' · pág. ' + s.page + '</span>';
     }).join('');
+
     return '<div class="card" style="margin-bottom:1.25rem">' +
       '<div class="card-head" style="justify-content:space-between">' +
         '<div style="display:flex;align-items:center;gap:.75rem">' +
@@ -382,8 +431,10 @@ function renderMetrics(rag, bl) {
     {k:'avg_mentions_no_info', lbl:'Sin respuesta'},
     {k:'avg_answer_length_words', lbl:'Longitud media'}
   ];
+
   var cards = ['avg_rouge1_f1','avg_rouge2_f1','avg_rougeL_f1'].map(function(k){
-    var rv = rag[k] || 0; var bv = bl[k] || 0;
+    var rv = rag[k] || 0;
+    var bv = bl[k] || 0;
     var better = rv >= bv;
     return '<div class="metric-card">' +
       '<div class="label">' + k.replace('avg_','').replace(/_/g,' ').toUpperCase() + '</div>' +
@@ -391,17 +442,20 @@ function renderMetrics(rag, bl) {
       '<div class="metric-cmp ' + (better?'better':'worse') + '">' + (better?'▲':'▼') + ' vs baseline ' + bv.toFixed(3) + '</div>' +
     '</div>';
   }).join('');
-  var noInfoR = ((rag.avg_mentions_no_info||0)*100).toFixed(0);
-  var noInfoB = ((bl.avg_mentions_no_info||0)*100).toFixed(0);
-  var noInfoBetter = (rag.avg_mentions_no_info||0) <= (bl.avg_mentions_no_info||0);
+
+  var noInfoR = ((rag.avg_mentions_no_info || 0) * 100).toFixed(0);
+  var noInfoB = ((bl.avg_mentions_no_info || 0) * 100).toFixed(0);
+  var noInfoBetter = (rag.avg_mentions_no_info || 0) <= (bl.avg_mentions_no_info || 0);
+
   cards += '<div class="metric-card">' +
     '<div class="label">SIN RESPUESTA</div>' +
-    '<div class="metric-val" style="color:' + (noInfoBetter?'var(--accent2)':'var(--accent3)') + '">' + noInfoR + '%</div>' +
-    '<div class="metric-cmp ' + (noInfoBetter?'better':'worse') + '">Baseline: ' + noInfoB + '%</div>' +
+    '<div class="metric-val" style="color:' + (noInfoBetter ? 'var(--accent2)' : 'var(--accent3)') + '">' + noInfoR + '%</div>' +
+    '<div class="metric-cmp ' + (noInfoBetter ? 'better' : 'worse') + '">Baseline: ' + noInfoB + '%</div>' +
   '</div>';
 
   var bars = keys.map(function(m){
-    var rv = rag[m.k]||0; var bv = bl[m.k]||0;
+    var rv = rag[m.k] || 0;
+    var bv = bl[m.k] || 0;
     var mx = Math.max(rv, bv, 0.001);
     var fmt = function(v){ return v < 2 ? v.toFixed(3) : Math.round(v); };
     return '<div style="margin-bottom:1.5rem">' +
@@ -430,21 +484,25 @@ function loadIdxStatus() {
       '<div class="metric-card" style="flex:1;min-width:160px"><div class="label">Última modificación</div><div class="mono" style="font-size:.85rem;margin-top:.5rem;color:var(--text)">' + data.modified + '</div></div>' +
       '<div class="metric-card" style="flex:1;min-width:160px"><div class="label">Tamaño</div><div class="mono" style="font-size:.85rem;margin-top:.5rem;color:var(--text)">' + data.type + '</div></div>' : '';
     el.innerHTML = '<div style="display:flex;gap:1rem;flex-wrap:wrap">' +
-      '<div class="metric-card" style="flex:1;min-width:160px"><div class="label">Estado</div><div class="metric-val" style="color:' + color + ';font-size:1.4rem">' + icon + ' ' + (data.exists?'Disponible':'No existe') + '</div></div>' +
+      '<div class="metric-card" style="flex:1;min-width:160px"><div class="label">Estado</div><div class="metric-val" style="color:' + color + ';font-size:1.4rem">' + icon + ' ' + (data.exists ? 'Disponible' : 'No existe') + '</div></div>' +
       extra + '</div>';
   });
 }
 
 function buildIdx(mode) {
   var ids = ['btn-idx-texto','btn-idx-multi','btn-run-cmp'];
-  ids.forEach(function(id){document.getElementById(id).disabled=true});
+  ids.forEach(function(id){document.getElementById(id).disabled = true});
   document.getElementById('load-idx').classList.add('show');
   document.getElementById('load-idx-txt').textContent = mode === 'multimodal'
     ? 'Construyendo índice multimodal con LLaVA... puede tardar 10-20 min.'
     : 'Construyendo índice de texto... puede tardar 2-3 min.';
   document.getElementById('log-idx').style.display = 'none';
 
-  fetch('/build_index', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mode:mode})})
+  fetch('/build_index', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({mode:mode})
+  })
     .then(function(r){return r.json()}).then(function(data){
       var log = document.getElementById('log-idx');
       log.style.display = 'block';
@@ -453,10 +511,11 @@ function buildIdx(mode) {
       loadIdxStatus();
     }).catch(function(){
       var log = document.getElementById('log-idx');
-      log.style.display = 'block'; log.textContent = 'Error al construir el índice.';
+      log.style.display = 'block';
+      log.textContent = 'Error al construir el índice.';
     }).finally(function(){
       document.getElementById('load-idx').classList.remove('show');
-      ids.forEach(function(id){document.getElementById(id).disabled=false});
+      ids.forEach(function(id){document.getElementById(id).disabled = false});
     });
 }
 
@@ -473,12 +532,13 @@ function runCmp() {
       log.scrollTop = log.scrollHeight;
       if (data.rag_rouge1 !== undefined) {
         document.getElementById('cmp-rag-r1').textContent = data.rag_rouge1.toFixed(3);
-        document.getElementById('cmp-bl-r1').textContent  = data.bl_rouge1.toFixed(3);
+        document.getElementById('cmp-bl-r1').textContent = data.bl_rouge1.toFixed(3);
       }
       compData = [];
     }).catch(function(){
       var log = document.getElementById('log-cmp');
-      log.style.display = 'block'; log.textContent = 'Error al ejecutar la comparación.';
+      log.style.display = 'block';
+      log.textContent = 'Error al ejecutar la comparación.';
     }).finally(function(){
       document.getElementById('load-cmp').classList.remove('show');
       document.getElementById('btn-run-cmp').disabled = false;
@@ -486,7 +546,10 @@ function runCmp() {
 }
 
 document.getElementById('query').addEventListener('keydown', function(e){
-  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); doAsk(); }
+  if (e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    doAsk();
+  }
 });
 </script>
 </body>
@@ -500,36 +563,44 @@ def index():
 
 @app.route('/ask', methods=['POST'])
 def ask():
-    data  = request.json
+    data = request.json
     query = data.get('query', '').strip()
-    mode  = data.get('mode', 'rag')
+    mode = data.get('mode', 'rag')
+
     if not query:
         return jsonify({'error': 'Pregunta vacía'}), 400
 
     result = {'rag_answer': '', 'baseline_answer': '', 'rag_sources': []}
+
     try:
         vs = get_vector_store()
+
         if mode in ('rag', 'ambos'):
             from src.evaluation.rag_pipeline import answer_with_rag_multimodal
             rag_answer, rag_sources, _ = answer_with_rag_multimodal(query, vs, k=4)
-            result['rag_answer']  = rag_answer
-            result['rag_sources'] = rag_sources
+            result['rag_answer'] = rag_answer
+            result['rag_sources'] = deduplicate_sources(rag_sources)
+
         if mode in ('baseline', 'ambos'):
             from src.evaluation.baseline import answer_without_rag
             result['baseline_answer'] = answer_without_rag(query)
+
     except Exception as e:
         result['error'] = str(e)
+
     return jsonify(result)
 
 
 @app.route('/metrics')
 def metrics():
     try:
-        with open(Path(EXPERIMENTS_DIR) / 'summary.json') as f:
+        with open(Path(EXPERIMENTS_DIR) / 'summary.json', encoding='utf-8') as f:
             summary = json.load(f)
+
         rag = next((s for s in summary if s['system'] == 'RAG'), {})
-        bl  = next((s for s in summary if s['system'] == 'Baseline'), {})
+        bl = next((s for s in summary if s['system'] == 'Baseline'), {})
         return jsonify({'rag': rag, 'baseline': bl})
+
     except Exception as e:
         return jsonify({'error': str(e)}), 404
 
@@ -537,24 +608,30 @@ def metrics():
 @app.route('/comparison')
 def comparison():
     try:
-        with open(Path(EXPERIMENTS_DIR) / 'rag_results.json') as f:
+        with open(Path(EXPERIMENTS_DIR) / 'rag_results.json', encoding='utf-8') as f:
             rag = json.load(f)
-        with open(Path(EXPERIMENTS_DIR) / 'baseline_results.json') as f:
-            bl  = json.load(f)
+
+        with open(Path(EXPERIMENTS_DIR) / 'baseline_results.json', encoding='utf-8') as f:
+            bl = json.load(f)
+
         bl_map = {r['id']: r for r in bl}
         combined = []
+
         for r in rag:
             b = bl_map.get(r['id'], {})
             combined.append({
-                'id': r['id'], 'question': r['question'],
-                'category': r.get('category',''),
-                'rag_answer': r.get('answer',''),
-                'rag_sources': r.get('sources',[]),
-                'rag_metrics': r.get('metrics',{}),
-                'baseline_answer': b.get('answer',''),
-                'baseline_metrics': b.get('metrics',{}),
+                'id': r['id'],
+                'question': r['question'],
+                'category': r.get('category', ''),
+                'rag_answer': r.get('answer', ''),
+                'rag_sources': deduplicate_sources(r.get('sources', [])),
+                'rag_metrics': r.get('metrics', {}),
+                'baseline_answer': b.get('answer', ''),
+                'baseline_metrics': b.get('metrics', {}),
             })
+
         return jsonify(combined)
+
     except Exception as e:
         return jsonify({'error': str(e)}), 404
 
@@ -562,28 +639,33 @@ def comparison():
 @app.route('/index_status')
 def index_status():
     faiss_p = Path(VECTOR_STORE_PATH) / 'index.faiss'
-    exists  = faiss_p.exists()
-    result  = {'exists': exists}
+    exists = faiss_p.exists()
+    result = {'exists': exists}
+
     if exists:
         mtime = faiss_p.stat().st_mtime
         result['modified'] = time.strftime('%d/%m/%Y %H:%M', time.localtime(mtime))
         size_mb = round(faiss_p.stat().st_size / 1024 / 1024, 1)
         result['type'] = f'FAISS ({size_mb} MB)'
+
     return jsonify(result)
 
 
 @app.route('/build_index', methods=['POST'])
 def build_index_route():
     mode = request.json.get('mode', 'texto')
-    log  = io.StringIO()
+    log = io.StringIO()
+
     try:
         with redirect_stdout(log):
-            from src.ingestion.pdf_loader  import load_pdfs_from_folder
-            from src.ingestion.chunking    import split_documents
+            from src.ingestion.pdf_loader import load_pdfs_from_folder
+            from src.ingestion.chunking import split_documents
+
             print("Cargando PDFs...")
-            docs   = load_pdfs_from_folder(CONFIG["paths"]["raw_data"])
+            docs = load_pdfs_from_folder(CONFIG["paths"]["raw_data"])
             print(f"Páginas cargadas: {len(docs)}")
             chunks = split_documents(docs)
+
             if mode == 'multimodal':
                 from src.multimodal.indexer import build_combined_index
                 print("Construyendo índice multimodal...")
@@ -592,62 +674,101 @@ def build_index_route():
                 from src.embeddings.vector_store import build_vector_store
                 print("Construyendo índice de texto...")
                 build_vector_store(chunks, VECTOR_STORE_PATH)
+
             print("Índice creado correctamente.")
+
             global _vector_store
             _vector_store = None
+
     except Exception as e:
         log.write(f"\nERROR: {e}")
+
     return jsonify({'log': log.getvalue()})
 
 
 @app.route('/run_comparison', methods=['POST'])
 def run_comparison_route():
-    log        = io.StringIO()
+    log = io.StringIO()
     rag_rouge1 = 0.0
-    bl_rouge1  = 0.0
+    bl_rouge1 = 0.0
+
     try:
         with redirect_stdout(log):
             from src.evaluation.dataset_builder import DEFAULT_QUESTIONS
-            from src.evaluation.rag_pipeline    import answer_with_rag_multimodal
-            from src.evaluation.baseline        import answer_without_rag
-            from src.evaluation.metrics         import compute_all_metrics
+            from src.evaluation.rag_pipeline import answer_with_rag_multimodal
+            from src.evaluation.baseline import answer_without_rag
+            from src.evaluation.metrics import compute_all_metrics
+
             vs = get_vector_store()
             rag_res, bl_res = [], []
+
             for item in DEFAULT_QUESTIONS:
-                q   = item['question']
+                q = item['question']
                 ref = item.get('reference_answer')
+
                 print(f"[{item['id']}] {q[:55]}...")
                 ra, rs, rd = answer_with_rag_multimodal(q, vs, k=4)
                 ba = answer_without_rag(q)
+
+                rs = deduplicate_sources(rs)
+
                 print(f"  RAG: {ra[:70]}...")
                 rm = compute_all_metrics(ra, rag_sources=rs, retrieved_docs=rd, reference_answer=ref)
                 bm = compute_all_metrics(ba, reference_answer=ref)
-                rag_res.append({'id':item['id'],'question':q,'category':item.get('category',''),'answer':ra,'sources':rs,'metrics':rm})
-                bl_res.append( {'id':item['id'],'question':q,'category':item.get('category',''),'answer':ba,'metrics':bm})
+
+                rag_res.append({
+                    'id': item['id'],
+                    'question': q,
+                    'category': item.get('category', ''),
+                    'answer': ra,
+                    'sources': rs,
+                    'metrics': rm
+                })
+
+                bl_res.append({
+                    'id': item['id'],
+                    'question': q,
+                    'category': item.get('category', ''),
+                    'answer': ba,
+                    'metrics': bm
+                })
 
             exp = Path(EXPERIMENTS_DIR)
             exp.mkdir(exist_ok=True)
-            with open(exp/'rag_results.json','w') as f:     json.dump(rag_res, f, indent=2, ensure_ascii=False)
-            with open(exp/'baseline_results.json','w') as f: json.dump(bl_res,  f, indent=2, ensure_ascii=False)
+
+            with open(exp / 'rag_results.json', 'w', encoding='utf-8') as f:
+                json.dump(rag_res, f, indent=2, ensure_ascii=False)
+
+            with open(exp / 'baseline_results.json', 'w', encoding='utf-8') as f:
+                json.dump(bl_res, f, indent=2, ensure_ascii=False)
 
             def avg(lst, k):
                 vals = [r['metrics'].get(k) for r in lst if r['metrics'].get(k) is not None]
-                return round(sum(vals)/len(vals),4) if vals else 0
+                return round(sum(vals) / len(vals), 4) if vals else 0
 
-            keys = ['answer_length_words','faithfulness','rouge1_vs_context','rougeL_vs_context',
-                    'rouge1_f1','rouge2_f1','rougeL_f1','is_empty','mentions_no_info']
-            summary = [
-                {'system':'RAG',      'n_questions':len(rag_res), **{f'avg_{k}':avg(rag_res,k) for k in keys}},
-                {'system':'Baseline', 'n_questions':len(bl_res),  **{f'avg_{k}':avg(bl_res, k) for k in keys}},
+            keys = [
+                'answer_length_words', 'faithfulness', 'rouge1_vs_context',
+                'rougeL_vs_context', 'rouge1_f1', 'rouge2_f1',
+                'rougeL_f1', 'is_empty', 'mentions_no_info'
             ]
-            with open(exp/'summary.json','w') as f: json.dump(summary, f, indent=2, ensure_ascii=False)
 
-            rag_rouge1 = avg(rag_res,'rouge1_f1')
-            bl_rouge1  = avg(bl_res, 'rouge1_f1')
+            summary = [
+                {'system': 'RAG', 'n_questions': len(rag_res), **{f'avg_{k}': avg(rag_res, k) for k in keys}},
+                {'system': 'Baseline', 'n_questions': len(bl_res), **{f'avg_{k}': avg(bl_res, k) for k in keys}},
+            ]
+
+            with open(exp / 'summary.json', 'w', encoding='utf-8') as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False)
+
+            rag_rouge1 = avg(rag_res, 'rouge1_f1')
+            bl_rouge1 = avg(bl_res, 'rouge1_f1')
+
             print(f"\nRAG rouge1={rag_rouge1:.3f} | Baseline rouge1={bl_rouge1:.3f}")
             print("Guardado en experiments/")
+
     except Exception as e:
         log.write(f"\nERROR: {e}")
+
     return jsonify({'log': log.getvalue(), 'rag_rouge1': rag_rouge1, 'bl_rouge1': bl_rouge1})
 
 
