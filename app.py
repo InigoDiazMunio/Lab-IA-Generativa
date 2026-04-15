@@ -152,7 +152,6 @@ textarea:focus{border-color:var(--accent)}
   <div class="tab" onclick="goTab('indice',this)">Índice</div>
 </div>
 
-<!-- CONSULTA -->
 <div id="panel-consulta" class="panel active">
   <div class="card">
     <div class="card-body">
@@ -182,7 +181,6 @@ textarea:focus{border-color:var(--accent)}
   <div id="res-consulta"></div>
 </div>
 
-<!-- COMPARACION -->
 <div id="panel-comparacion" class="panel">
   <div class="section-title">Resultados del dataset de evaluación</div>
   <div class="filter-row">
@@ -195,12 +193,10 @@ textarea:focus{border-color:var(--accent)}
   <div id="res-comp"><div class="empty">Cargando resultados...</div></div>
 </div>
 
-<!-- METRICAS -->
 <div id="panel-metricas" class="panel">
   <div id="res-metrics"><div class="empty">Cargando métricas...</div></div>
 </div>
 
-<!-- INDICE -->
 <div id="panel-indice" class="panel">
   <div class="section-title">Gestión del índice</div>
   <div id="indice-status" style="margin-bottom:2rem"></div>
@@ -303,22 +299,41 @@ function doAsk() {
 
 function renderConsulta(data) {
   var cont = document.getElementById('res-consulta');
+
+  if (data.error) {
+    cont.innerHTML =
+      '<div class="card anim">' +
+        '<div class="card-head"><span class="badge badge-bl">ERROR</span></div>' +
+        '<div class="card-body"><div class="answer" style="color:#c4856a;">' + data.error + '</div></div>' +
+      '</div>';
+    return;
+  }
+
   if (curMode === 'ambos') {
     cont.innerHTML = buildGrid(data.rag_answer, data.rag_sources, data.baseline_answer, null);
     return;
   }
+
   var isRag = curMode === 'rag';
   var ans = isRag ? data.rag_answer : data.baseline_answer;
   var src = isRag ? (data.rag_sources || []) : [];
   var badgeCls = isRag ? 'badge-rag' : 'badge-bl';
   var lbl = isRag ? 'RAG' : 'BASELINE';
-  cont.innerHTML = '<div class="card anim"><div class="card-head"><span class="badge ' + badgeCls + '">' + lbl + '</span></div><div class="card-body"><div class="answer">' + ans + '</div>' + srcHtml(src) + '</div></div>';
+
+  cont.innerHTML =
+    '<div class="card anim">' +
+      '<div class="card-head"><span class="badge ' + badgeCls + '">' + lbl + '</span></div>' +
+      '<div class="card-body">' +
+        '<div class="answer">' + (ans || 'Sin respuesta.') + '</div>' +
+        srcHtml(src) +
+      '</div>' +
+    '</div>';
 }
 
 function buildGrid(ragAns, ragSrc, blAns, blSrc) {
   return '<div class="grid2">' +
-    '<div class="card anim"><div class="card-head"><span class="badge badge-rag">RAG</span></div><div class="card-body"><div class="answer">' + ragAns + '</div>' + srcHtml(ragSrc || []) + '</div></div>' +
-    '<div class="card anim"><div class="card-head"><span class="badge badge-bl">Baseline</span></div><div class="card-body"><div class="answer">' + blAns + '</div></div></div>' +
+    '<div class="card anim"><div class="card-head"><span class="badge badge-rag">RAG</span></div><div class="card-body"><div class="answer">' + (ragAns || 'Sin respuesta.') + '</div>' + srcHtml(ragSrc || []) + '</div></div>' +
+    '<div class="card anim"><div class="card-head"><span class="badge badge-bl">Baseline</span></div><div class="card-body"><div class="answer">' + (blAns || 'Sin respuesta.') + '</div></div></div>' +
   '</div>';
 }
 
@@ -585,10 +600,10 @@ def ask():
             from src.evaluation.baseline import answer_without_rag
             result['baseline_answer'] = answer_without_rag(query)
 
-    except Exception as e:
-        result['error'] = str(e)
+        return jsonify(result)
 
-    return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/metrics')
@@ -773,6 +788,6 @@ def run_comparison_route():
 
 
 if __name__ == '__main__':
-    print("\n Iniciando interfaz web...")
-    print("   Abre tu navegador en: http://localhost:5001\n")
+    print("\nIniciando interfaz web...")
+    print("Abre tu navegador en: http://localhost:5001\n")
     app.run(debug=False, port=5001)
