@@ -1,21 +1,20 @@
-langchain
-langchain-community
-langchain-core
-langchain-text-splitters
-langchain-huggingface
+langchain==0.3.25
+langchain-core==0.3.84
+langchain-community==0.3.24
+langchain-text-splitters==0.3.8
+langchain-chroma==0.2.4
+langchain-huggingface==0.1.2
+langchain-openai==0.3.35
 
-faiss-cpu
+chromadb>=1.0.9
+sentence-transformers==4.1.0
+transformers==4.51.3
+torch>=2.2.0
 
-pypdf
-pymupdf
+pypdf==5.4.0
+python-dotenv==1.1.0
+openai>=1.0.0
 
-sentence-transformers
-
-rouge-score
-sentencepiece
-rouge-score
-pyyaml
-flask
-pyyaml
-flask
-rouge-score
+rouge-score==0.1.2
+numpy>=1.26.0
+pandas>=2.2.0
