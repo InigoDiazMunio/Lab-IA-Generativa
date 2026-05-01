@@ -1,0 +1,10 @@
+[
+  {
+    "question": "¿Qué es RAG?",
+    "reference_answer": "RAG es un método que combina recuperación de información con generación de texto."
+  },
+  {
+    "question": "¿Qué mide Recall@k?",
+    "reference_answer": "Recall@k mide si los documentos relevantes aparecen entre los primeros k resultados."
+  }
+]

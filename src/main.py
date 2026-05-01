@@ -1,10 +1,11 @@
 """
 Menú principal actualizado.
 
-Cambios respecto al original:
-- Lee config.yaml en vez de tener paths hardcodeados
-- Opción 1 ahora puede construir índice combinado (texto + imágenes)
-- Usa el pipeline mejorado (reranking + multimodal)
+Cambios:
+- Lee config.yaml.
+- Construye índice texto o multimodal.
+- Añade answer_question() para evaluación automática.
+- Usa ChromaDB/vector store desde config.
 """
 
 import sys
@@ -12,7 +13,6 @@ import os
 import logging
 import warnings
 from pathlib import Path
-
 
 os.environ["TRANSFORMERS_NO_ADVISORY_WARNINGS"] = "true"
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
@@ -28,12 +28,10 @@ logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
 try:
     from transformers import logging as hf_logging
     hf_logging.set_verbosity_error()
-except:
+except Exception:
     pass
 
-# ==============================
-# PATH DEL PROYECTO
-# ==============================
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
@@ -48,8 +46,25 @@ def load_config(path: str = "config.yaml") -> dict:
 
 CONFIG = load_config()
 
-RAW_DATA_PATH     = CONFIG["paths"]["raw_data"]
+RAW_DATA_PATH = CONFIG["paths"]["raw_data"]
 VECTOR_STORE_PATH = CONFIG["paths"]["vector_store"]
+
+
+# ==============================
+# FUNCIÓN PARA EVALUACIÓN
+# ==============================
+def answer_question(question: str) -> str:
+    """
+    Función puente para evaluate_rag.py.
+    Devuelve solo la respuesta generada por el sistema RAG.
+    """
+    from src.embeddings.vector_store import load_vector_store
+    from src.evaluation.rag_pipeline import answer_with_rag_multimodal
+
+    vector_store = load_vector_store(VECTOR_STORE_PATH)
+    answer, _, _ = answer_with_rag_multimodal(question, vector_store, k=4)
+
+    return answer
 
 
 # ==============================
@@ -109,13 +124,14 @@ def ask_question_with_rag():
         unique_sources = []
 
         for s in sources:
-            key = (s["source_file"], s["page"])
+            key = (s.get("source_file"), s.get("page"), s.get("type", "texto"))
             if key not in seen:
                 seen.add(key)
                 unique_sources.append(s)
 
         for i, src in enumerate(unique_sources, start=1):
-            print(f"{i}. {src['source_file']} | Pág. {src['page']}")
+            print(f"{i}. {src.get('source_file')} | Pág. {src.get('page')}")
+
 
 # ==============================
 # BASELINE
@@ -150,20 +166,34 @@ def run_comparison():
 
 
 # ==============================
+# EVALUACIÓN AVANZADA
+# ==============================
+def run_advanced_evaluation():
+    from src.evaluation.evaluate_rag import evaluate_rag, print_summary, save_results
+
+    results = evaluate_rag()
+    print_summary(results)
+    save_results(results)
+
+
+# ==============================
 # PIPELINE COMPLETO
 # ==============================
 def run_all():
-    print("\n[1/3] Construyendo índice...")
+    print("\n[1/4] Construyendo índice...")
     build_index(multimodal=False)
 
-    print("\n[2/3] Generando dataset de preguntas...")
+    print("\n[2/4] Generando dataset de preguntas...")
     build_questions_dataset()
 
-    print("\n[3/3] Ejecutando comparación RAG vs baseline...")
+    print("\n[3/4] Ejecutando comparación RAG vs baseline...")
     run_comparison()
 
+    print("\n[4/4] Ejecutando evaluación avanzada...")
+    run_advanced_evaluation()
+
     print("\nProceso completo terminado.")
-    print("Revisa la carpeta experiments/ para ver los resultados.")
+    print("Revisa experiments/ y data/evaluation_results.json.")
 
 
 # ==============================
@@ -180,7 +210,8 @@ if __name__ == "__main__":
         print("4. Hacer preguntas con baseline")
         print("5. Crear dataset de preguntas")
         print("6. Ejecutar comparación RAG vs baseline")
-        print("7. Ejecutar todo")
+        print("7. Ejecutar evaluación avanzada")
+        print("8. Ejecutar todo")
         print("0. Salir")
 
         option = input("Selecciona una opción: ").strip()
@@ -198,6 +229,8 @@ if __name__ == "__main__":
         elif option == "6":
             run_comparison()
         elif option == "7":
+            run_advanced_evaluation()
+        elif option == "8":
             run_all()
         elif option == "0":
             print("Saliendo...")

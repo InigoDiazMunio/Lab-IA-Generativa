@@ -1,6 +1,6 @@
 paths:
   raw_data: "data/raw"
-  vector_store: "data/embeddings/faiss_index"
+  vector_store: "data/embeddings/chroma_db"
   experiments: "experiments"
   questions: "src/evaluation/questions.json"
 

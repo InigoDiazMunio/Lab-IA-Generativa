@@ -11,6 +11,7 @@ import json
 import time
 from pathlib import Path
 from contextlib import redirect_stdout
+from unittest import result
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -54,6 +55,61 @@ def deduplicate_sources(sources: list) -> list:
 
     return unique
 
+def save_live_metrics(query, mode, result):
+    from src.evaluation.metrics import compute_all_metrics
+
+    metrics_path = Path("data/live_metrics.json")
+    metrics_path.parent.mkdir(exist_ok=True)
+
+    previous = []
+    if metrics_path.exists():
+        with open(metrics_path, "r", encoding="utf-8") as f:
+            previous = json.load(f)
+
+    entry = {
+        "timestamp": time.strftime("%d/%m/%Y %H:%M:%S"),
+        "question": query,
+        "mode": mode,
+        "rag_answer": result.get("rag_answer", ""),
+        "baseline_answer": result.get("baseline_answer", ""),
+        "rag_sources": result.get("rag_sources", []),
+    }
+
+    if result.get("rag_answer"):
+        metrics = compute_all_metrics(
+            result["rag_answer"],
+            rag_sources=result.get("rag_sources", []),
+            reference_answer=None
+        )
+
+        context_text = " ".join(
+            s.get("content_preview", "")
+            for s in result.get("rag_sources", [])
+        )
+
+        answer_words = set(result["rag_answer"].lower().split())
+        context_words = set(context_text.lower().split())
+
+        if answer_words and context_words:
+            overlap = len(answer_words & context_words) / len(answer_words)
+        else:
+            overlap = 0
+
+        metrics["faithfulness"] = overlap
+        metrics["rouge1_vs_context"] = overlap
+
+        entry["rag_metrics"] = metrics
+
+    if result.get("baseline_answer"):
+        entry["baseline_metrics"] = compute_all_metrics(
+            result["baseline_answer"],
+            reference_answer=None
+        )
+
+    previous.append(entry)
+
+    with open(metrics_path, "w", encoding="utf-8") as f:
+        json.dump(previous, f, indent=2, ensure_ascii=False)
 
 HTML = r"""<!DOCTYPE html>
 <html lang="es">
@@ -432,62 +488,131 @@ function renderComp() {
 
 function loadMetrics() {
   fetch('/metrics').then(function(r){return r.json()}).then(function(data){
-    renderMetrics(data.rag, data.baseline);
+    if (data.error) {
+      document.getElementById('res-metrics').innerHTML =
+        '<div class="empty">No hay métricas. Haz una pregunta o ejecuta RAGAS primero.</div>';
+      return;
+    }
+
+    renderMetrics(data.items || [], data.ragas || {});
   }).catch(function(){
-    document.getElementById('res-metrics').innerHTML = '<div class="empty">No hay métricas. Ejecuta la comparación primero.</div>';
+    document.getElementById('res-metrics').innerHTML =
+      '<div class="empty">No hay métricas disponibles.</div>';
   });
 }
 
-function renderMetrics(rag, bl) {
-  var keys = [
-    {k:'avg_rouge1_f1', lbl:'ROUGE-1 F1'},
-    {k:'avg_rouge2_f1', lbl:'ROUGE-2 F1'},
-    {k:'avg_rougeL_f1', lbl:'ROUGE-L F1'},
-    {k:'avg_mentions_no_info', lbl:'Sin respuesta'},
-    {k:'avg_answer_length_words', lbl:'Longitud media'}
-  ];
+function renderMetrics(items, ragas) {
+  var cont = document.getElementById('res-metrics');
 
-  var cards = ['avg_rouge1_f1','avg_rouge2_f1','avg_rougeL_f1'].map(function(k){
-    var rv = rag[k] || 0;
-    var bv = bl[k] || 0;
-    var better = rv >= bv;
-    return '<div class="metric-card">' +
-      '<div class="label">' + k.replace('avg_','').replace(/_/g,' ').toUpperCase() + '</div>' +
-      '<div class="metric-val" style="color:var(--rag)">' + rv.toFixed(3) + '</div>' +
-      '<div class="metric-cmp ' + (better?'better':'worse') + '">' + (better?'▲':'▼') + ' vs baseline ' + bv.toFixed(3) + '</div>' +
-    '</div>';
-  }).join('');
+  if (!items.length) {
+    cont.innerHTML = '<div class="empty">No hay métricas. Haz una pregunta primero.</div>';
+    return;
+  }
 
-  var noInfoR = ((rag.avg_mentions_no_info || 0) * 100).toFixed(0);
-  var noInfoB = ((bl.avg_mentions_no_info || 0) * 100).toFixed(0);
-  var noInfoBetter = (rag.avg_mentions_no_info || 0) <= (bl.avg_mentions_no_info || 0);
+  var last = items[items.length - 1];
+  var rag = last.rag_metrics || {};
+  var bl = last.baseline_metrics || {};
 
-  cards += '<div class="metric-card">' +
-    '<div class="label">SIN RESPUESTA</div>' +
-    '<div class="metric-val" style="color:' + (noInfoBetter ? 'var(--accent2)' : 'var(--accent3)') + '">' + noInfoR + '%</div>' +
-    '<div class="metric-cmp ' + (noInfoBetter ? 'better' : 'worse') + '">Baseline: ' + noInfoB + '%</div>' +
-  '</div>';
-
-  var bars = keys.map(function(m){
-    var rv = rag[m.k] || 0;
-    var bv = bl[m.k] || 0;
-    var mx = Math.max(rv, bv, 0.001);
-    var fmt = function(v){ return v < 2 ? v.toFixed(3) : Math.round(v); };
-    return '<div style="margin-bottom:1.5rem">' +
-      '<div class="label">' + m.lbl + '</div>' +
-      '<div class="bar-row"><div class="bar-lbl">RAG</div><div class="bar-track"><div class="bar-fill rag" style="width:' + (rv/mx*100).toFixed(1) + '%"></div></div><div class="bar-val">' + fmt(rv) + '</div></div>' +
-      '<div class="bar-row"><div class="bar-lbl">Baseline</div><div class="bar-track"><div class="bar-fill bl" style="width:' + (bv/mx*100).toFixed(1) + '%"></div></div><div class="bar-val">' + fmt(bv) + '</div></div>' +
-    '</div>';
-  }).join('');
-
-  document.getElementById('res-metrics').innerHTML =
-    '<div class="section-title">Resultados de la evaluación</div>' +
-    '<div style="display:flex;gap:1.5rem;margin-bottom:1.5rem">' +
-      '<span class="mono small dim"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--rag);margin-right:.4rem"></span>RAG (' + rag.n_questions + ' preguntas)</span>' +
-      '<span class="mono small dim"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--bl);margin-right:.4rem"></span>Baseline (' + bl.n_questions + ' preguntas)</span>' +
+  var html =
+    '<div class="section-title">Métricas de la última consulta</div>' +
+    '<div class="card" style="margin-bottom:1.5rem">' +
+      '<div class="card-head"><span class="badge badge-accent">Pregunta</span></div>' +
+      '<div class="card-body">' +
+        '<div class="answer">' + last.question + '</div>' +
+        '<div class="mono small dim" style="margin-top:.75rem">' + last.timestamp + '</div>' +
+      '</div>' +
     '</div>' +
-    '<div class="grid2" style="margin-bottom:2rem">' + cards + '</div>' +
-    '<div>' + bars + '</div>';
+    '<div class="grid2" style="margin-bottom:2rem">';
+
+  if (last.rag_answer) {
+    html +=
+      '<div class="metric-card">' +
+        '<div class="label">RAG · Faithfulness</div>' +
+        '<div class="metric-val" style="color:var(--rag)">' + ((rag.faithfulness || 0).toFixed(3)) + '</div>' +
+      '</div>' +
+      '<div class="metric-card">' +
+        '<div class="label">RAG · ROUGE contexto</div>' +
+        '<div class="metric-val" style="color:var(--rag)">' + ((rag.rouge1_vs_context || 0).toFixed(3)) + '</div>' +
+      '</div>' +
+      '<div class="metric-card">' +
+        '<div class="label">RAG · Longitud</div>' +
+        '<div class="metric-val" style="color:var(--rag)">' + (rag.answer_length_words || 0) + '</div>' +
+      '</div>' +
+      '<div class="metric-card">' +
+        '<div class="label">RAG · Sin respuesta</div>' +
+        '<div class="metric-val" style="color:var(--rag)">' + ((rag.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+      '</div>';
+  }
+
+  if (last.baseline_answer) {
+    html +=
+      '<div class="metric-card">' +
+        '<div class="label">Baseline · Longitud</div>' +
+        '<div class="metric-val" style="color:var(--bl)">' + (bl.answer_length_words || 0) + '</div>' +
+      '</div>' +
+      '<div class="metric-card">' +
+        '<div class="label">Baseline · Sin respuesta</div>' +
+        '<div class="metric-val" style="color:var(--bl)">' + ((bl.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+      '</div>';
+  }
+    if (ragas && ragas.n_questions) {
+    html +=
+      '<div class="section-title">Métricas RAGAS</div>' +
+      '<div class="grid2" style="margin-bottom:2rem">' +
+        '<div class="metric-card">' +
+          '<div class="label">RAGAS · Faithfulness</div>' +
+          '<div class="metric-val" style="color:var(--accent2)">' + (ragas.faithfulness || 0).toFixed(3) + '</div>' +
+        '</div>' +
+        '<div class="metric-card">' +
+          '<div class="label">RAGAS · Answer Relevance</div>' +
+          '<div class="metric-val" style="color:var(--accent2)">' + (ragas.answer_relevancy || 0).toFixed(3) + '</div>' +
+        '</div>' +
+        '<div class="metric-card">' +
+          '<div class="label">RAGAS · Context Precision</div>' +
+          '<div class="metric-val" style="color:var(--accent)">' + (ragas.context_precision || 0).toFixed(3) + '</div>' +
+        '</div>' +
+        '<div class="metric-card">' +
+          '<div class="label">RAGAS · Context Recall</div>' +
+          '<div class="metric-val" style="color:var(--accent)">' + (ragas.context_recall || 0).toFixed(3) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mono small dim" style="margin-bottom:2rem">RAGAS calculado sobre ' + ragas.n_questions + ' preguntas del dataset de evaluación.</div>';
+  }
+
+  html += '</div>';
+
+  html += '<div class="section-title">Histórico de consultas</div>';
+
+  items.slice().reverse().forEach(function(item){
+    var rm = item.rag_metrics || {};
+    var bm = item.baseline_metrics || {};
+
+    html +=
+      '<div class="card">' +
+        '<div class="card-head" style="justify-content:space-between">' +
+          '<span class="answer" style="font-size:.9rem">' + item.question + '</span>' +
+          '<span class="mono small dim">' + item.timestamp + '</span>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="grid2">' +
+            '<div>' +
+              '<span class="badge badge-rag">RAG</span>' +
+              '<div class="mono small dim" style="margin-top:.6rem">Faithfulness: ' + ((rm.faithfulness || 0).toFixed(3)) + '</div>' +
+              '<div class="mono small dim">ROUGE contexto: ' + ((rm.rouge1_vs_context || 0).toFixed(3)) + '</div>' +
+              '<div class="mono small dim">Longitud: ' + (rm.answer_length_words || 0) + '</div>' +
+              '<div class="mono small dim">Sin respuesta: ' + ((rm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+            '</div>' +
+            '<div>' +
+              '<span class="badge badge-bl">Baseline</span>' +
+              '<div class="mono small dim" style="margin-top:.6rem">Longitud: ' + (bm.answer_length_words || 0) + '</div>' +
+              '<div class="mono small dim">Sin respuesta: ' + ((bm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  cont.innerHTML = html;
 }
 
 function loadIdxStatus() {
@@ -592,13 +717,18 @@ def ask():
 
         if mode in ('rag', 'ambos'):
             from src.evaluation.rag_pipeline import answer_with_rag_multimodal
-            rag_answer, rag_sources, _ = answer_with_rag_multimodal(query, vs, k=4)
+            rag_answer, rag_sources, retrieved_docs = answer_with_rag_multimodal(query, vs, k=4)
             result['rag_answer'] = rag_answer
             result['rag_sources'] = deduplicate_sources(rag_sources)
+            result['retrieved_docs'] = retrieved_docs
 
         if mode in ('baseline', 'ambos'):
             from src.evaluation.baseline import answer_without_rag
             result['baseline_answer'] = answer_without_rag(query)
+
+        save_live_metrics(query, mode, result)
+
+        result.pop("retrieved_docs", None)
 
         return jsonify(result)
 
@@ -609,15 +739,48 @@ def ask():
 @app.route('/metrics')
 def metrics():
     try:
-        with open(Path(EXPERIMENTS_DIR) / 'summary.json', encoding='utf-8') as f:
-            summary = json.load(f)
+        live_path = Path("data/live_metrics.json")
+        ragas_path = Path(EXPERIMENTS_DIR) / "ragas_results.json"
 
-        rag = next((s for s in summary if s['system'] == 'RAG'), {})
-        bl = next((s for s in summary if s['system'] == 'Baseline'), {})
-        return jsonify({'rag': rag, 'baseline': bl})
+        response = {
+            "type": "live",
+            "items": [],
+            "ragas": {}
+        }
+
+        if live_path.exists():
+            with open(live_path, "r", encoding="utf-8") as f:
+                response["items"] = json.load(f)
+
+        if ragas_path.exists():
+            with open(ragas_path, "r", encoding="utf-8") as f:
+                ragas_data = json.load(f)
+
+            rows = ragas_data.get("rows", [])
+
+            def avg_metric(metric_name):
+                values = []
+                for row in rows:
+                    value = row.get(metric_name)
+                    if isinstance(value, (int, float)):
+                        values.append(value)
+                return round(sum(values) / len(values), 4) if values else 0
+
+            response["ragas"] = {
+                "n_questions": len(rows),
+                "faithfulness": avg_metric("faithfulness"),
+                "answer_relevancy": avg_metric("answer_relevancy"),
+                "context_precision": avg_metric("context_precision"),
+                "context_recall": avg_metric("context_recall")
+            }
+
+        if not response["items"] and not response["ragas"]:
+            return jsonify({"error": "No hay métricas todavía"}), 404
+
+        return jsonify(response)
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 404
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/comparison')
@@ -653,15 +816,15 @@ def comparison():
 
 @app.route('/index_status')
 def index_status():
-    faiss_p = Path(VECTOR_STORE_PATH) / 'index.faiss'
-    exists = faiss_p.exists()
+    chroma_p = Path(VECTOR_STORE_PATH) / 'chroma.sqlite3'
+    exists = chroma_p.exists()
     result = {'exists': exists}
 
     if exists:
-        mtime = faiss_p.stat().st_mtime
+        mtime = chroma_p.stat().st_mtime
         result['modified'] = time.strftime('%d/%m/%Y %H:%M', time.localtime(mtime))
-        size_mb = round(faiss_p.stat().st_size / 1024 / 1024, 1)
-        result['type'] = f'FAISS ({size_mb} MB)'
+        size_mb = round(sum(f.stat().st_size for f in Path(VECTOR_STORE_PATH).rglob('*') if f.is_file()) / 1024 / 1024, 1)
+        result['type'] = f'ChromaDB ({size_mb} MB)'
 
     return jsonify(result)
 
@@ -700,7 +863,6 @@ def build_index_route():
 
     return jsonify({'log': log.getvalue()})
 
-
 @app.route('/run_comparison', methods=['POST'])
 def run_comparison_route():
     log = io.StringIO()
@@ -713,6 +875,7 @@ def run_comparison_route():
             from src.evaluation.rag_pipeline import answer_with_rag_multimodal
             from src.evaluation.baseline import answer_without_rag
             from src.evaluation.metrics import compute_all_metrics
+            from src.evaluation.ragas_eval import run_ragas_eval
 
             vs = get_vector_store()
             rag_res, bl_res = [], []
@@ -722,14 +885,25 @@ def run_comparison_route():
                 ref = item.get('reference_answer')
 
                 print(f"[{item['id']}] {q[:55]}...")
+
                 ra, rs, rd = answer_with_rag_multimodal(q, vs, k=4)
                 ba = answer_without_rag(q)
 
                 rs = deduplicate_sources(rs)
 
                 print(f"  RAG: {ra[:70]}...")
-                rm = compute_all_metrics(ra, rag_sources=rs, retrieved_docs=rd, reference_answer=ref)
-                bm = compute_all_metrics(ba, reference_answer=ref)
+
+                rm = compute_all_metrics(
+                    ra,
+                    rag_sources=rs,
+                    retrieved_docs=rd,
+                    reference_answer=ref
+                )
+
+                bm = compute_all_metrics(
+                    ba,
+                    reference_answer=ref
+                )
 
                 rag_res.append({
                     'id': item['id'],
@@ -737,6 +911,11 @@ def run_comparison_route():
                     'category': item.get('category', ''),
                     'answer': ra,
                     'sources': rs,
+                    'retrieved_docs': [
+                        doc.page_content if hasattr(doc, "page_content") else str(doc)
+                        for doc in rd
+                    ],
+                    'reference_answer': ref,
                     'metrics': rm
                 })
 
@@ -745,6 +924,7 @@ def run_comparison_route():
                     'question': q,
                     'category': item.get('category', ''),
                     'answer': ba,
+                    'reference_answer': ref,
                     'metrics': bm
                 })
 
@@ -758,18 +938,36 @@ def run_comparison_route():
                 json.dump(bl_res, f, indent=2, ensure_ascii=False)
 
             def avg(lst, k):
-                vals = [r['metrics'].get(k) for r in lst if r['metrics'].get(k) is not None]
+                vals = [
+                    r['metrics'].get(k)
+                    for r in lst
+                    if r.get('metrics', {}).get(k) is not None
+                ]
                 return round(sum(vals) / len(vals), 4) if vals else 0
 
             keys = [
-                'answer_length_words', 'faithfulness', 'rouge1_vs_context',
-                'rougeL_vs_context', 'rouge1_f1', 'rouge2_f1',
-                'rougeL_f1', 'is_empty', 'mentions_no_info'
+                'answer_length_words',
+                'faithfulness',
+                'rouge1_vs_context',
+                'rougeL_vs_context',
+                'rouge1_f1',
+                'rouge2_f1',
+                'rougeL_f1',
+                'is_empty',
+                'mentions_no_info'
             ]
 
             summary = [
-                {'system': 'RAG', 'n_questions': len(rag_res), **{f'avg_{k}': avg(rag_res, k) for k in keys}},
-                {'system': 'Baseline', 'n_questions': len(bl_res), **{f'avg_{k}': avg(bl_res, k) for k in keys}},
+                {
+                    'system': 'RAG',
+                    'n_questions': len(rag_res),
+                    **{f'avg_{k}': avg(rag_res, k) for k in keys}
+                },
+                {
+                    'system': 'Baseline',
+                    'n_questions': len(bl_res),
+                    **{f'avg_{k}': avg(bl_res, k) for k in keys}
+                },
             ]
 
             with open(exp / 'summary.json', 'w', encoding='utf-8') as f:
@@ -779,13 +977,72 @@ def run_comparison_route():
             bl_rouge1 = avg(bl_res, 'rouge1_f1')
 
             print(f"\nRAG rouge1={rag_rouge1:.3f} | Baseline rouge1={bl_rouge1:.3f}")
-            print("Guardado en experiments/")
+            print("Resultados clásicos guardados en experiments/")
+
+            # ==============================
+            # RAGAS
+            # ==============================
+            print("\nEjecutando evaluación RAGAS...")
+
+            ragas_questions = []
+            ragas_answers = []
+            ragas_contexts = []
+            ragas_references = []
+
+            for r in rag_res:
+                ragas_questions.append(r["question"])
+                ragas_answers.append(r["answer"])
+
+                contexts = []
+
+                if r.get("retrieved_docs"):
+                    contexts = r["retrieved_docs"]
+                elif r.get("sources"):
+                    contexts = [
+                        s.get("content_preview", "")
+                        for s in r["sources"]
+                        if s.get("content_preview")
+                    ]
+
+                ragas_contexts.append(contexts)
+                ragas_references.append(r.get("reference_answer") or "")
+
+            try:
+                ragas_result = run_ragas_eval(
+                    questions=ragas_questions,
+                    answers=ragas_answers,
+                    contexts=ragas_contexts,
+                    references=ragas_references
+                )
+
+                ragas_dict = {}
+
+                if hasattr(ragas_result, "to_pandas"):
+                    ragas_df = ragas_result.to_pandas()
+                    ragas_dict = {
+                        "columns": list(ragas_df.columns),
+                        "rows": ragas_df.to_dict(orient="records")
+                    }
+                else:
+                    ragas_dict = {"result": str(ragas_result)}
+
+                with open(exp / "ragas_results.json", "w", encoding="utf-8") as f:
+                    json.dump(ragas_dict, f, indent=2, ensure_ascii=False)
+
+                print("RAGAS guardado en experiments/ragas_results.json")
+
+            except Exception as ragas_error:
+                print(f"ERROR en RAGAS: {ragas_error}")
+                print("La comparación clásica se ha guardado correctamente igualmente.")
 
     except Exception as e:
         log.write(f"\nERROR: {e}")
 
-    return jsonify({'log': log.getvalue(), 'rag_rouge1': rag_rouge1, 'bl_rouge1': bl_rouge1})
-
+    return jsonify({
+        'log': log.getvalue(),
+        'rag_rouge1': rag_rouge1,
+        'bl_rouge1': bl_rouge1
+    })
 
 if __name__ == '__main__':
     print("\nIniciando interfaz web...")

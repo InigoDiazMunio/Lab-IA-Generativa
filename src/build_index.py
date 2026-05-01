@@ -38,7 +38,7 @@ def main():
     print(f"Chunks generados: {len(chunks)}")
 
     print("Creando base de datos vectorial...")
-    create_vectorstore(chunks, reset=True)
+    create_vectorstore(chunks, reset=False)
 
     print("Base de datos vectorial creada correctamente.")
 
