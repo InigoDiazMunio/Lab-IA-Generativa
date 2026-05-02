@@ -1,12 +1,13 @@
-from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
 from datasets import Dataset
+from ragas import evaluate
+from ragas.metrics import faithfulness
 
-def run_ragas_eval(questions, answers, contexts):
+
+def run_ragas_eval(questions, answers, contexts, references=None, llm=None):
     data = {
         "question": questions,
         "answer": answers,
-        "contexts": contexts
+        "contexts": contexts,
     }
 
     dataset = Dataset.from_dict(data)
@@ -15,10 +16,8 @@ def run_ragas_eval(questions, answers, contexts):
         dataset,
         metrics=[
             faithfulness,
-            answer_relevancy,
-            context_precision,
-            context_recall
-        ]
+        ],
+        llm=llm,
     )
 
     return result

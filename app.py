@@ -13,6 +13,7 @@ from pathlib import Path
 from contextlib import redirect_stdout
 from unittest import result
 
+
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
@@ -503,117 +504,94 @@ function loadMetrics() {
 
 function renderMetrics(items, ragas) {
   var cont = document.getElementById('res-metrics');
+  var html = '';
 
-  if (!items.length) {
-    cont.innerHTML = '<div class="empty">No hay métricas. Haz una pregunta primero.</div>';
-    return;
-  }
+  if (items.length) {
+    var last = items[items.length - 1];
+    var rag = last.rag_metrics || {};
+    var bl = last.baseline_metrics || {};
 
-  var last = items[items.length - 1];
-  var rag = last.rag_metrics || {};
-  var bl = last.baseline_metrics || {};
-
-  var html =
-    '<div class="section-title">Métricas de la última consulta</div>' +
-    '<div class="card" style="margin-bottom:1.5rem">' +
-      '<div class="card-head"><span class="badge badge-accent">Pregunta</span></div>' +
-      '<div class="card-body">' +
-        '<div class="answer">' + last.question + '</div>' +
-        '<div class="mono small dim" style="margin-top:.75rem">' + last.timestamp + '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="grid2" style="margin-bottom:2rem">';
-
-  if (last.rag_answer) {
     html +=
-      '<div class="metric-card">' +
-        '<div class="label">RAG · Faithfulness</div>' +
-        '<div class="metric-val" style="color:var(--rag)">' + ((rag.faithfulness || 0).toFixed(3)) + '</div>' +
+      '<div class="section-title">Métricas de la última consulta</div>' +
+      '<div class="card" style="margin-bottom:1.5rem">' +
+        '<div class="card-head"><span class="badge badge-accent">Pregunta</span></div>' +
+        '<div class="card-body">' +
+          '<div class="answer">' + last.question + '</div>' +
+          '<div class="mono small dim" style="margin-top:.75rem">' + last.timestamp + '</div>' +
+        '</div>' +
       '</div>' +
-      '<div class="metric-card">' +
-        '<div class="label">RAG · ROUGE contexto</div>' +
-        '<div class="metric-val" style="color:var(--rag)">' + ((rag.rouge1_vs_context || 0).toFixed(3)) + '</div>' +
-      '</div>' +
-      '<div class="metric-card">' +
-        '<div class="label">RAG · Longitud</div>' +
-        '<div class="metric-val" style="color:var(--rag)">' + (rag.answer_length_words || 0) + '</div>' +
-      '</div>' +
-      '<div class="metric-card">' +
-        '<div class="label">RAG · Sin respuesta</div>' +
-        '<div class="metric-val" style="color:var(--rag)">' + ((rag.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
-      '</div>';
+      '<div class="grid2" style="margin-bottom:2rem">';
+
+    if (last.rag_answer) {
+      html +=
+        '<div class="metric-card"><div class="label">RAG · Faithfulness</div><div class="metric-val" style="color:var(--rag)">' + ((rag.faithfulness || 0).toFixed(3)) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAG · ROUGE contexto</div><div class="metric-val" style="color:var(--rag)">' + ((rag.rouge1_vs_context || 0).toFixed(3)) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAG · Longitud</div><div class="metric-val" style="color:var(--rag)">' + (rag.answer_length_words || 0) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAG · Sin respuesta</div><div class="metric-val" style="color:var(--rag)">' + ((rag.mentions_no_info || 0) * 100).toFixed(0) + '%</div></div>';
+    }
+
+    if (last.baseline_answer) {
+      html +=
+        '<div class="metric-card"><div class="label">Baseline · Longitud</div><div class="metric-val" style="color:var(--bl)">' + (bl.answer_length_words || 0) + '</div></div>' +
+        '<div class="metric-card"><div class="label">Baseline · Sin respuesta</div><div class="metric-val" style="color:var(--bl)">' + ((bl.mentions_no_info || 0) * 100).toFixed(0) + '%</div></div>';
+    }
+
+    html += '</div>';
   }
 
-  if (last.baseline_answer) {
-    html +=
-      '<div class="metric-card">' +
-        '<div class="label">Baseline · Longitud</div>' +
-        '<div class="metric-val" style="color:var(--bl)">' + (bl.answer_length_words || 0) + '</div>' +
-      '</div>' +
-      '<div class="metric-card">' +
-        '<div class="label">Baseline · Sin respuesta</div>' +
-        '<div class="metric-val" style="color:var(--bl)">' + ((bl.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
-      '</div>';
-  }
-    if (ragas && ragas.n_questions) {
+  if (ragas && ragas.n_questions) {
     html +=
       '<div class="section-title">Métricas RAGAS</div>' +
       '<div class="grid2" style="margin-bottom:2rem">' +
-        '<div class="metric-card">' +
-          '<div class="label">RAGAS · Faithfulness</div>' +
-          '<div class="metric-val" style="color:var(--accent2)">' + (ragas.faithfulness || 0).toFixed(3) + '</div>' +
-        '</div>' +
-        '<div class="metric-card">' +
-          '<div class="label">RAGAS · Answer Relevance</div>' +
-          '<div class="metric-val" style="color:var(--accent2)">' + (ragas.answer_relevancy || 0).toFixed(3) + '</div>' +
-        '</div>' +
-        '<div class="metric-card">' +
-          '<div class="label">RAGAS · Context Precision</div>' +
-          '<div class="metric-val" style="color:var(--accent)">' + (ragas.context_precision || 0).toFixed(3) + '</div>' +
-        '</div>' +
-        '<div class="metric-card">' +
-          '<div class="label">RAGAS · Context Recall</div>' +
-          '<div class="metric-val" style="color:var(--accent)">' + (ragas.context_recall || 0).toFixed(3) + '</div>' +
-        '</div>' +
+        '<div class="metric-card"><div class="label">RAGAS · Faithfulness</div><div class="metric-val" style="color:var(--accent2)">' + (ragas.faithfulness || 0).toFixed(3) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAGAS · Answer Relevance</div><div class="metric-val" style="color:var(--accent2)">' + (ragas.answer_relevancy || 0).toFixed(3) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAGAS · Context Precision</div><div class="metric-val" style="color:var(--accent)">' + (ragas.context_precision || 0).toFixed(3) + '</div></div>' +
+        '<div class="metric-card"><div class="label">RAGAS · Context Recall</div><div class="metric-val" style="color:var(--accent)">' + (ragas.context_recall || 0).toFixed(3) + '</div></div>' +
       '</div>' +
       '<div class="mono small dim" style="margin-bottom:2rem">RAGAS calculado sobre ' + ragas.n_questions + ' preguntas del dataset de evaluación.</div>';
   }
 
-  html += '</div>';
+  if (items.length) {
+    html += '<div class="section-title">Histórico de consultas</div>';
 
-  html += '<div class="section-title">Histórico de consultas</div>';
+    items.slice().reverse().forEach(function(item){
+      var rm = item.rag_metrics || {};
+      var bm = item.baseline_metrics || {};
 
-  items.slice().reverse().forEach(function(item){
-    var rm = item.rag_metrics || {};
-    var bm = item.baseline_metrics || {};
-
-    html +=
-      '<div class="card">' +
-        '<div class="card-head" style="justify-content:space-between">' +
-          '<span class="answer" style="font-size:.9rem">' + item.question + '</span>' +
-          '<span class="mono small dim">' + item.timestamp + '</span>' +
-        '</div>' +
-        '<div class="card-body">' +
-          '<div class="grid2">' +
-            '<div>' +
-              '<span class="badge badge-rag">RAG</span>' +
-              '<div class="mono small dim" style="margin-top:.6rem">Faithfulness: ' + ((rm.faithfulness || 0).toFixed(3)) + '</div>' +
-              '<div class="mono small dim">ROUGE contexto: ' + ((rm.rouge1_vs_context || 0).toFixed(3)) + '</div>' +
-              '<div class="mono small dim">Longitud: ' + (rm.answer_length_words || 0) + '</div>' +
-              '<div class="mono small dim">Sin respuesta: ' + ((rm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
-            '</div>' +
-            '<div>' +
-              '<span class="badge badge-bl">Baseline</span>' +
-              '<div class="mono small dim" style="margin-top:.6rem">Longitud: ' + (bm.answer_length_words || 0) + '</div>' +
-              '<div class="mono small dim">Sin respuesta: ' + ((bm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+      html +=
+        '<div class="card">' +
+          '<div class="card-head" style="justify-content:space-between">' +
+            '<span class="answer" style="font-size:.9rem">' + item.question + '</span>' +
+            '<span class="mono small dim">' + item.timestamp + '</span>' +
+          '</div>' +
+          '<div class="card-body">' +
+            '<div class="grid2">' +
+              '<div>' +
+                '<span class="badge badge-rag">RAG</span>' +
+                '<div class="mono small dim" style="margin-top:.6rem">Faithfulness: ' + ((rm.faithfulness || 0).toFixed(3)) + '</div>' +
+                '<div class="mono small dim">ROUGE contexto: ' + ((rm.rouge1_vs_context || 0).toFixed(3)) + '</div>' +
+                '<div class="mono small dim">Longitud: ' + (rm.answer_length_words || 0) + '</div>' +
+                '<div class="mono small dim">Sin respuesta: ' + ((rm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+              '</div>' +
+              '<div>' +
+                '<span class="badge badge-bl">Baseline</span>' +
+                '<div class="mono small dim" style="margin-top:.6rem">Longitud: ' + (bm.answer_length_words || 0) + '</div>' +
+                '<div class="mono small dim">Sin respuesta: ' + ((bm.mentions_no_info || 0) * 100).toFixed(0) + '%</div>' +
+              '</div>' +
             '</div>' +
           '</div>' +
-        '</div>' +
-      '</div>';
-  });
+        '</div>';
+    });
+  }
+
+  if (!html) {
+    html = '<div class="empty">No hay métricas. Haz una pregunta o ejecuta RAGAS primero.</div>';
+  }
 
   cont.innerHTML = html;
 }
+
+
 
 function loadIdxStatus() {
   fetch('/index_status').then(function(r){return r.json()}).then(function(data){
@@ -743,7 +721,6 @@ def metrics():
         ragas_path = Path(EXPERIMENTS_DIR) / "ragas_results.json"
 
         response = {
-            "type": "live",
             "items": [],
             "ragas": {}
         }
@@ -771,10 +748,10 @@ def metrics():
                 "faithfulness": avg_metric("faithfulness"),
                 "answer_relevancy": avg_metric("answer_relevancy"),
                 "context_precision": avg_metric("context_precision"),
-                "context_recall": avg_metric("context_recall")
+                "context_recall": avg_metric("context_recall"),
             }
 
-        if not response["items"] and not response["ragas"]:
+        if not response["items"] and not response["ragas"].get("n_questions"):
             return jsonify({"error": "No hay métricas todavía"}), 404
 
         return jsonify(response)
@@ -871,16 +848,22 @@ def run_comparison_route():
 
     try:
         with redirect_stdout(log):
-            from src.evaluation.dataset_builder import DEFAULT_QUESTIONS
+            from src.evaluation.dataset_builder import build_default_dataset    
+            DEFAULT_QUESTIONS = build_default_dataset()
             from src.evaluation.rag_pipeline import answer_with_rag_multimodal
             from src.evaluation.baseline import answer_without_rag
             from src.evaluation.metrics import compute_all_metrics
             from src.evaluation.ragas_eval import run_ragas_eval
+            from langchain_community.chat_models import ChatOllama
+            from ragas.llms import LangchainLLMWrapper
 
+            print("Inicializando LLM para RAGAS (Ollama)...")
+            llm = ChatOllama(model="mistral")
+            ragas_llm = LangchainLLMWrapper(llm)
             vs = get_vector_store()
             rag_res, bl_res = [], []
 
-            for item in DEFAULT_QUESTIONS:
+            for item in DEFAULT_QUESTIONS[:5]:
                 q = item['question']
                 ref = item.get('reference_answer')
 
@@ -1012,7 +995,7 @@ def run_comparison_route():
                     questions=ragas_questions,
                     answers=ragas_answers,
                     contexts=ragas_contexts,
-                    references=ragas_references
+                    llm=ragas_llm
                 )
 
                 ragas_dict = {}

@@ -3,440 +3,228 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el Fragmento 4, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y una vez (una sola vez).",
+    "answer": "Retrieval-Augmented Generation (RAG) se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 3, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y adaptativa. En particular, según el fragmento 1, RAG se basa en la idea de que la recuperación de información puede mejorar la robustez de la generación de respuestas al ofrecer referencias contextuales adicionales a través de múltiples iteraciones de recuperación.",
     "sources": [
       {
-        "source_file": "paper 5.pdf",
-        "page": 10,
-        "content_preview": "ages “retrieval-enhanced generation” alongside “generation-\nenhanced retrieval” for tasks that necessitate the reproduction\nof specific information. The model harnesses the content\nrequired to address the input task as a contextual basis for\nretrieving pertinent knowledge, which in turn facilitates ",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
+        "source_file": "data\\raw\\paper 5.pdf",
         "page": 10,
         "content_preview": "base for LLMs. This approach has been shown to enhance\nthe robustness of subsequent answer generation by offering\nadditional contextual references through multiple retrieval\niterations. However, it may be affected by semantic discon-\ntinuity and the accumulation of irrelevant information. ITER-\nRETG",
         "type": "texto"
       },
       {
-        "source_file": "paper 5.pdf",
-        "page": 6,
-        "content_preview": "enhancement selectively. GenRead [13] replaces the retriever\nwith an LLM generator, finding that LLM-generated contexts\noften contain more accurate answers due to better alignment\nwith the pre-training objectives of causal language modeling.\nSelfmem [17] iteratively creates an unbounded memory pool\n",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 10,
-        "content_preview": "11\nFig. 5. In addition to the most common once retrieval, RAG also includes three types of retrieval augmentation processes. (left) Iterative retrieval involves\nalternating between retrieval and generation, allowing for richer and more targeted context from the knowledge base at each step. (Middle) ",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 2,
+        "content_preview": "Moreover, there’s a concern that generation models might\noverly rely on augmented information, leading to outputs that\nsimply echo retrieved content without adding insightful or\nsynthesized information.\nB. Advanced RAG\nAdvanced RAG introduces specific improvements to over-\ncome the limitations of Na",
         "type": "texto"
       }
     ],
+    "retrieved_docs": [
+      "base for LLMs. This approach has been shown to enhance\nthe robustness of subsequent answer generation by offering\nadditional contextual references through multiple retrieval\niterations. However, it may be affected by semantic discon-\ntinuity and the accumulation of irrelevant information. ITER-\nRETGEN [14] employs a synergistic approach that lever-\nages “retrieval-enhanced generation” alongside “generation-\nenhanced retrieval” for tasks that necessitate the reproduction\nof specific information. The model harnesses the content\nrequired to address the input task as a contextual basis for\nretrieving pertinent knowledge, which in turn facilitates the\ngeneration of improved responses in subsequent iterations.\nB. Recursive Retrieval\nRecursive retrieval is often used in information retrieval and",
+      "generation of improved responses in subsequent iterations.\nB. Recursive Retrieval\nRecursive retrieval is often used in information retrieval and\nNLP to improve the depth and relevance of search results.\nThe process involves iteratively refining search queries based\non the results obtained from previous searches. Recursive\nRetrieval aims to enhance the search experience by gradu-\nally converging on the most pertinent information through a\nfeedback loop. IRCoT [61] uses chain-of-thought to guide\nthe retrieval process and refines the CoT with the obtained\nretrieval results. ToC [57] creates a clarification tree that\nsystematically optimizes the ambiguous parts in the Query. It\ncan be particularly useful in complex search scenarios where",
+      "11\nFig. 5. In addition to the most common once retrieval, RAG also includes three types of retrieval augmentation processes. (left) Iterative retrieval involves\nalternating between retrieval and generation, allowing for richer and more targeted context from the knowledge base at each step. (Middle) Recursive retrieval\ninvolves gradually refining the user query and breaking down the problem into sub-problems, then continuously solving complex problems through retrieval\nand generation. (Right) Adaptive retrieval focuses on enabling the RAG system to autonomously determine whether external knowledge retrieval is necessary\nand when to stop retrieval and generation, often utilizing LLM-generated special tokens for control.\nbase for LLMs. This approach has been shown to enhance",
+      "Moreover, there’s a concern that generation models might\noverly rely on augmented information, leading to outputs that\nsimply echo retrieved content without adding insightful or\nsynthesized information.\nB. Advanced RAG\nAdvanced RAG introduces specific improvements to over-\ncome the limitations of Naive RAG. Focusing on enhancing re-\ntrieval quality, it employs pre-retrieval and post-retrieval strate-\ngies. To tackle the indexing issues, Advanced RAG refines\nits indexing techniques through the use of a sliding window\napproach, fine-grained segmentation, and the incorporation of\nmetadata. Additionally, it incorporates several optimization\nmethods to streamline the retrieval process [8]."
+    ],
+    "reference_answer": null,
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 41,
+      "answer_length_words": 77,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
+      "rouge1_vs_context": 0.0347,
+      "rougeL_vs_context": 0.027
     }
   },
   {
     "id": 2,
-    "question": "¿Para qué sirven los embeddings en un sistema RAG?",
+    "question": "¿Qué problema intenta resolver un sistema RAG?",
     "category": "teoria",
-    "answer": "Los embeddings en un sistema RAG se utilizan para calcular la similitud entre las representaciones semánticas del pregunta y los documentos. Según el Fragmento 1, esto se logra mediante la comparación de las similitudes (por ejemplo, la similitud coseno) entre las representaciones de embeddings de los fragmentos de pregunta y documento.",
+    "answer": "Un sistema RAG intenta resolver la pregunta de cómo mejorar su desempeño en diversas escenarios de aplicación. Según el Fragmento 1, el objetivo principal de esta evaluación es comprender y optimizar el rendimiento de los modelos RAG en diferentes escenarios de aplicación. Sin embargo, si se entiende que la pregunta busca saber qué problema específico resuelve un sistema RAG, la respuesta sería: Un sistema RAG intenta resolver problemas relacionados con la extracción de información, la generación de diálogo, búsqueda de código, etc. Según el Fragmento 1, A. Downstream Task.",
     "sources": [
       {
-        "source_file": "paper 5.pdf",
-        "page": 8,
-        "content_preview": "approach can also be employed, combining both semantic and\nmetadata-based methods for enhanced query routing.\nD. Embedding\nIn RAG, retrieval is achieved by calculating the similarity\n(e.g. cosine similarity) between the embeddings of the ques-\ntion and document chunks, where the semantic representat",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 11,
+        "content_preview": "The primary objective of this evaluation is to comprehend\nand optimize the performance of RAG models across diverse\napplication scenarios.This chapter will mainly introduce the\nmain downstream tasks of RAG, datasets, and how to evaluate\nRAG systems.\nA. Downstream Task\nThe core task of RAG remains Qu",
         "type": "texto"
       },
       {
-        "source_file": "paper 5.pdf",
+        "source_file": "data\\raw\\paper 5.pdf",
         "page": 13,
-        "content_preview": "references for LLMs to help users verify the generated an-\nswers. The entire retrieval and reasoning process is observable,\nwhile generation solely relying on long context remains a\nblack box. Conversely, the expansion of context provides new\nopportunities for the development of RAG, enabling it to\n",
+        "content_preview": "quality scores. These tools and benchmarks collectively form\na robust framework for the systematic evaluation of RAG\nmodels, as summarized in Table IV.\nVII. D ISCUSSION AND FUTURE PROSPECTS\nDespite the considerable progress in RAG technology, sev-\neral challenges persist that warrant in-depth resear",
         "type": "texto"
       },
       {
-        "source_file": "paper 5.pdf",
-        "page": 15,
-        "content_preview": "of RAG capabilities. RAG toolkits are converging into a\nfoundational technology stack, laying the groundwork for\nadvanced enterprise applications. However, a fully integrated,\ncomprehensive platform concept is still in the future, requiring\nfurther innovation and development.\nF . Multi-modal RAG\nRAG",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 2,
+        "content_preview": "3\nFig. 2. A representative instance of the RAG process applied to question answering. It mainly consists of 3 steps. 1) Indexing. Documents are split into chunks,\nencoded into vectors, and stored in a vector database. 2) Retrieval. Retrieve the Top k chunks most relevant to the question based on sem",
         "type": "texto"
       },
       {
-        "source_file": "paper 10.pdf",
-        "page": 1,
-        "content_preview": "of retrieval augmented generation systems. We fo-\ncus on settings where reference answers may not be\navailable, and where we want to estimate different\nproxies for correctness, in addition to the useful-\nness of the retrieved passages. The Ragas frame-\nwork provides an integration with both llama-in",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merge",
         "type": "texto"
       }
     ],
+    "retrieved_docs": [
+      "The primary objective of this evaluation is to comprehend\nand optimize the performance of RAG models across diverse\napplication scenarios.This chapter will mainly introduce the\nmain downstream tasks of RAG, datasets, and how to evaluate\nRAG systems.\nA. Downstream Task\nThe core task of RAG remains Question Answering (QA),\nincluding traditional single-hop/multi-hop QA, multiple-\nchoice, domain-specific QA as well as long-form scenarios\nsuitable for RAG. In addition to QA, RAG is continuously\nbeing expanded into multiple downstream tasks, such as Infor-\nmation Extraction (IE), dialogue generation, code search, etc.\nThe main downstream tasks of RAG and their corresponding\ndatasets are summarized in Table II.\nB. Evaluation Target\nHistorically, RAG models assessments have centered on",
+      "quality scores. These tools and benchmarks collectively form\na robust framework for the systematic evaluation of RAG\nmodels, as summarized in Table IV.\nVII. D ISCUSSION AND FUTURE PROSPECTS\nDespite the considerable progress in RAG technology, sev-\neral challenges persist that warrant in-depth research.This\nchapter will mainly introduce the current challenges and future\nresearch directions faced by RAG.\nA. RAG vs Long Context\nWith the deepening of related research, the context of LLMs\nis continuously expanding [170]–[172]. Presently, LLMs can\neffortlessly manage contexts exceeding 200,000 tokens 9. This\ncapability signifies that long-document question answering,\npreviously reliant on RAG, can now incorporate the entire\ndocument directly into the prompt. This has also sparked",
+      "3\nFig. 2. A representative instance of the RAG process applied to question answering. It mainly consists of 3 steps. 1) Indexing. Documents are split into chunks,\nencoded into vectors, and stored in a vector database. 2) Retrieval. Retrieve the Top k chunks most relevant to the question based on semantic similarity. 3)\nGeneration. Input the original question and the retrieved chunks together into LLM to generate the final answer.\nwidespread adoption of ChatGPT. The Naive RAG follows\na traditional process that includes indexing, retrieval, and\ngeneration, which is also characterized as a “Retrieve-Read”\nframework [7].\nIndexing starts with the cleaning and extraction of raw data\nin diverse formats like PDF, HTML, Word, and Markdown,",
+      "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merges LLMs’ intrin-\nsic knowledge with the vast, dynamic repositories of external\ndatabases. This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naive RAG, the Advanced RAG, and the Modular RAG.\nIt meticulously scrutinizes the tripartite foundation of RAG\nframeworks, which includes the retrieval, the generation and the\naugmentation techniques. The paper highlights the state-of-the-"
+    ],
+    "reference_answer": null,
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 51,
+      "answer_length_words": 89,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
+      "rouge1_vs_context": 0.0394,
+      "rougeL_vs_context": 0.0286
     }
   },
   {
     "id": 3,
-    "question": "¿Qué diferencia hay entre un sistema RAG textual y uno multimodal?",
-    "category": "comparacion",
-    "answer": "Un sistema RAG textual se limita a responder preguntas basadas en texto, mientras que un sistema multimodal RAG puede procesar y responder preguntas con modalidades de datos más diversas. Según el Fragmento 1, RAG ha \"transcendido sus confines iniciales de pregunta-respuesta basados en texto\" para abarcar una variedad de tipos de datos.",
-    "sources": [
-      {
-        "source_file": "paper 5.pdf",
-        "page": 15,
-        "content_preview": "of RAG capabilities. RAG toolkits are converging into a\nfoundational technology stack, laying the groundwork for\nadvanced enterprise applications. However, a fully integrated,\ncomprehensive platform concept is still in the future, requiring\nfurther innovation and development.\nF . Multi-modal RAG\nRAG",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 3,
-        "content_preview": "challenges. The shift towards a modular RAG approach is\nbecoming prevalent, supporting both sequential processing and\nintegrated end-to-end training across its components. Despite\nits distinctiveness, Modular RAG builds upon the foundational\nprinciples of Advanced and Naive RAG, illustrating a progr",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 3,
-        "content_preview": "chain-like structure. (Right) Modular RAG inherits and develops from the previous paradigm, showcasing greater flexibility overall. This is evident in the\nintroduction of multiple specific functional modules and the replacement of existing modules. The overall process is not limited to sequential re",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 4,
-        "content_preview": "structures of Naive and Advanced RAG, characterized by a\nsimple “Retrieve” and “Read” mechanism. Moreover, Modular\nRAG expands this flexibility by integrating new modules or\nadjusting interaction flow among existing ones, enhancing its\napplicability across different tasks.\nInnovations such as the Re",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 52,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 4,
-    "question": "¿Qué problemas tiene el RAG con datos semiestructurados como PDFs con tablas e imágenes?",
-    "category": "multimodalidad",
-    "answer": "El RAG tiene problemas con datos semiestructurados como PDFs con tablas e imágenes debido a dos razones principales. Primero, los procesos de división de texto pueden separar inadvertidamente las tablas, lo que lleva a la corrupción de datos durante la recuperación (Fragmento 2). Segundo, incorporar tablas en el dato puede complicar las búsquedas de similitud semántica (Fragmento 2).",
-    "sources": [
-      {
-        "source_file": "paper 5.pdf",
-        "page": 6,
-        "content_preview": "December, 2018). In addition to encyclopedic data, common\nunstructured data includes cross-lingual text [19] and domain-\nspecific data (such as medical [67]and legal domains [29]).\nSemi-structured data. typically refers to data that contains a\ncombination of text and table information, such as PDF. ",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 6,
-        "content_preview": "RAG systems due to two main reasons. Firstly, text splitting\nprocesses may inadvertently separate tables, leading to data\ncorruption during retrieval. Secondly, incorporating tables into\nthe data can complicate semantic similarity searches. When\ndealing with semi-structured data, one approach involv",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 7,
-        "content_preview": "consists of nodes (representing paragraphs or structures in the\ndocuments, such as pages and tables) and edges (indicating\nsemantic/lexical similarity between paragraphs or relationships\nwithin the document structure), effectively addressing knowl-\nedge retrieval and reasoning problems in a multi-do",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 6,
-        "content_preview": "progresses, Modular RAG has become more integrated with fine-tuning techniques.\nUnstructured Data , such as text, is the most widely used\nretrieval source, which are mainly gathered from corpus. For\nopen-domain question-answering (ODQA) tasks, the primary\nretrieval sources are Wikipedia Dump with th",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 58,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 5,
-    "question": "¿Qué es BLIP-2 y cuál es su aportación principal?",
-    "category": "multimodalidad",
-    "answer": "BLIP-2 es una estrategia de preentrenamiento genérica y eficiente para la visión-lenguaje. Su aportación principal es poder alcanzar un rendimiento de estado del arte en diversas tareas de visión-lenguaje mientras tiene un pequeño número de parámetros entrenables durante el preentrenamiento (Fragmento 2).",
-    "sources": [
-      {
-        "source_file": "paper 2.pdf",
-        "page": 0,
-        "content_preview": "proposes BLIP-2, a generic and efficient pre-\ntraining strategy that bootstraps vision-language\npre-training from off-the-shelf frozen pre-trained\nimage encoders and frozen large language mod-\nels. BLIP-2 bridges the modality gap with a\nlightweight Querying Transformer, which is pre-\ntrained in two ",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 7,
-        "content_preview": "on a filtered dataset with harmful content removed.\n6. Conclusion\nWe propose BLIP-2, a generic and compute-efficient method\nfor vision-language pre-training that leverages frozen pre-\ntrained image encoders and LLMs. BLIP-2 achieves state-\nof-the-art performance on various vision-language tasks\nwhil",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 1,
-        "content_preview": "• BLIP-2 effectively leverages both frozen pre-trained im-\nage models and language models. We bridge the modality\ngap using a Q-Former pre-trained in two-stages: repre-\nsentation learning stage and generative learning stage.\nBLIP-2 achieves state-of-the-art performance on various\nvision-language tas",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 1,
-        "content_preview": "• Powered by LLMs ( e.g. OPT (Zhang et al., 2022),\nFlanT5 (Chung et al., 2022)), BLIP-2 can be prompted to\nperform zero-shot image-to-text generation that follows\nnatural language instructions, which enables emerging\ncapabilities such as visual knowledge reasoning, visual\nconversation, etc. (see Fig",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 42,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 6,
-    "question": "¿Qué es LLaVA y cómo se entrena?",
-    "category": "multimodalidad",
-    "answer": "No dispongo de esa información.",
-    "sources": [
-      {
-        "source_file": "paper 3.pdf",
-        "page": 6,
-        "content_preview": "LLaV A serves as a solid baseline on the benchmarks, on which our findings can inspire future work\nin developing more capable LMMs.\n7",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 3.pdf",
-        "page": 13,
-        "content_preview": "A Broader Impact\nThe broader impact of LLaV A, a general-purpose visual assistant, has potential benefits and risks\nassociated with its deployment and release. Some considerations are unique to LLaV A due to its\nvisual nature, while others share similarities with existing instruction-following LLMs ",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 3.pdf",
-        "page": 13,
-        "content_preview": "Evaluation complexities. Assessing the performance of LLaV A is challenging as it involves both\nlanguage and visual tasks. Our evaluation benchmark covers several aspects, including accuracy,\nconcept coverage, reasoning ability, and creativity. However, additional aspects need consideration,\nsuch as",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 3.pdf",
-        "page": 13,
-        "content_preview": "engages the community in developing better mitigation strategies to address these concerns. Moreover,\nthe release of LLaV A can spur the development of new applications and research directions, ultimately\ncontributing to the progress and responsible deployment of foundation models in vision-language",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 1,
-      "answer_length_words": 5,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 7,
-    "question": "¿Qué es RAGAS y qué métricas define para evaluar sistemas RAG?",
-    "category": "evaluacion",
-    "answer": "No dispongo de información sobre lo que son las RAGAS. Sin embargo, sí puedo decirte qué métricas se utilizan para evaluar sistemas RAG. Según el Fragmento 1, los objetivos principales de la evaluación incluyen la calidad de recuperación y la calidad de generación. Para evaluar la calidad de recuperación, se emplean métricas como Hit Rate, MRR (Mean Reciprocal Rank) y NDCG (Normalized Discounted Cumulative Gain), según el Fragmento 2. Para evaluar la calidad de generación, se centra en la capacidad del generador para sintetizar respuestas coherentes y relevantes a partir del contexto recuperado. El Fragmento 4 menciona que ROUGE/ROUGE-L son métricas utilizadas para evaluar la calidad de generación. Es importante destacar que estas métricas no representan una aproximación madura o estándar para",
-    "sources": [
-      {
-        "source_file": "paper 5.pdf",
-        "page": 11,
-        "content_preview": "specific metrics [160]. Despite this, there is a notable paucity\nof research dedicated to evaluating the distinct characteristics\nof RAG models.The main evaluation objectives include:\nRetrieval Quality. Evaluating the retrieval quality is crucial\nfor determining the effectiveness of the context sour",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 11,
-        "content_preview": "of search engines, recommendation systems, and information\nretrieval systems are employed to measure the performance of\nthe RAG retrieval module. Metrics such as Hit Rate, MRR, and\nNDCG are commonly utilized for this purpose [161], [162].\nGeneration Quality . The assessment of generation quality\ncen",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 11,
-        "content_preview": "in the field of NLP have propelled the evaluation of RAG\nmodels to the forefront of research in the LLMs community.\nThe primary objective of this evaluation is to comprehend\nand optimize the performance of RAG models across diverse\napplication scenarios.This chapter will mainly introduce the\nmain do",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 13,
-        "content_preview": "ROUGE/ROUGE-L ✓ ✓ ✓\nThe specific metrics for each evaluation aspect are sum-\nmarized in Table III. It is essential to recognize that these\nmetrics, derived from related work, are traditional measures\nand do not yet represent a mature or standardized approach for\nquantifying RAG evaluation aspects. C",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 1,
-      "answer_length_words": 122,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 8,
-    "question": "¿Qué limitaciones tienen los LLMs que RAG intenta resolver, como las alucinaciones o el conocimiento desactualizado?",
+    "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
     "category": "teoria",
-    "answer": "Los LLMs enfrentan limitaciones significativas, especialmente en tareas específicas del dominio o intensivas en conocimiento. Según el Fragmento 1, estos modelos aún enfrentan desafíos importantes, como la producción de \"alucinaciones\" cuando manejan consultas más allá de sus datos de entrenamiento o requieren información actualizada.",
+    "answer": "Según el Fragmento 1, se menciona que los sistemas RAG pueden combinar recuperación con generación mediante la integración con ajustes finos. Esto sugiere que la combinación de recuperación y generación en un sistema RAG implica utilizar técnicas de recuperación para obtener información relevante y luego utilizar modelos de generación para crear texto a partir de esa información, todo ello dentro del marco de un sistema RAG.",
     "sources": [
       {
-        "source_file": "paper 5.pdf",
-        "page": 0,
-        "content_preview": "eration, natural language processing, information retrieval\nI. I NTRODUCTION\nL\nARGE language models (LLMs) have achieved remark-\nable success, though they still face significant limitations,\nespecially in domain-specific or knowledge-intensive tasks [1],\nnotably producing “hallucinations” [2] when h",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 13,
+        "content_preview": "of developing specialized strategies to integrate retrieval with\nlanguage generation models, highlighting the need for further\nresearch and exploration into the robustness of RAG.\nC. Hybrid Approaches\nCombining RAG with fine-tuning is emerging as a leading\nstrategy. Determining the optimal integrati",
         "type": "texto"
       },
       {
-        "source_file": "paper 5.pdf",
-        "page": 0,
-        "content_preview": "cCollege of Design and Innovation, Tongji University\nAbstract—Large Language Models (LLMs) showcase impres-\nsive capabilities but encounter challenges like hallucination,\noutdated knowledge, and non-transparent, untraceable reasoning\nprocesses. Retrieval-Augmented Generation (RAG) has emerged\nas a p",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 10.pdf",
-        "page": 0,
-        "content_preview": "reference-free evaluation of Retrieval Aug-\nmented Generation (RAG) pipelines. RAG\nsystems are composed of a retrieval and an\nLLM based generation module, and provide\nLLMs with knowledge from a reference textual\ndatabase, which enables them to act as a natu-\nral language layer between a user and tex",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 10.pdf",
-        "page": 1,
-        "content_preview": "for building RAG solutions, thus enabling devel-\nopers to easily integrate Ragas into their standard\nworkflow.\n2 Related Work\nEstimating faithfulness using LLMs The prob-\nlem of detecting hallucinations in LLM generated\nresponses has been extensively studied (Ji et al.,\n2023). Several authors have s",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 44,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.0,
-      "rouge2_f1": 0.0,
-      "rougeL_f1": 0.0,
-      "rouge1_vs_context": 0.0,
-      "rougeL_vs_context": 0.0
-    }
-  },
-  {
-    "id": 9,
-    "question": "¿Qué es el Q-Former en BLIP-2?",
-    "category": "multimodalidad",
-    "answer": "El Q-Former en BLIP-2 es un Querying Transformer (Q-Former) preentrenado con una nueva estrategia de dos etapas. Según el Fragmento 4, se trata de un transformador ligero que emplea un conjunto de vectores de consulta aprendibles para extraer características visuales del codificador de imágenes congelado.",
-    "sources": [
-      {
-        "source_file": "paper 2.pdf",
-        "page": 1,
-        "content_preview": "lightweight Q-Former, BLIP-2 is more compute-efficient\nthan exisiting state-of-the-arts. For example, BLIP-2 out-\nperforms Flamingo (Alayrac et al., 2022) by 8.7% on\nzero-shot VQAv2, while using 54 × fewer trainable pa-\nrameters. Furthermore, our results show that BLIP-2 is a\ngeneric method that can",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 1,
-        "content_preview": "• BLIP-2 effectively leverages both frozen pre-trained im-\nage models and language models. We bridge the modality\ngap using a Q-Former pre-trained in two-stages: repre-\nsentation learning stage and generative learning stage.\nBLIP-2 achieves state-of-the-art performance on various\nvision-language tas",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 1,
-        "content_preview": "• Powered by LLMs ( e.g. OPT (Zhang et al., 2022),\nFlanT5 (Chung et al., 2022)), BLIP-2 can be prompted to\nperform zero-shot image-to-text generation that follows\nnatural language instructions, which enables emerging\ncapabilities such as visual knowledge reasoning, visual\nconversation, etc. (see Fig",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 2.pdf",
-        "page": 0,
-        "content_preview": "unimodal models, we propose a Querying Transformer (Q-\nFormer) pre-trained with a new two-stage pre-training strat-\negy. As shown in Figure 1, Q-Former is a lightweight trans-\nformer which employs a set of learnable query vectors to\nextract visual features from the frozen image encoder. It\nacts as a",
-        "type": "texto"
-      }
-    ],
-    "metrics": {
-      "has_sources": 1,
-      "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 45,
-      "faithfulness": 0.0,
-      "rouge1_f1": 0.422,
-      "rouge2_f1": 0.1682,
-      "rougeL_f1": 0.2569,
-      "rouge1_vs_context": 0.0585,
-      "rougeL_vs_context": 0.0468
-    }
-  },
-  {
-    "id": 10,
-    "question": "¿Qué tipos de RAG existen según el survey de RAG para LLMs?",
-    "category": "teoria",
-    "answer": "Según el fragmento 1, se mencionan tres tipos de RAG: Naive RAG, Advanced RAG y Modular RAG.",
-    "sources": [
-      {
-        "source_file": "paper 5.pdf",
-        "page": 1,
-        "content_preview": "question, form a comprehensive prompt that empowers LLMs\nto generate a well-informed answer.\nThe RAG research paradigm is continuously evolving, and\nwe categorize it into three stages: Naive RAG, Advanced\nRAG, and Modular RAG, as showed in Figure 3. Despite\nRAG method are cost-effective and surpass ",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
-        "page": 15,
-        "content_preview": "VIII. C ONCLUSION\nThe summary of this paper, as depicted in Figure 6, empha-\nsizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcas",
-        "type": "texto"
-      },
-      {
-        "source_file": "paper 5.pdf",
+        "source_file": "data\\raw\\paper 5.pdf",
         "page": 1,
         "content_preview": "landscape of LLMs.\n• We identify and discuss the central technologies integral\nto the RAG process, specifically focusing on the aspects\nof “Retrieval”, “Generation” and “Augmentation”, and\ndelve into their synergies, elucidating how these com-\nponents intricately collaborate to form a cohesive and\ne",
         "type": "texto"
       },
       {
-        "source_file": "paper 5.pdf",
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 3,
+        "content_preview": "4\nFig. 3. Comparison between the three paradigms of RAG. (Left) Naive RAG mainly consists of three parts: indexing, retrieval and generation. (Middle)\nAdvanced RAG proposes multiple optimization strategies around pre-retrieval and post-retrieval, with a process similar to the Naive RAG, still follow",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
         "page": 0,
-        "content_preview": "foundational technical concepts, historical progression, and\nthe spectrum of RAG methodologies and applications that\nhave emerged post-LLMs. It is designed to equip readers and\nprofessionals with a detailed and structured understanding of\nboth large models and RAG. It aims to illuminate the evolutio",
+        "content_preview": "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merge",
         "type": "texto"
       }
     ],
+    "retrieved_docs": [
+      "of developing specialized strategies to integrate retrieval with\nlanguage generation models, highlighting the need for further\nresearch and exploration into the robustness of RAG.\nC. Hybrid Approaches\nCombining RAG with fine-tuning is emerging as a leading\nstrategy. Determining the optimal integration of RAG and\nfine-tuning whether sequential, alternating, or through end-to-\nend joint training—and how to harness both parameterized",
+      "landscape of LLMs.\n• We identify and discuss the central technologies integral\nto the RAG process, specifically focusing on the aspects\nof “Retrieval”, “Generation” and “Augmentation”, and\ndelve into their synergies, elucidating how these com-\nponents intricately collaborate to form a cohesive and\neffective RAG framework.\n• We have summarized the current assessment methods of\nRAG, covering 26 tasks, nearly 50 datasets, outlining\nthe evaluation objectives and metrics, as well as the\ncurrent evaluation benchmarks and tools. Additionally,\nwe anticipate future directions for RAG, emphasizing\npotential enhancements to tackle current challenges.\nThe paper unfolds as follows: Section II introduces the\nmain concept and current paradigms of RAG. The following",
+      "4\nFig. 3. Comparison between the three paradigms of RAG. (Left) Naive RAG mainly consists of three parts: indexing, retrieval and generation. (Middle)\nAdvanced RAG proposes multiple optimization strategies around pre-retrieval and post-retrieval, with a process similar to the Naive RAG, still following a\nchain-like structure. (Right) Modular RAG inherits and develops from the previous paradigm, showcasing greater flexibility overall. This is evident in the\nintroduction of multiple specific functional modules and the replacement of existing modules. The overall process is not limited to sequential retrieval and\ngeneration; it includes methods such as iterative and adaptive retrieval.\nPre-retrieval process. In this stage, the primary focus is",
+      "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merges LLMs’ intrin-\nsic knowledge with the vast, dynamic repositories of external\ndatabases. This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naive RAG, the Advanced RAG, and the Modular RAG.\nIt meticulously scrutinizes the tripartite foundation of RAG\nframeworks, which includes the retrieval, the generation and the\naugmentation techniques. The paper highlights the state-of-the-"
+    ],
+    "reference_answer": null,
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 17,
+      "answer_length_words": 66,
       "faithfulness": 0.0,
-      "rouge1_f1": 0.3562,
-      "rouge2_f1": 0.2254,
-      "rougeL_f1": 0.3562,
-      "rouge1_vs_context": 0.0519,
-      "rougeL_vs_context": 0.0519
+      "rouge1_vs_context": 0.0174,
+      "rougeL_vs_context": 0.0174
+    }
+  },
+  {
+    "id": 4,
+    "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
+    "category": "teoria",
+    "answer": "Un modelo con conocimiento paramétrico se refiere a un modelo que tiene una base de conocimientos pre-entrenada y cargada en su memoria. Por otro lado, un sistema con recuperación externa utiliza la información de una base de datos externa para generar respuestas. Según el fragmento 1, los modelos RAG (Retrieval-Augmented Generation) combinan componentes de memoria paramétricos y no-paramétricos pre-entrenados y cargados con conocimiento extenso. Sin embargo, la recuperación externa se refiere específicamente a la capacidad del modelo para acceder a una base de datos externa para obtener información relevante. En resumen, un modelo con conocimiento paramétrico tiene su propia base de conocimientos interna, mientras que un sistema con recuperación externa busca información en una base de datos externa.",
+    "sources": [
+      {
+        "source_file": "data\\raw\\paper 1.pdf",
+        "page": 1,
+        "content_preview": "parametric and non-parametric memory components are pre-trained and pre-loaded with extensive\nknowledge. Crucially, by using pre-trained access mechanisms, the ability to access knowledge is\npresent without additional training.\nOur results highlight the beneﬁts of combining parametric and non-parame",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 4,
+        "content_preview": "to a student internalizing knowledge over time, suitable for\nscenarios requiring replication of specific structures, styles, or\nformats.\nRAG excels in dynamic environments by offering real-\ntime knowledge updates and effective utilization of external\nknowledge sources with high interpretability. How",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 10.pdf",
+        "page": 0,
+        "content_preview": "formance will be affected by the retrieval model,\nthe considered corpus, the LM, or the prompt for-\nmulation, among others. Automated evaluation of\nretrieval-augmented systems is thus paramount. In\npractice, RAG systems are often evaluated in terms\nof the language modelling task itself, i.e. by mea-",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "able success, though they still face significant limitations,\nespecially in domain-specific or knowledge-intensive tasks [1],\nnotably producing “hallucinations” [2] when handling queries\nbeyond their training data or requiring current information. To\novercome challenges, Retrieval-Augmented Generati",
+        "type": "texto"
+      }
+    ],
+    "retrieved_docs": [
+      "parametric and non-parametric memory components are pre-trained and pre-loaded with extensive\nknowledge. Crucially, by using pre-trained access mechanisms, the ability to access knowledge is\npresent without additional training.\nOur results highlight the beneﬁts of combining parametric and non-parametric memory with genera-\ntion for knowledge-intensive tasks—tasks that humans could not reasonably be expected to perform\nwithout access to an external knowledge source. Our RAG models achieve state-of-the-art results\non open Natural Questions [29], WebQuestions [3] and CuratedTrec [2] and strongly outperform\nrecent approaches that use specialised pre-training objectives on TriviaQA [24]. Despite these being",
+      "to a student internalizing knowledge over time, suitable for\nscenarios requiring replication of specific structures, styles, or\nformats.\nRAG excels in dynamic environments by offering real-\ntime knowledge updates and effective utilization of external\nknowledge sources with high interpretability. However, it\ncomes with higher latency and ethical considerations regarding\ndata retrieval. On the other hand, FT is more static, requiring\nretraining for updates but enabling deep customization of the\nmodel’s behavior and style. It demands significant compu-\ntational resources for dataset preparation and training, and\nwhile it can reduce hallucinations, it may face challenges with\nunfamiliar data.\nIn multiple evaluations of their performance on various",
+      "formance will be affected by the retrieval model,\nthe considered corpus, the LM, or the prompt for-\nmulation, among others. Automated evaluation of\nretrieval-augmented systems is thus paramount. In\npractice, RAG systems are often evaluated in terms\nof the language modelling task itself, i.e. by mea-\nsuring perplexity on some reference corpus. How-\never, such evaluations are not always predictive\nof downstream performance (Wang et al., 2023c).\nMoreover, this evaluation strategy relies on the LM\nprobabilities, which are not accessible for some\nclosed models (e.g. ChatGPT and GPT-4). Ques-\ntion answering is another common evaluation task,\nbut usually only datasets with short extractive an-\nswers are considered, which may not be represen-\ntative of how the system will be used.",
+      "able success, though they still face significant limitations,\nespecially in domain-specific or knowledge-intensive tasks [1],\nnotably producing “hallucinations” [2] when handling queries\nbeyond their training data or requiring current information. To\novercome challenges, Retrieval-Augmented Generation (RAG)\nenhances LLMs by retrieving relevant document chunks from\nexternal knowledge base through semantic similarity calcu-\nlation. By referencing external knowledge, RAG effectively\nreduces the problem of generating factually incorrect content.\nIts integration into LLMs has resulted in widespread adoption,\nestablishing RAG as a key technology in advancing chatbots\nand enhancing the suitability of LLMs for real-world applica-\ntions.\nRAG technology has rapidly developed in recent years, and"
+    ],
+    "reference_answer": null,
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 118,
+      "faithfulness": 0.0,
+      "rouge1_vs_context": 0.0347,
+      "rougeL_vs_context": 0.0208
+    }
+  },
+  {
+    "id": 5,
+    "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?",
+    "category": "teoria",
+    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para acceder y manipular el conocimiento es limitada. Según el Fragmento 1, los modelos de lenguaje \"largely\" saben qué saben, pero no siempre pueden acceder a la información que necesitan. Además, según el Fragmento 2, aunque los modelos de lenguaje han demostrado almacenar conocimiento en sus parámetros y lograr resultados de vanguardia en tareas de NLP cuando se fine-tunean, su capacidad para acceder y manipular el conocimiento con precisión es limitada.",
+    "sources": [
+      {
+        "source_file": "data\\raw\\paper 10.pdf",
+        "page": 5,
+        "content_preview": "Kaplan. 2022. Language models (mostly) know what\nthey know. CoRR, abs/2207.05221.\nNikhil Kandpal, Haikang Deng, Adam Roberts, Eric\nWallace, and Colin Raffel. 2022. Large language\nmodels struggle to learn long-tail knowledge. CoRR,\nabs/2211.08411.\nUrvashi Khandelwal, Omer Levy, Dan Jurafsky, Luke\nZet",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 1.pdf",
+        "page": 0,
+        "content_preview": "Retrieval-Augmented Generation for\nKnowledge-Intensive NLP Tasks\nPatrick Lewis†‡, Ethan Perez⋆,\nAleksandra Piktus†, Fabio Petroni†, Vladimir Karpukhin†, Naman Goyal†, Heinrich Küttler†,\nMike Lewis†, Wen-tau Yih†, Tim Rocktäschel†‡, Sebastian Riedel†‡, Douwe Kiela†\n†Facebook AI Research; ‡University ",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 1.pdf",
+        "page": 13,
+        "content_preview": "doi: 10.18653/v1/D19-1244. URL https://www.aclweb.org/anthology/D19-1244.\n[47] Fabio Petroni, Tim Rocktäschel, Sebastian Riedel, Patrick Lewis, Anton Bakhtin, Yuxiang Wu,\nand Alexander Miller. Language models as knowledge bases? In Proceedings of the 2019\nConference on Empirical Methods in Natural L",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 3.pdf",
+        "page": 0,
+        "content_preview": "the image content. While this allows language to play an important role in mapping visual signals to\nlanguage semantics—a common channel for human communication, it leads to models that usually\nhave a fixed interface with limited interactivity and adaptability to the user’s instructions.\nLarge langu",
+        "type": "texto"
+      }
+    ],
+    "retrieved_docs": [
+      "Kaplan. 2022. Language models (mostly) know what\nthey know. CoRR, abs/2207.05221.\nNikhil Kandpal, Haikang Deng, Adam Roberts, Eric\nWallace, and Colin Raffel. 2022. Large language\nmodels struggle to learn long-tail knowledge. CoRR,\nabs/2211.08411.\nUrvashi Khandelwal, Omer Levy, Dan Jurafsky, Luke\nZettlemoyer, and Mike Lewis. 2020. Generalization\nthrough memorization: Nearest neighbor language\nmodels. In 8th International Conference on Learning\nRepresentations, ICLR 2020, Addis Ababa, Ethiopia,\nApril 26-30, 2020. OpenReview.net.\nOmar Khattab, Keshav Santhanam, Xiang Lisa Li,\nDavid Hall, Percy Liang, Christopher Potts, and\nMatei Zaharia. 2022. Demonstrate-search-predict:\nComposing retrieval and language models for\nknowledge-intensive NLP. CoRR, abs/2212.14024.",
+      "Retrieval-Augmented Generation for\nKnowledge-Intensive NLP Tasks\nPatrick Lewis†‡, Ethan Perez⋆,\nAleksandra Piktus†, Fabio Petroni†, Vladimir Karpukhin†, Naman Goyal†, Heinrich Küttler†,\nMike Lewis†, Wen-tau Yih†, Tim Rocktäschel†‡, Sebastian Riedel†‡, Douwe Kiela†\n†Facebook AI Research; ‡University College London; ⋆New York University;\nplewis@fb.com\nAbstract\nLarge pre-trained language models have been shown to store factual knowledge\nin their parameters, and achieve state-of-the-art results when ﬁne-tuned on down-\nstream NLP tasks. However, their ability to access and precisely manipulate knowl-\nedge is still limited, and hence on knowledge-intensive tasks, their performance\nlags behind task-speciﬁc architectures. Additionally, providing provenance for their",
+      "doi: 10.18653/v1/D19-1244. URL https://www.aclweb.org/anthology/D19-1244.\n[47] Fabio Petroni, Tim Rocktäschel, Sebastian Riedel, Patrick Lewis, Anton Bakhtin, Yuxiang Wu,\nand Alexander Miller. Language models as knowledge bases? In Proceedings of the 2019\nConference on Empirical Methods in Natural Language Processing and the 9th International\nJoint Conference on Natural Language Processing (EMNLP-IJCNLP), pages 2463–2473, Hong\nKong, China, November 2019. Association for Computational Linguistics. doi: 10.18653/v1/\nD19-1250. URL https://www.aclweb.org/anthology/D19-1250.\n[48] Fabio Petroni, Patrick Lewis, Aleksandra Piktus, Tim Rocktäschel, Yuxiang Wu, Alexander H.\nMiller, and Sebastian Riedel. How context affects language models’ factual predictions. In",
+      "the image content. While this allows language to play an important role in mapping visual signals to\nlanguage semantics—a common channel for human communication, it leads to models that usually\nhave a fixed interface with limited interactivity and adaptability to the user’s instructions.\nLarge language models (LLM), on the other hand, have shown that language can play a wider\nrole: a universal interface for a general-purpose assistant, where various task instructions can be\nexplicitly represented in language and guide the end-to-end trained neural assistant to switch to the\ntask of interest to solve it. For example, the recent success of ChatGPT [35] and GPT-4 [36] have\ndemonstrated the power of aligned LLMs in following human instructions, and have stimulated"
+    ],
+    "reference_answer": null,
+    "metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 82,
+      "faithfulness": 0.0,
+      "rouge1_vs_context": 0.011,
+      "rougeL_vs_context": 0.0073
     }
   }
 ]

@@ -78,3 +78,6 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
         json.dump(questions, f, ensure_ascii=False, indent=2)
 
     print(f"Dataset de {len(questions)} preguntas guardado en {output_path}")
+
+    return questions
+
