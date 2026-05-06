@@ -172,5 +172,69 @@
       "faithfulness": 0.06060606060606061,
       "rouge1_vs_context": 0.06060606060606061
     }
+  },
+  {
+    "timestamp": "06/05/2026 11:40:25",
+    "question": "¿Qué es RAG?",
+    "mode": "ambos",
+    "rag_answer": "RAG se refiere a Retrieval-Augmented Generation. Según el Fragmento 1, RAG es una solución prometedora que combina conocimientos de bases de datos externas para mejorar la precisión y credibilidad de la generación, especialmente en tareas intensivas en conocimiento.",
+    "baseline_answer": "La respuesta a tu pregunta es que RAG puede referirse a diferentes conceptos dependiendo del contexto. En el ámbito académico y universitario, RAG suele ser abreviatura de \"Reunión Académica General\" o \"Red de Apoyo a la Gestión\", pero también se utiliza en otros contextos como \"Reto a Ganar\" (en competencias deportivas) o \"Resolución de Actividades Gestionadas\" (en gestión de proyectos). Si necesitas más información, por favor proporciona el contexto específico en el que estás utilizando la abreviatura RAG.",
+    "rag_sources": [
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merge",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 15,
+        "content_preview": "sizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcases the evolution\nof RAG technologies and their application on many different\n",
+        "type": "texto"
+      }
+    ],
+    "rag_metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 38,
+      "faithfulness": 0.06060606060606061,
+      "rouge1_vs_context": 0.06060606060606061
+    },
+    "baseline_metrics": {
+      "has_sources": 0,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 78
+    }
+  },
+  {
+    "timestamp": "06/05/2026 11:57:30",
+    "question": "¿Qué es RAG?",
+    "mode": "rag",
+    "rag_answer": "RAG se refiere a Retrieval-Augmentation-Generation. Según el fragmento 1, RAG es una solución prometedora que combina conocimiento de bases de datos externas para mejorar la precisión y credibilidad de la generación, especialmente en tareas intensivas en conocimiento.",
+    "baseline_answer": "",
+    "rag_sources": [
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merge",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 15,
+        "content_preview": "sizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcases the evolution\nof RAG technologies and their application on many different\n",
+        "type": "texto"
+      }
+    ],
+    "rag_metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 37,
+      "faithfulness": 0.0625,
+      "rouge1_vs_context": 0.0625
+    }
   }
 ]

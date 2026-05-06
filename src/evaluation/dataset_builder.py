@@ -4,10 +4,27 @@ from pathlib import Path
 
 def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
     questions = [
-        {"id": 1, "question": "¿Qué es Retrieval-Augmented Generation?", "category": "teoria"},
-        {"id": 2, "question": "¿Qué problema intenta resolver un sistema RAG?", "category": "teoria"},
-        {"id": 3, "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?", "category": "teoria"},
-        {"id": 4, "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?", "category": "teoria"},
+        {
+            "id": 1,
+            "question": "¿Qué es Retrieval-Augmented Generation?",
+            "category": "teoria",
+            "reference_answer": "RAG es una técnica que combina un sistema de recuperación de información con un modelo generativo. El sistema recupera fragmentos relevantes de una base de documentos y los usa como contexto para que el modelo genere respuestas más precisas y fundamentadas."
+        },
+        {
+            "id": 2,
+            "question": "¿Qué problema intenta resolver un sistema RAG?",
+            "category": "teoria",
+            "reference_answer": "RAG intenta resolver el problema de que los modelos de lenguaje tienen conocimiento paramétrico limitado y estático, que puede estar desactualizado o ser insuficiente. Al recuperar información externa relevante, RAG permite generar respuestas más precisas y actualizadas."
+        },
+        {
+            "id": 3,
+            "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
+            "category": "teoria",
+            "reference_answer": "Significa que el sistema primero busca y recupera fragmentos relevantes de una base de documentos usando búsqueda semántica, y luego un modelo generativo usa esos fragmentos como contexto adicional para producir una respuesta informada y fundamentada en los documentos."
+        },
+        {"id": 4, "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?", "category": "teoria",
+         "reference_answer": "Un modelo con conocimiento paramétrico solo puede usar la información aprendida durante su entrenamiento, que es estática y puede estar desactualizada. Un sistema con recuperación externa puede acceder a documentos actualizados en tiempo real, complementando el conocimiento del modelo."
+        },
         {"id": 5, "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?", "category": "teoria"},
         {"id": 6, "question": "¿Qué ventajas ofrece RAG frente a un modelo sin acceso a documentos?", "category": "teoria"},
         {"id": 7, "question": "¿Qué papel tiene el retrieval en una arquitectura RAG?", "category": "teoria"},
@@ -17,9 +34,15 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
         {"id": 11, "question": "¿Qué limitación general de los LLM intenta paliar RAG?", "category": "teoria"},
         {"id": 12, "question": "¿Por qué RAG es útil en tareas de pregunta-respuesta sobre documentos?", "category": "teoria"},
 
-        {"id": 13, "question": "¿Para qué sirven los embeddings en un sistema RAG?", "category": "componentes"},
-        {"id": 14, "question": "¿Qué papel cumple un índice vectorial en el sistema?", "category": "componentes"},
-        {"id": 15, "question": "¿Por qué los documentos se dividen en chunks?", "category": "componentes"},
+        {"id": 13, "question": "¿Para qué sirven los embeddings en un sistema RAG?", "category": "componentes",
+         "reference_answer": "Los embeddings convierten texto en vectores numéricos que capturan el significado semántico. En un sistema RAG, permiten comparar la similitud entre la pregunta del usuario y los fragmentos de documentos para recuperar los más relevantes."
+        },
+        {"id": 14, "question": "¿Qué papel cumple un índice vectorial en el sistema?", "category": "componentes",
+         "reference_answer": "El índice vectorial almacena los embeddings de los fragmentos de documentos y permite realizar búsquedas de similitud eficientes. Cuando llega una pregunta, se compara su embedding contra el índice para encontrar los fragmentos más relevantes."
+        },
+        {"id": 15, "question": "¿Por qué los documentos se dividen en chunks?", "category": "componentes",
+         "reference_answer": "Los documentos se dividen en chunks porque los modelos tienen un límite de contexto y porque fragmentos más pequeños permiten recuperar información más precisa y relevante para preguntas específicas."
+        },
         {"id": 16, "question": "¿Qué efecto tiene el chunk overlap en la recuperación?", "category": "componentes"},
         {"id": 17, "question": "¿Cómo influye el tamaño del chunk en el rendimiento del sistema?", "category": "componentes"},
         {"id": 18, "question": "¿Qué significa buscar similitud semántica entre una pregunta y los documentos?", "category": "componentes"},
@@ -30,7 +53,9 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
         {"id": 23, "question": "¿Qué diferencia hay entre retrieval inicial y reranking?", "category": "componentes"},
         {"id": 24, "question": "¿Por qué la calidad de los embeddings influye en la calidad del retrieval?", "category": "componentes"},
 
-        {"id": 25, "question": "¿Qué diferencia hay entre un baseline y un sistema RAG?", "category": "comparacion"},
+        {"id": 25, "question": "¿Qué diferencia hay entre un baseline y un sistema RAG?", "category": "comparacion",
+         "reference_answer": "El baseline responde preguntas usando solo el conocimiento paramétrico del modelo, sin acceso a documentos externos. El sistema RAG primero recupera fragmentos relevantes de una base de documentos y los usa como contexto, lo que permite respuestas más precisas y fundamentadas."
+        },
         {"id": 26, "question": "¿Por qué el baseline suele dar respuestas más genéricas?", "category": "comparacion"},
         {"id": 27, "question": "¿En qué situaciones puede superar RAG al baseline?", "category": "comparacion"},
         {"id": 28, "question": "¿En qué casos puede fallar un sistema RAG aunque recupere contexto?", "category": "comparacion"},
@@ -44,7 +69,9 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
         {"id": 35, "question": "¿Por qué los PDFs con tablas e imágenes son difíciles de procesar en RAG?", "category": "multimodalidad"},
         {"id": 36, "question": "¿Qué problemas introduce el contenido visual en un sistema puramente textual?", "category": "multimodalidad"},
         {"id": 37, "question": "¿Por qué una figura puede contener información relevante que no aparece bien en el texto extraído?", "category": "multimodalidad"},
-        {"id": 38, "question": "¿Qué aporta LLaVA en un pipeline multimodal?", "category": "multimodalidad"},
+        {"id": 38, "question": "¿Qué aporta LLaVA en un pipeline multimodal?", "category": "multimodalidad",
+         "reference_answer": "LLaVA es un modelo de visión-lenguaje que genera descripciones textuales (captions) a partir de imágenes. En el pipeline multimodal, se usa para describir las imágenes extraídas de los PDFs, convirtiendo contenido visual en texto que puede ser indexado y recuperado junto con los chunks textuales."
+        },
         {"id": 39, "question": "¿Qué limitaciones tiene la generación automática de captions a partir de imágenes extraídas de un PDF?", "category": "multimodalidad"},
         {"id": 40, "question": "¿Por qué detectar todas las imágenes de un PDF puede introducir ruido?", "category": "multimodalidad"},
         {"id": 41, "question": "¿Por qué las imágenes irrelevantes pueden empeorar la calidad del índice multimodal?", "category": "multimodalidad"},
@@ -52,9 +79,13 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
         {"id": 43, "question": "¿Por qué el contenido visual puede requerir modelos específicos de visión-lenguaje?", "category": "multimodalidad"},
         {"id": 44, "question": "¿Qué limitaciones prácticas tiene un pipeline multimodal frente a uno solo textual?", "category": "multimodalidad"},
 
-        {"id": 45, "question": "¿Qué es BLIP-2 y cuál es su aportación principal?", "category": "modelos"},
+        {"id": 45, "question": "¿Qué es BLIP-2 y cuál es su aportación principal?", "category": "modelos",
+         "reference_answer": "BLIP-2 es un modelo de visión-lenguaje que introduce el Q-Former, un módulo que conecta un encoder de imágenes congelado con un LLM congelado. Su aportación principal es lograr capacidades multimodales de alto rendimiento con un entrenamiento eficiente, sin necesidad de ajustar los modelos base."
+        },
         {"id": 46, "question": "¿Qué es LLaVA y cómo se entrena?", "category": "modelos"},
-        {"id": 47, "question": "¿Qué es RAGAS y para qué sirve?", "category": "modelos"},
+        {"id": 47, "question": "¿Qué es RAGAS y para qué sirve?", "category": "modelos",
+         "reference_answer": "RAGAS es un framework de evaluación para sistemas RAG que usa un LLM como juez para medir métricas como faithfulness (fidelidad al contexto), answer relevancy (relevancia de la respuesta), context precision (precisión del contexto recuperado) y context recall (cobertura del contexto necesario)."
+        },
         {"id": 48, "question": "¿Qué tipo de evaluación propone RAGAS para sistemas RAG?", "category": "modelos"},
         {"id": 49, "question": "¿Qué importancia tiene el survey sobre RAG dentro del proyecto?", "category": "modelos"},
         {"id": 50, "question": "¿Por qué los modelos de visión-lenguaje son relevantes para la multimodalidad?", "category": "modelos"},
@@ -77,7 +108,8 @@ def build_default_dataset(output_path: str = "src/evaluation/questions.json"):
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(questions, f, ensure_ascii=False, indent=2)
 
+    n_with_ref = sum(1 for q in questions if q.get("reference_answer"))
     print(f"Dataset de {len(questions)} preguntas guardado en {output_path}")
+    print(f"  ({n_with_ref} con respuesta de referencia para RAGAS context_recall)")
 
     return questions
-

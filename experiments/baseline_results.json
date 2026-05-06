@@ -3,65 +3,77 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en aprendizaje automático que combina la búsqueda y generación de texto. Funciona mediante la siguiente secuencia: 1. Primero, el modelo busca información relevante en una base de datos o conjunto de documentos relacionados con la pregunta o tema específico. 2. Luego, utiliza esa información para generar un texto coherente y preciso que responda a la pregunta o complete la tarea. RAG se enfoca en mejorar la precisión y la coherencia del modelo al incorporar la búsqueda de información relevante antes de la generación del texto.",
-    "reference_answer": null,
+    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en aprendizaje automático que combina la búsqueda y generación de texto. Funciona buscando en una base de datos para encontrar información relevante relacionada con la pregunta o tema dado, y luego utiliza esa información para generar una respuesta más precisa y detallada. En otras palabras, RAG busca en una base de datos para \"recuperar\" información relevante y luego la utiliza como input para generar texto. Esto permite a los modelos de lenguaje producir respuestas más precisas y relevantes que simplemente generando texto aleatorio.",
+    "reference_answer": "RAG es una técnica que combina un sistema de recuperación de información con un modelo generativo. El sistema recupera fragmentos relevantes de una base de documentos y los usa como contexto para que el modelo genere respuestas más precisas y fundamentadas.",
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 94
+      "answer_length_words": 92,
+      "rouge1_f1": 0.3836,
+      "rouge2_f1": 0.1528,
+      "rougeL_f1": 0.274
     }
   },
   {
     "id": 2,
     "question": "¿Qué problema intenta resolver un sistema RAG?",
     "category": "teoria",
-    "answer": "Un sistema RAG (Reducción de Actividades Gestionables) es una herramienta utilizada para identificar y priorizar las actividades que pueden ser eliminadas o simplificadas en un proceso, con el objetivo de mejorar la eficiencia y reducir el tiempo necesario para completar tareas. En resumen, un sistema RAG intenta resolver el problema del \"sobrecarga de trabajo\" o \"eficiencia operativa\", identificando áreas donde se pueden aplicar mejoras para liberar recursos y aumentar la productividad.",
-    "reference_answer": null,
+    "answer": "Un sistema RAG (Reducción de Actividades Gestionables) es una herramienta utilizada para identificar y priorizar las actividades que pueden ser eliminadas, simplificadas o automatizadas en un proceso. El objetivo principal de un sistema RAG es reducir la complejidad y mejorar la eficiencia en los procesos organizacionales. En resumen, el problema que intenta resolver un sistema RAG es la sobrecarga de tareas innecesarias y la falta de claridad en las responsabilidades y procedimientos.",
+    "reference_answer": "RAG intenta resolver el problema de que los modelos de lenguaje tienen conocimiento paramétrico limitado y estático, que puede estar desactualizado o ser insuficiente. Al recuperar información externa relevante, RAG permite generar respuestas más precisas y actualizadas.",
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 71
+      "answer_length_words": 72,
+      "rouge1_f1": 0.2807,
+      "rouge2_f1": 0.0357,
+      "rougeL_f1": 0.1404
     }
   },
   {
     "id": 3,
     "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
     "category": "teoria",
-    "answer": "La combinación de recuperación y generación en un sistema RAG (Recovery and Generation) se refiere a la capacidad del sistema para restaurar el estado anterior de una transacción fallida, mientras que también genera nuevos datos o resultados a partir de esa misma transacción. En otras palabras, cuando una transacción falla en un sistema RAG, no solo se intenta recuperar los cambios realizados hasta ese punto (recuperación), sino que también se aprovechan esos cambios para generar nuevas informaciones o resultados que puedan ser útiles. Esto puede incluir la generación de nuevos datos, la actualización de estadísticas, o incluso la ejecución de acciones adicionales basadas en los cambios realizados. La combinación de recuperación y generación permite a los sistemas RAG maximizar el valor de las transacciones fallidas, reduciendo así el impacto negativo de dichas fallas.",
-    "reference_answer": null,
+    "answer": "La combinación de recuperación y generación en un sistema RAG (Recuperación-Acción-Generación) implica que el sistema no solo puede generar nuevos datos o información, sino también recuperar y utilizar los datos existentes para mejorar su desempeño y precisión. Esto permite al sistema aprender a partir de sus errores y experiencias pasadas, lo que puede conducir a una mejor generación de resultados en el futuro. En otras palabras, la combinación de recuperación y generación en un sistema RAG significa que el sistema puede: * Recuperar datos o información existentes para mejorar su desempeño. * Generar nuevos datos o información basada en los datos recuperados. Esta combinación permite a los sistemas RAG ser más efectivos y precisos en sus tareas, ya que pueden aprender de sus errores y experiencias pasadas.",
+    "reference_answer": "Significa que el sistema primero busca y recupera fragmentos relevantes de una base de documentos usando búsqueda semántica, y luego un modelo generativo usa esos fragmentos como contexto adicional para producir una respuesta informada y fundamentada en los documentos.",
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 133
+      "answer_length_words": 127,
+      "rouge1_f1": 0.1497,
+      "rouge2_f1": 0.0432,
+      "rougeL_f1": 0.1283
     }
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
     "category": "teoria",
-    "answer": "Un modelo con conocimiento paramétrico es aquel que utiliza parámetros predefinidos para realizar una tarea específica, mientras que un sistema con recuperación externa busca información en fuentes externas al propio sistema para tomar decisiones o realizar tareas. En otras palabras, el modelo con conocimiento paramétrico depende de la información previamente almacenada y programada, mientras que el sistema con recuperación externa puede acceder a nuevas fuentes de información en tiempo real.",
-    "reference_answer": null,
+    "answer": "Un modelo con conocimiento paramétrico es aquel que utiliza parámetros predefinidos para realizar una tarea específica, mientras que un sistema con recuperación externa busca información en fuentes externas al propio sistema para tomar decisiones o realizar tareas. En otras palabras, el modelo con conocimiento paramétrico se basa en la información previamente almacenada y programada, mientras que el sistema con recuperación externa busca obtener la información necesaria en tiempo real a través de fuentes externas como bases de datos, internet o otros sistemas conectados.",
+    "reference_answer": "Un modelo con conocimiento paramétrico solo puede usar la información aprendida durante su entrenamiento, que es estática y puede estar desactualizada. Un sistema con recuperación externa puede acceder a documentos actualizados en tiempo real, complementando el conocimiento del modelo.",
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 70
+      "answer_length_words": 83,
+      "rouge1_f1": 0.3676,
+      "rouge2_f1": 0.209,
+      "rougeL_f1": 0.2647
     }
   },
   {
     "id": 5,
     "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?",
     "category": "teoria",
-    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para comprender y generar texto está limitada a la información que se le ha entrenado. Si el modelo no tiene acceso a ciertos datos o conceptos, puede no poder responder preguntas complejas o producir textos precisos en un tema específico. Por ejemplo, si un modelo de lenguaje se entrena solo con textos históricos hasta la década de 1990, no podrá proporcionar información precisa sobre eventos que ocurrieron después de esa fecha. En este caso, el modelo necesitaría conocimiento externo para estar al día y poder responder preguntas sobre temas más recientes. Además, los modelos de lenguaje pueden tener dificultades con la comprensión del contexto o la interpretación de conceptos abstractos, por lo que también pueden requerir conocimiento externo para mejorar su precisión.",
+    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para comprender y generar texto está limitada a la información que se le proporcionó durante el entrenamiento. Si el modelo no ha sido expuesto a un tema o concepto específico, puede no poder generar respuestas precisas o relevantes. Por ejemplo, si se le pide al modelo que describa una técnica de investigación en biología molecular, pero solo se le entrenó con textos sobre física y matemáticas, es probable que no tenga la información necesaria para responder correctamente. En este caso, el conocimiento externo puede ser necesario para proporcionarle a la herramienta la información adicional que necesita para generar una respuesta precisa. Además, los modelos de lenguaje pueden tener dificultades para comprender contextos culturales o históricos específicos, y pueden requerir conocimientos externos para entender referencias o alusiones que no est",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 133
+      "answer_length_words": 140
     }
   }
 ]
