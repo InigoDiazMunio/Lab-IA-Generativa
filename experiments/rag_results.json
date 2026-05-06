@@ -80,7 +80,7 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 89,
+      "answer_length_words": 96,
       "faithfulness": 0.0,
       "rouge1_f1": 0.2345,
       "rouge2_f1": 0.0559,
@@ -233,7 +233,7 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 82,
+      "answer_length_words": 69,
       "faithfulness": 0.0,
       "rouge1_vs_context": 0.0184,
       "rougeL_vs_context": 0.011

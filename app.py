@@ -165,7 +165,7 @@ textarea:focus{border-color:var(--accent)}
 .loading.show{display:flex}
 .spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.answer{font-size:.95rem;line-height:1.7}
+.answer{font-size:.95rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 .sources{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
 .chip{display:inline-flex;align-items:center;gap:.3rem;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:.2rem .5rem;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-dim);margin:.15rem}
 .chip.visual{border-color:rgba(126,184,164,.3);color:var(--rag)}
@@ -193,6 +193,11 @@ textarea:focus{border-color:var(--accent)}
 .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
 .anim{animation:slideUp .3s ease}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.badge-agent{background:rgba(180,160,220,.15);color:#b4a0dc}
+.step{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.65rem .9rem;margin:.35rem 0;font-size:.76rem;font-family:'DM Mono',monospace}
+.step-tool{color:#b4a0dc;font-weight:500}
+.step-input{color:var(--text-dim);margin-top:.2rem}
+.step-result{color:var(--text-dim);margin-top:.2rem;opacity:.7}
 </style>
 </head>
 <body>
@@ -219,6 +224,7 @@ textarea:focus{border-color:var(--accent)}
         <button class="tog active" onclick="setMode('rag',this)">RAG</button>
         <button class="tog" onclick="setMode('baseline',this)">Baseline</button>
         <button class="tog" onclick="setMode('ambos',this)">Ambos</button>
+        <button class="tog" onclick="setMode('agente',this)">Agente</button>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" id="btn-ask" onclick="doAsk()">Preguntar</button>
@@ -405,6 +411,19 @@ function renderConsulta(data) {
     return;
   }
 
+  if (curMode === 'agente') {
+    cont.innerHTML =
+      '<div class="card anim">' +
+        '<div class="card-head"><span class="badge badge-agent">AGENTE</span></div>' +
+        '<div class="card-body">' +
+          '<div class="answer">' + (data.rag_answer || 'Sin respuesta.') + '</div>' +
+          stepsHtml(data.agent_steps || []) +
+          srcHtml(data.rag_sources || []) +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
   var isRag = curMode === 'rag';
   var ans = isRag ? data.rag_answer : data.baseline_answer;
   var src = isRag ? (data.rag_sources || []) : [];
@@ -426,6 +445,18 @@ function buildGrid(ragAns, ragSrc, blAns, blSrc) {
     '<div class="card anim"><div class="card-head"><span class="badge badge-rag">RAG</span></div><div class="card-body"><div class="answer">' + (ragAns || 'Sin respuesta.') + '</div>' + srcHtml(ragSrc || []) + '</div></div>' +
     '<div class="card anim"><div class="card-head"><span class="badge badge-bl">Baseline</span></div><div class="card-body"><div class="answer">' + (blAns || 'Sin respuesta.') + '</div></div></div>' +
   '</div>';
+}
+
+function stepsHtml(steps) {
+  if (!steps || !steps.length) return '';
+  var rows = steps.map(function(s, i) {
+    return '<div class="step">' +
+      '<div class="step-tool">&#x2192; ' + (i+1) + '. ' + s.tool + '</div>' +
+      '<div class="step-input">Input: ' + s.input + '</div>' +
+      (s.result_preview ? '<div class="step-result">' + s.result_preview.substring(0,200) + '…</div>' : '') +
+    '</div>';
+  }).join('');
+  return '<div class="sources"><div class="label">Pasos del agente</div>' + rows + '</div>';
 }
 
 function srcHtml(sources) {
@@ -832,9 +863,18 @@ def ask():
     if not query:
         return jsonify({'error': 'Pregunta vacía'}), 400
 
-    result = {'rag_answer': '', 'baseline_answer': '', 'rag_sources': []}
+    result = {'rag_answer': '', 'baseline_answer': '', 'rag_sources': [], 'agent_steps': []}
 
     try:
+        if mode == 'agente':
+            from src.agent.rag_agent import run_agent
+            agent_result = run_agent(query)
+            result['rag_answer'] = agent_result['answer']
+            result['rag_sources'] = agent_result['sources']
+            result['agent_steps'] = agent_result['steps']
+            save_live_metrics(query, mode, result)
+            return jsonify(result)
+
         vs = get_vector_store()
 
         if mode in ('rag', 'ambos'):
