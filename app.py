@@ -258,19 +258,53 @@ textarea:focus{border-color:var(--accent)}
   <div class="section-title">Gestión del índice</div>
   <div id="indice-status" style="margin-bottom:2rem"></div>
 
+  <!-- Documentos indexados -->
+  <div class="card" style="margin-bottom:2rem">
+    <div class="card-head">
+      <span class="badge badge-accent">Documentos indexados</span>
+      <span class="dim small mono" id="idx-summary" style="margin-left:auto"></span>
+    </div>
+    <div class="card-body" id="indexed-docs-list">
+      <div class="dim small">Cargando...</div>
+    </div>
+  </div>
+
+  <!-- Añadir documento -->
+  <div class="card" style="margin-bottom:2rem">
+    <div class="card-head"><span class="badge badge-rag">Añadir documento</span></div>
+    <div class="card-body">
+      <div class="answer" style="font-size:.88rem;margin-bottom:1rem">
+        Sube un PDF nuevo para añadirlo al índice de forma incremental, sin regenerar los embeddings existentes.
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+        <label class="btn btn-secondary" style="cursor:pointer">
+          Seleccionar PDF
+          <input type="file" id="pdf-upload" accept=".pdf" style="display:none" onchange="onFileSelected(this)">
+        </label>
+        <span class="dim small mono" id="selected-file">Ningún archivo seleccionado</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-add-doc" onclick="addDocument()" disabled>Añadir al índice</button>
+      </div>
+      <div class="loading" id="load-add"><div class="spinner"></div><span>Procesando documento...</span></div>
+      <div class="log" id="log-add"></div>
+    </div>
+  </div>
+
+  <!-- Reconstruir índice completo -->
   <div class="grid2" style="margin-bottom:2rem">
     <div class="card">
-      <div class="card-head"><span class="badge badge-rag">Solo texto</span></div>
+      <div class="card-head"><span class="badge badge-rag">Reconstruir · Solo texto</span></div>
       <div class="card-body">
-        <div class="answer" style="font-size:.88rem;margin-bottom:1rem">Indexa únicamente chunks de texto. Más rápido y con mejores métricas textuales.</div>
-        <button class="btn btn-primary" id="btn-idx-texto" onclick="buildIdx('texto')">Construir índice de texto</button>
+        <div class="answer" style="font-size:.88rem;margin-bottom:1rem">Regenera todo el índice desde cero con todos los PDFs de data/raw. Borra los embeddings existentes.</div>
+        <button class="btn btn-primary" id="btn-idx-texto" onclick="buildIdx('texto')">Reconstruir índice de texto</button>
       </div>
     </div>
     <div class="card">
-      <div class="card-head"><span class="badge badge-accent">Texto + Imágenes</span></div>
+      <div class="card-head"><span class="badge badge-accent">Reconstruir · Texto + Imágenes</span></div>
       <div class="card-body">
-        <div class="answer" style="font-size:.88rem;margin-bottom:1rem">Indexa texto + captions de imágenes con LLaVA. Requiere Ollama con LLaVA instalado.</div>
-        <button class="btn btn-secondary" id="btn-idx-multi" onclick="buildIdx('multimodal')">Construir índice multimodal</button>
+        <div class="answer" style="font-size:.88rem;margin-bottom:1rem">Regenera índice con texto + captions de imágenes (LLaVA). Requiere Ollama.</div>
+        <button class="btn btn-secondary" id="btn-idx-multi" onclick="buildIdx('multimodal')">Reconstruir índice multimodal</button>
       </div>
     </div>
   </div>
@@ -605,6 +639,116 @@ function loadIdxStatus() {
       '<div class="metric-card" style="flex:1;min-width:160px"><div class="label">Estado</div><div class="metric-val" style="color:' + color + ';font-size:1.4rem">' + icon + ' ' + (data.exists ? 'Disponible' : 'No existe') + '</div></div>' +
       extra + '</div>';
   });
+  loadIndexedSources();
+}
+
+function loadIndexedSources() {
+  fetch('/indexed_sources').then(function(r){return r.json()}).then(function(data){
+    var cont = document.getElementById('indexed-docs-list');
+    var summary = document.getElementById('idx-summary');
+
+    if (data.error || !data.sources || data.sources.length === 0) {
+      cont.innerHTML = '<div class="dim small" style="font-style:italic">No hay documentos indexados todavía.</div>';
+      summary.textContent = '';
+      return;
+    }
+
+    summary.textContent = data.total_documents + ' docs · ' + data.total_chunks + ' chunks';
+
+    var html = '';
+    data.sources.forEach(function(src) {
+      var types = src.types.join(', ');
+      var pageCount = src.pages.length;
+
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)">' +
+        '<div>' +
+          '<div class="mono small" style="color:var(--text)">' + src.source_file + '</div>' +
+          '<div class="dim" style="font-size:.72rem">' + src.chunk_count + ' chunks · ' + pageCount + ' páginas · ' + types + '</div>' +
+        '</div>' +
+        '<button class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.68rem" onclick="deleteSource(\'' + src.source_file.replace(/'/g, "\\'") + '\')">Eliminar</button>' +
+      '</div>';
+    });
+
+    cont.innerHTML = html;
+  }).catch(function(){
+    document.getElementById('indexed-docs-list').innerHTML = '<div class="dim small">Error al cargar documentos indexados.</div>';
+  });
+}
+
+function onFileSelected(input) {
+  var lbl = document.getElementById('selected-file');
+  var btn = document.getElementById('btn-add-doc');
+
+  if (input.files && input.files.length > 0) {
+    lbl.textContent = input.files[0].name;
+    lbl.style.color = 'var(--accent)';
+    btn.disabled = false;
+  } else {
+    lbl.textContent = 'Ningún archivo seleccionado';
+    lbl.style.color = '';
+    btn.disabled = true;
+  }
+}
+
+function addDocument() {
+  var fileInput = document.getElementById('pdf-upload');
+  if (!fileInput.files || fileInput.files.length === 0) return;
+
+  var formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+
+  var btn = document.getElementById('btn-add-doc');
+  btn.disabled = true;
+  document.getElementById('load-add').classList.add('show');
+  document.getElementById('log-add').style.display = 'none';
+
+  fetch('/add_document', {
+    method: 'POST',
+    body: formData
+  }).then(function(r){return r.json()}).then(function(data){
+    var log = document.getElementById('log-add');
+    log.style.display = 'block';
+
+    if (data.error) {
+      log.innerHTML = '<span style="color:var(--accent3)">ERROR: ' + data.error + '</span>';
+    } else {
+      log.innerHTML = data.log.replace(/\n/g, '<br>');
+    }
+    log.scrollTop = log.scrollHeight;
+
+    // Refresh lists
+    loadIdxStatus();
+
+    // Reset file input
+    fileInput.value = '';
+    document.getElementById('selected-file').textContent = 'Ningún archivo seleccionado';
+    document.getElementById('selected-file').style.color = '';
+  }).catch(function(){
+    var log = document.getElementById('log-add');
+    log.style.display = 'block';
+    log.textContent = 'Error de conexión al añadir el documento.';
+  }).finally(function(){
+    document.getElementById('load-add').classList.remove('show');
+    btn.disabled = true;
+  });
+}
+
+function deleteSource(sourceFile) {
+  if (!confirm('¿Eliminar "' + sourceFile + '" del índice?')) return;
+
+  fetch('/delete_source', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({source_file: sourceFile})
+  }).then(function(r){return r.json()}).then(function(data){
+    if (data.error) {
+      alert('Error: ' + data.error);
+    }
+    loadIndexedSources();
+    loadIdxStatus();
+  }).catch(function(){
+    alert('Error de conexión al eliminar el documento.');
+  });
 }
 
 function buildIdx(mode) {
@@ -734,22 +878,34 @@ def metrics():
                 ragas_data = json.load(f)
 
             rows = ragas_data.get("rows", [])
+            averages = ragas_data.get("averages", {})
 
-            def avg_metric(metric_name):
-                values = []
-                for row in rows:
-                    value = row.get(metric_name)
-                    if isinstance(value, (int, float)):
-                        values.append(value)
-                return round(sum(values) / len(values), 4) if values else 0
+            # Si hay averages precalculados, usarlos directamente
+            if averages:
+                response["ragas"] = {
+                    "n_questions": len(rows),
+                    "faithfulness": averages.get("faithfulness", 0),
+                    "answer_relevancy": averages.get("answer_relevancy", 0),
+                    "context_precision": averages.get("context_precision", 0),
+                    "context_recall": averages.get("context_recall", 0),
+                }
+            elif rows:
+                # Fallback: calcular promedios desde rows (formato antiguo)
+                def avg_metric(metric_name):
+                    values = [
+                        row.get(metric_name)
+                        for row in rows
+                        if isinstance(row.get(metric_name), (int, float))
+                    ]
+                    return round(sum(values) / len(values), 4) if values else 0
 
-            response["ragas"] = {
-                "n_questions": len(rows),
-                "faithfulness": avg_metric("faithfulness"),
-                "answer_relevancy": avg_metric("answer_relevancy"),
-                "context_precision": avg_metric("context_precision"),
-                "context_recall": avg_metric("context_recall"),
-            }
+                response["ragas"] = {
+                    "n_questions": len(rows),
+                    "faithfulness": avg_metric("faithfulness"),
+                    "answer_relevancy": avg_metric("answer_relevancy"),
+                    "context_precision": avg_metric("context_precision"),
+                    "context_recall": avg_metric("context_recall"),
+                }
 
         if not response["items"] and not response["ragas"].get("n_questions"):
             return jsonify({"error": "No hay métricas todavía"}), 404
@@ -840,6 +996,114 @@ def build_index_route():
 
     return jsonify({'log': log.getvalue()})
 
+
+@app.route('/add_document', methods=['POST'])
+def add_document_route():
+    """
+    Recibe un PDF por upload, lo procesa en chunks y lo añade
+    incrementalmente a la BD vectorial sin reconstruir el índice.
+    """
+    log = io.StringIO()
+
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No se ha enviado ningún archivo.'}), 400
+
+        file = request.files['file']
+
+        if not file.filename or not file.filename.lower().endswith('.pdf'):
+            return jsonify({'error': 'Solo se aceptan archivos PDF.'}), 400
+
+        with redirect_stdout(log):
+            from src.ingestion.chunking import split_documents
+            from src.embeddings.vector_store import add_documents
+
+            # Guardar el PDF en data/raw
+            raw_path = Path(CONFIG["paths"]["raw_data"])
+            raw_path.mkdir(parents=True, exist_ok=True)
+
+            save_path = raw_path / file.filename
+            file.save(str(save_path))
+            print(f"PDF guardado: {file.filename}")
+
+            # Cargar y dividir en chunks
+            from langchain_community.document_loaders import PyPDFLoader
+
+            loader = PyPDFLoader(str(save_path))
+            docs = loader.load()
+
+            for doc in docs:
+                doc.metadata["source_file"] = file.filename
+
+            print(f"Páginas cargadas: {len(docs)}")
+
+            chunks = split_documents(docs)
+            print(f"Chunks generados: {len(chunks)}")
+
+            # Añadir incrementalmente
+            stats = add_documents(chunks, VECTOR_STORE_PATH)
+            print(f"Añadidos: {stats['añadidos']} | "
+                  f"Duplicados ignorados: {stats['duplicados']} | "
+                  f"Total recibidos: {stats['total_recibidos']}")
+
+            # Invalidar cache del vector store
+            global _vector_store
+            _vector_store = None
+
+            print("Documento añadido al índice correctamente.")
+
+    except Exception as e:
+        log.write(f"\nERROR: {e}")
+        return jsonify({'error': str(e), 'log': log.getvalue()}), 500
+
+    return jsonify({'log': log.getvalue(), 'filename': file.filename})
+
+
+@app.route('/indexed_sources')
+def indexed_sources_route():
+    """Devuelve la lista de documentos indexados en la BD vectorial."""
+    try:
+        from src.embeddings.vector_store import list_indexed_sources
+        sources = list_indexed_sources(VECTOR_STORE_PATH)
+
+        total_chunks = sum(s["chunk_count"] for s in sources)
+
+        return jsonify({
+            'sources': sources,
+            'total_documents': len(sources),
+            'total_chunks': total_chunks,
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/delete_source', methods=['POST'])
+def delete_source_route():
+    """Elimina todos los chunks de un documento concreto de la BD."""
+    data = request.json
+    source_file = data.get('source_file', '').strip()
+
+    if not source_file:
+        return jsonify({'error': 'No se ha indicado el documento a eliminar.'}), 400
+
+    try:
+        from src.embeddings.vector_store import delete_source
+
+        deleted = delete_source(source_file, VECTOR_STORE_PATH)
+
+        global _vector_store
+        _vector_store = None
+
+        return jsonify({
+            'deleted_chunks': deleted,
+            'source_file': source_file,
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/run_comparison', methods=['POST'])
 def run_comparison_route():
     log = io.StringIO()
@@ -853,13 +1117,19 @@ def run_comparison_route():
             from src.evaluation.rag_pipeline import answer_with_rag_multimodal
             from src.evaluation.baseline import answer_without_rag
             from src.evaluation.metrics import compute_all_metrics
-            from src.evaluation.ragas_eval import run_ragas_eval
+            from src.evaluation.ragas_eval import run_ragas_eval, format_ragas_result
             from langchain_community.chat_models import ChatOllama
             from ragas.llms import LangchainLLMWrapper
+            from ragas.embeddings import LangchainEmbeddingsWrapper
+            from src.embeddings.embedder import get_embedder
 
             print("Inicializando LLM para RAGAS (Ollama)...")
             llm = ChatOllama(model="mistral")
             ragas_llm = LangchainLLMWrapper(llm)
+
+            print("Inicializando embeddings para RAGAS...")
+            ragas_embeddings = LangchainEmbeddingsWrapper(get_embedder())
+
             vs = get_vector_store()
             rag_res, bl_res = [], []
 
@@ -966,6 +1236,7 @@ def run_comparison_route():
             # RAGAS
             # ==============================
             print("\nEjecutando evaluación RAGAS...")
+            print("Métricas: faithfulness, context_precision, answer_relevancy, context_recall")
 
             ragas_questions = []
             ragas_answers = []
@@ -987,6 +1258,10 @@ def run_comparison_route():
                         if s.get("content_preview")
                     ]
 
+                # Asegurar que contexts no esté vacío (RAGAS lo requiere)
+                if not contexts:
+                    contexts = [""]
+
                 ragas_contexts.append(contexts)
                 ragas_references.append(r.get("reference_answer") or "")
 
@@ -995,27 +1270,29 @@ def run_comparison_route():
                     questions=ragas_questions,
                     answers=ragas_answers,
                     contexts=ragas_contexts,
-                    llm=ragas_llm
+                    references=ragas_references,
+                    llm=ragas_llm,
+                    embeddings=ragas_embeddings,
                 )
 
-                ragas_dict = {}
-
-                if hasattr(ragas_result, "to_pandas"):
-                    ragas_df = ragas_result.to_pandas()
-                    ragas_dict = {
-                        "columns": list(ragas_df.columns),
-                        "rows": ragas_df.to_dict(orient="records")
-                    }
-                else:
-                    ragas_dict = {"result": str(ragas_result)}
+                ragas_dict = format_ragas_result(ragas_result)
 
                 with open(exp / "ragas_results.json", "w", encoding="utf-8") as f:
                     json.dump(ragas_dict, f, indent=2, ensure_ascii=False)
+
+                # Mostrar resumen en el log
+                avgs = ragas_dict.get("averages", {})
+                if avgs:
+                    print("\nResultados RAGAS (promedios):")
+                    for metric, value in avgs.items():
+                        print(f"  {metric}: {value:.4f}")
 
                 print("RAGAS guardado en experiments/ragas_results.json")
 
             except Exception as ragas_error:
                 print(f"ERROR en RAGAS: {ragas_error}")
+                import traceback
+                traceback.print_exc()
                 print("La comparación clásica se ha guardado correctamente igualmente.")
 
     except Exception as e:

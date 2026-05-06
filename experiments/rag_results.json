@@ -3,7 +3,7 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 3, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y adaptativa. En particular, según el fragmento 1, RAG se basa en la idea de que la recuperación de información puede mejorar la robustez de la generación de respuestas al ofrecer referencias contextuales adicionales a través de múltiples iteraciones de recuperación.",
+    "answer": "Retrieval-Augmented Generation (RAG) se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 3, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y adaptativa. En particular, según el fragmento 1, RAG se basa en la idea de que la recuperación de información puede ser utilizada para mejorar la generación de respuestas. El modelo utiliza la información recuperada como base contextual para generar respuestas más precisas en iteraciones sucesivas.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -24,22 +24,25 @@
       "11\nFig. 5. In addition to the most common once retrieval, RAG also includes three types of retrieval augmentation processes. (left) Iterative retrieval involves\nalternating between retrieval and generation, allowing for richer and more targeted context from the knowledge base at each step. (Middle) Recursive retrieval\ninvolves gradually refining the user query and breaking down the problem into sub-problems, then continuously solving complex problems through retrieval\nand generation. (Right) Adaptive retrieval focuses on enabling the RAG system to autonomously determine whether external knowledge retrieval is necessary\nand when to stop retrieval and generation, often utilizing LLM-generated special tokens for control.\nbase for LLMs. This approach has been shown to enhance",
       "Moreover, there’s a concern that generation models might\noverly rely on augmented information, leading to outputs that\nsimply echo retrieved content without adding insightful or\nsynthesized information.\nB. Advanced RAG\nAdvanced RAG introduces specific improvements to over-\ncome the limitations of Naive RAG. Focusing on enhancing re-\ntrieval quality, it employs pre-retrieval and post-retrieval strate-\ngies. To tackle the indexing issues, Advanced RAG refines\nits indexing techniques through the use of a sliding window\napproach, fine-grained segmentation, and the incorporation of\nmetadata. Additionally, it incorporates several optimization\nmethods to streamline the retrieval process [8]."
     ],
-    "reference_answer": null,
+    "reference_answer": "RAG es una técnica que combina un sistema de recuperación de información con un modelo generativo. El sistema recupera fragmentos relevantes de una base de documentos y los usa como contexto para que el modelo genere respuestas más precisas y fundamentadas.",
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 77,
+      "answer_length_words": 82,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0347,
-      "rougeL_vs_context": 0.027
+      "rouge1_f1": 0.3597,
+      "rouge2_f1": 0.146,
+      "rougeL_f1": 0.2878,
+      "rouge1_vs_context": 0.0382,
+      "rougeL_vs_context": 0.0268
     }
   },
   {
     "id": 2,
     "question": "¿Qué problema intenta resolver un sistema RAG?",
     "category": "teoria",
-    "answer": "Un sistema RAG intenta resolver la pregunta de cómo mejorar su desempeño en diversas escenarios de aplicación. Según el Fragmento 1, el objetivo principal de esta evaluación es comprender y optimizar el rendimiento de los modelos RAG en diferentes escenarios de aplicación. Sin embargo, si se entiende que la pregunta busca saber qué problema específico resuelve un sistema RAG, la respuesta sería: Un sistema RAG intenta resolver problemas relacionados con la extracción de información, la generación de diálogo, búsqueda de código, etc. Según el Fragmento 1, A. Downstream Task.",
+    "answer": "Un sistema RAG intenta resolver la pregunta de cómo mejorar su desempeño en diversas escenarios de aplicación. Según el Fragmento 1, el objetivo principal de esta evaluación es comprender y optimizar el rendimiento de los modelos RAG en diferentes escenarios de aplicación. Sin embargo, si se refiere a qué problema específico resuelve un sistema RAG, la respuesta sería que intenta resolver problemas relacionados con la pregunta y la información extraída de textos. Según el Fragmento 3, el proceso del RAG consiste en tres pasos: indexación, recuperación y generación.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -72,22 +75,25 @@
       "3\nFig. 2. A representative instance of the RAG process applied to question answering. It mainly consists of 3 steps. 1) Indexing. Documents are split into chunks,\nencoded into vectors, and stored in a vector database. 2) Retrieval. Retrieve the Top k chunks most relevant to the question based on semantic similarity. 3)\nGeneration. Input the original question and the retrieved chunks together into LLM to generate the final answer.\nwidespread adoption of ChatGPT. The Naive RAG follows\na traditional process that includes indexing, retrieval, and\ngeneration, which is also characterized as a “Retrieve-Read”\nframework [7].\nIndexing starts with the cleaning and extraction of raw data\nin diverse formats like PDF, HTML, Word, and Markdown,",
       "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merges LLMs’ intrin-\nsic knowledge with the vast, dynamic repositories of external\ndatabases. This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naive RAG, the Advanced RAG, and the Modular RAG.\nIt meticulously scrutinizes the tripartite foundation of RAG\nframeworks, which includes the retrieval, the generation and the\naugmentation techniques. The paper highlights the state-of-the-"
     ],
-    "reference_answer": null,
+    "reference_answer": "RAG intenta resolver el problema de que los modelos de lenguaje tienen conocimiento paramétrico limitado y estático, que puede estar desactualizado o ser insuficiente. Al recuperar información externa relevante, RAG permite generar respuestas más precisas y actualizadas.",
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 89,
+      "answer_length_words": 88,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0394,
-      "rougeL_vs_context": 0.0286
+      "rouge1_f1": 0.2378,
+      "rouge2_f1": 0.0567,
+      "rougeL_f1": 0.1818,
+      "rouge1_vs_context": 0.0287,
+      "rougeL_vs_context": 0.0251
     }
   },
   {
     "id": 3,
     "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
     "category": "teoria",
-    "answer": "Según el Fragmento 1, se menciona que los sistemas RAG pueden combinar recuperación con generación mediante la integración con ajustes finos. Esto sugiere que la combinación de recuperación y generación en un sistema RAG implica utilizar técnicas de recuperación para obtener información relevante y luego utilizar modelos de generación para crear texto a partir de esa información, todo ello dentro del marco de un sistema RAG.",
+    "answer": "Según el Fragmento 1, se menciona que desarrollar estrategias especializadas para integrar la recuperación con modelos de generación de lenguaje es una necesidad. Esto implica combinar los procesos de recuperación y generación en un sistema RAG. En otras palabras, significa utilizar información recuperada a partir de bases de datos o fuentes externas para generar texto o respuestas más precisas y relevantes.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -120,22 +126,25 @@
       "4\nFig. 3. Comparison between the three paradigms of RAG. (Left) Naive RAG mainly consists of three parts: indexing, retrieval and generation. (Middle)\nAdvanced RAG proposes multiple optimization strategies around pre-retrieval and post-retrieval, with a process similar to the Naive RAG, still following a\nchain-like structure. (Right) Modular RAG inherits and develops from the previous paradigm, showcasing greater flexibility overall. This is evident in the\nintroduction of multiple specific functional modules and the replacement of existing modules. The overall process is not limited to sequential retrieval and\ngeneration; it includes methods such as iterative and adaptive retrieval.\nPre-retrieval process. In this stage, the primary focus is",
       "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merges LLMs’ intrin-\nsic knowledge with the vast, dynamic repositories of external\ndatabases. This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naive RAG, the Advanced RAG, and the Modular RAG.\nIt meticulously scrutinizes the tripartite foundation of RAG\nframeworks, which includes the retrieval, the generation and the\naugmentation techniques. The paper highlights the state-of-the-"
     ],
-    "reference_answer": null,
+    "reference_answer": "Significa que el sistema primero busca y recupera fragmentos relevantes de una base de documentos usando búsqueda semántica, y luego un modelo generativo usa esos fragmentos como contexto adicional para producir una respuesta informada y fundamentada en los documentos.",
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 66,
+      "answer_length_words": 61,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0174,
-      "rougeL_vs_context": 0.0174
+      "rouge1_f1": 0.2569,
+      "rouge2_f1": 0.0,
+      "rougeL_f1": 0.1468,
+      "rouge1_vs_context": 0.0089,
+      "rougeL_vs_context": 0.0089
     }
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
     "category": "teoria",
-    "answer": "Un modelo con conocimiento paramétrico se refiere a un modelo que tiene una base de conocimientos pre-entrenada y cargada en su memoria. Por otro lado, un sistema con recuperación externa utiliza la información de una base de datos externa para generar respuestas. Según el fragmento 1, los modelos RAG (Retrieval-Augmented Generation) combinan componentes de memoria paramétricos y no-paramétricos pre-entrenados y cargados con conocimiento extenso. Sin embargo, la recuperación externa se refiere específicamente a la capacidad del modelo para acceder a una base de datos externa para obtener información relevante. En resumen, un modelo con conocimiento paramétrico tiene su propia base de conocimientos interna, mientras que un sistema con recuperación externa busca información en una base de datos externa.",
+    "answer": "No dispongo de esa información.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 1.pdf",
@@ -168,22 +177,25 @@
       "formance will be affected by the retrieval model,\nthe considered corpus, the LM, or the prompt for-\nmulation, among others. Automated evaluation of\nretrieval-augmented systems is thus paramount. In\npractice, RAG systems are often evaluated in terms\nof the language modelling task itself, i.e. by mea-\nsuring perplexity on some reference corpus. How-\never, such evaluations are not always predictive\nof downstream performance (Wang et al., 2023c).\nMoreover, this evaluation strategy relies on the LM\nprobabilities, which are not accessible for some\nclosed models (e.g. ChatGPT and GPT-4). Ques-\ntion answering is another common evaluation task,\nbut usually only datasets with short extractive an-\nswers are considered, which may not be represen-\ntative of how the system will be used.",
       "able success, though they still face significant limitations,\nespecially in domain-specific or knowledge-intensive tasks [1],\nnotably producing “hallucinations” [2] when handling queries\nbeyond their training data or requiring current information. To\novercome challenges, Retrieval-Augmented Generation (RAG)\nenhances LLMs by retrieving relevant document chunks from\nexternal knowledge base through semantic similarity calcu-\nlation. By referencing external knowledge, RAG effectively\nreduces the problem of generating factually incorrect content.\nIts integration into LLMs has resulted in widespread adoption,\nestablishing RAG as a key technology in advancing chatbots\nand enhancing the suitability of LLMs for real-world applica-\ntions.\nRAG technology has rapidly developed in recent years, and"
     ],
-    "reference_answer": null,
+    "reference_answer": "Un modelo con conocimiento paramétrico solo puede usar la información aprendida durante su entrenamiento, que es estática y puede estar desactualizada. Un sistema con recuperación externa puede acceder a documentos actualizados en tiempo real, complementando el conocimiento del modelo.",
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 118,
+      "mentions_no_info": 1,
+      "answer_length_words": 5,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0347,
-      "rougeL_vs_context": 0.0208
+      "rouge1_f1": 0.0816,
+      "rouge2_f1": 0.0426,
+      "rougeL_f1": 0.0816,
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
     "id": 5,
     "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?",
     "category": "teoria",
-    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para acceder y manipular el conocimiento es limitada. Según el Fragmento 1, los modelos de lenguaje \"largely\" saben qué saben, pero no siempre pueden acceder a la información que necesitan. Además, según el Fragmento 2, aunque los modelos de lenguaje han demostrado almacenar conocimiento en sus parámetros y lograr resultados de vanguardia en tareas de NLP cuando se fine-tunean, su capacidad para acceder y manipular el conocimiento con precisión es limitada.",
+    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para acceder y manipular el conocimiento es limitada. Según el Fragmento 1, los modelos de lenguaje \"largely\" saben qué saben, pero no siempre pueden acceder a la información que necesitan. Además, según el Fragmento 2, aunque los modelos de lenguaje han demostrado almacenar conocimiento en sus parámetros y lograr resultados de vanguardia en tareas de NLP, su capacidad para acceder y manipular el conocimiento es aún limitada.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 10.pdf",
@@ -221,10 +233,10 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 82,
+      "answer_length_words": 78,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.011,
-      "rougeL_vs_context": 0.0073
+      "rouge1_vs_context": 0.0148,
+      "rougeL_vs_context": 0.0111
     }
   }
 ]

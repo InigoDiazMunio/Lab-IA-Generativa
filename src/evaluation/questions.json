@@ -2,22 +2,26 @@
   {
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
-    "category": "teoria"
+    "category": "teoria",
+    "reference_answer": "RAG es una técnica que combina un sistema de recuperación de información con un modelo generativo. El sistema recupera fragmentos relevantes de una base de documentos y los usa como contexto para que el modelo genere respuestas más precisas y fundamentadas."
   },
   {
     "id": 2,
     "question": "¿Qué problema intenta resolver un sistema RAG?",
-    "category": "teoria"
+    "category": "teoria",
+    "reference_answer": "RAG intenta resolver el problema de que los modelos de lenguaje tienen conocimiento paramétrico limitado y estático, que puede estar desactualizado o ser insuficiente. Al recuperar información externa relevante, RAG permite generar respuestas más precisas y actualizadas."
   },
   {
     "id": 3,
     "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
-    "category": "teoria"
+    "category": "teoria",
+    "reference_answer": "Significa que el sistema primero busca y recupera fragmentos relevantes de una base de documentos usando búsqueda semántica, y luego un modelo generativo usa esos fragmentos como contexto adicional para producir una respuesta informada y fundamentada en los documentos."
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
-    "category": "teoria"
+    "category": "teoria",
+    "reference_answer": "Un modelo con conocimiento paramétrico solo puede usar la información aprendida durante su entrenamiento, que es estática y puede estar desactualizada. Un sistema con recuperación externa puede acceder a documentos actualizados en tiempo real, complementando el conocimiento del modelo."
   },
   {
     "id": 5,
@@ -62,17 +66,20 @@
   {
     "id": 13,
     "question": "¿Para qué sirven los embeddings en un sistema RAG?",
-    "category": "componentes"
+    "category": "componentes",
+    "reference_answer": "Los embeddings convierten texto en vectores numéricos que capturan el significado semántico. En un sistema RAG, permiten comparar la similitud entre la pregunta del usuario y los fragmentos de documentos para recuperar los más relevantes."
   },
   {
     "id": 14,
     "question": "¿Qué papel cumple un índice vectorial en el sistema?",
-    "category": "componentes"
+    "category": "componentes",
+    "reference_answer": "El índice vectorial almacena los embeddings de los fragmentos de documentos y permite realizar búsquedas de similitud eficientes. Cuando llega una pregunta, se compara su embedding contra el índice para encontrar los fragmentos más relevantes."
   },
   {
     "id": 15,
     "question": "¿Por qué los documentos se dividen en chunks?",
-    "category": "componentes"
+    "category": "componentes",
+    "reference_answer": "Los documentos se dividen en chunks porque los modelos tienen un límite de contexto y porque fragmentos más pequeños permiten recuperar información más precisa y relevante para preguntas específicas."
   },
   {
     "id": 16,
@@ -122,7 +129,8 @@
   {
     "id": 25,
     "question": "¿Qué diferencia hay entre un baseline y un sistema RAG?",
-    "category": "comparacion"
+    "category": "comparacion",
+    "reference_answer": "El baseline responde preguntas usando solo el conocimiento paramétrico del modelo, sin acceso a documentos externos. El sistema RAG primero recupera fragmentos relevantes de una base de documentos y los usa como contexto, lo que permite respuestas más precisas y fundamentadas."
   },
   {
     "id": 26,
@@ -187,7 +195,8 @@
   {
     "id": 38,
     "question": "¿Qué aporta LLaVA en un pipeline multimodal?",
-    "category": "multimodalidad"
+    "category": "multimodalidad",
+    "reference_answer": "LLaVA es un modelo de visión-lenguaje que genera descripciones textuales (captions) a partir de imágenes. En el pipeline multimodal, se usa para describir las imágenes extraídas de los PDFs, convirtiendo contenido visual en texto que puede ser indexado y recuperado junto con los chunks textuales."
   },
   {
     "id": 39,
@@ -222,7 +231,8 @@
   {
     "id": 45,
     "question": "¿Qué es BLIP-2 y cuál es su aportación principal?",
-    "category": "modelos"
+    "category": "modelos",
+    "reference_answer": "BLIP-2 es un modelo de visión-lenguaje que introduce el Q-Former, un módulo que conecta un encoder de imágenes congelado con un LLM congelado. Su aportación principal es lograr capacidades multimodales de alto rendimiento con un entrenamiento eficiente, sin necesidad de ajustar los modelos base."
   },
   {
     "id": 46,
@@ -232,7 +242,8 @@
   {
     "id": 47,
     "question": "¿Qué es RAGAS y para qué sirve?",
-    "category": "modelos"
+    "category": "modelos",
+    "reference_answer": "RAGAS es un framework de evaluación para sistemas RAG que usa un LLM como juez para medir métricas como faithfulness (fidelidad al contexto), answer relevancy (relevancia de la respuesta), context precision (precisión del contexto recuperado) y context recall (cobertura del contexto necesario)."
   },
   {
     "id": 48,
