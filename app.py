@@ -1118,17 +1118,6 @@ def run_comparison_route():
             from src.evaluation.baseline import answer_without_rag
             from src.evaluation.metrics import compute_all_metrics
             from src.evaluation.ragas_eval import run_ragas_eval, format_ragas_result
-            from langchain_community.chat_models import ChatOllama
-            from ragas.llms import LangchainLLMWrapper
-            from ragas.embeddings import LangchainEmbeddingsWrapper
-            from src.embeddings.embedder import get_embedder
-
-            print("Inicializando LLM para RAGAS (Ollama)...")
-            llm = ChatOllama(model="mistral")
-            ragas_llm = LangchainLLMWrapper(llm)
-
-            print("Inicializando embeddings para RAGAS...")
-            ragas_embeddings = LangchainEmbeddingsWrapper(get_embedder())
 
             vs = get_vector_store()
             rag_res, bl_res = [], []
@@ -1266,13 +1255,13 @@ def run_comparison_route():
                 ragas_references.append(r.get("reference_answer") or "")
 
             try:
+                print("Usando Ollama directamente para evaluación RAGAS...")
+
                 ragas_result = run_ragas_eval(
                     questions=ragas_questions,
                     answers=ragas_answers,
                     contexts=ragas_contexts,
                     references=ragas_references,
-                    llm=ragas_llm,
-                    embeddings=ragas_embeddings,
                 )
 
                 ragas_dict = format_ragas_result(ragas_result)
