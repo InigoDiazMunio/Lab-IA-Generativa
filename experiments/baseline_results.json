@@ -3,65 +3,65 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en aprendizaje automático que combina la búsqueda y el procesamiento de texto. Funciona buscando en una base de datos de texto relacionada con la pregunta o tema dado, y luego utiliza esa información para generar una respuesta más precisa y detallada. En otras palabras, RAG busca en un conjunto de textos relevantes y los utiliza como contexto adicional para mejorar la calidad de la generación del modelo. Esto permite a RAG abordar tareas de lenguaje natural complejas, como la comprensión de texto y el procesamiento de lenguaje natural. RAG se ha utilizado en diversas aplicaciones, incluyendo la generación de textos, la respuesta a preguntas y la traducción.",
+    "answer": "Retrieval-Augmented Generation (RAG) es un modelo de lenguaje basado en aprendizaje automático que combina la búsqueda y generación de texto. Funciona mediante la siguiente secuencia: 1. Primero, el modelo busca información relevante en una base de datos o conjunto de documentos relacionados con la pregunta o tema específico. 2. Luego, utiliza esa información para generar un texto coherente y preciso que responda a la pregunta o complete la tarea. RAG se enfoca en mejorar la precisión y la coherencia del modelo al incorporar la búsqueda de información relevante antes de la generación del texto.",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 116
+      "answer_length_words": 94
     }
   },
   {
     "id": 2,
     "question": "¿Qué problema intenta resolver un sistema RAG?",
     "category": "teoria",
-    "answer": "Un sistema RAG (Reducción de Actividades Gestionadas) es una herramienta utilizada para identificar y priorizar las actividades que consumen más tiempo y recursos en un proyecto o proceso. El objetivo principal de un sistema RAG es ayudar a los gerentes y equipos a identificar áreas de mejora y optimizar la gestión del trabajo. En resumen, el problema que intenta resolver un sistema RAG es la ineficiencia en la asignación de recursos y la falta de visibilidad sobre las actividades que consumen más tiempo y esfuerzo.",
+    "answer": "Un sistema RAG (Reducción de Actividades Gestionables) es una herramienta utilizada para identificar y priorizar las actividades que pueden ser eliminadas o simplificadas en un proceso, con el objetivo de mejorar la eficiencia y reducir el tiempo necesario para completar tareas. En resumen, un sistema RAG intenta resolver el problema del \"sobrecarga de trabajo\" o \"eficiencia operativa\", identificando áreas donde se pueden aplicar mejoras para liberar recursos y aumentar la productividad.",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 85
+      "answer_length_words": 71
     }
   },
   {
     "id": 3,
     "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
     "category": "teoria",
-    "answer": "La combinación de recuperación y generación en un sistema RAG (Recuperación-Acción-Generación) implica que el sistema no solo puede generar nuevos datos o información, sino también utilizar los datos existentes para mejorar su desempeño o tomar decisiones informadas. En otras palabras, la recuperación se refiere a la capacidad del sistema de acceder y utilizar datos previamente almacenados, mientras que la generación se enfoca en crear nuevos datos o información. Al combinar ambas funciones, un sistema RAG puede aprovechar los beneficios de cada una para mejorar su eficiencia y precisión. Por ejemplo, un sistema de recomendación podría utilizar recuperación para acceder a patrones de comportamiento del usuario previamente almacenados, y luego generar recomendaciones personalizadas basadas en esos patrones.",
+    "answer": "La combinación de recuperación y generación en un sistema RAG (Recovery and Generation) se refiere a la capacidad del sistema para restaurar el estado anterior de una transacción fallida, mientras que también genera nuevos datos o resultados a partir de esa misma transacción. En otras palabras, cuando una transacción falla en un sistema RAG, no solo se intenta recuperar los cambios realizados hasta ese punto (recuperación), sino que también se aprovechan esos cambios para generar nuevas informaciones o resultados que puedan ser útiles. Esto puede incluir la generación de nuevos datos, la actualización de estadísticas, o incluso la ejecución de acciones adicionales basadas en los cambios realizados. La combinación de recuperación y generación permite a los sistemas RAG maximizar el valor de las transacciones fallidas, reduciendo así el impacto negativo de dichas fallas.",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 116
+      "answer_length_words": 133
     }
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
     "category": "teoria",
-    "answer": "Un modelo con conocimiento paramétrico es aquel que utiliza parámetros predefinidos para realizar una tarea específica, mientras que un sistema con recuperación externa busca información en fuentes externas al propio sistema para tomar decisiones o realizar tareas. En otras palabras, el modelo con conocimiento paramétrico tiene la información necesaria internamente, mientras que el sistema con recuperación externa busca y recupera la información de fuentes externas.",
+    "answer": "Un modelo con conocimiento paramétrico es aquel que utiliza parámetros predefinidos para realizar una tarea específica, mientras que un sistema con recuperación externa busca información en fuentes externas al propio sistema para tomar decisiones o realizar tareas. En otras palabras, el modelo con conocimiento paramétrico depende de la información previamente almacenada y programada, mientras que el sistema con recuperación externa puede acceder a nuevas fuentes de información en tiempo real.",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 65
+      "answer_length_words": 70
     }
   },
   {
     "id": 5,
     "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?",
     "category": "teoria",
-    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para comprender y generar texto está limitada a la información que se le ha entrenado. Si el modelo no tiene experiencia previa con un tema o concepto específico, puede no poder generar respuestas precisas o relevantes. Por ejemplo, si se le pide al modelo que describa una técnica médica reciente, pero su entrenamiento solo incluye información hasta hace unos años, necesitará conocimiento externo para estar actualizado y proporcionar información precisa.",
+    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para comprender y generar texto está limitada a la información que se le ha entrenado. Si el modelo no tiene acceso a ciertos datos o conceptos, puede no poder responder preguntas complejas o producir textos precisos en un tema específico. Por ejemplo, si un modelo de lenguaje se entrena solo con textos históricos hasta la década de 1990, no podrá proporcionar información precisa sobre eventos que ocurrieron después de esa fecha. En este caso, el modelo necesitaría conocimiento externo para estar al día y poder responder preguntas sobre temas más recientes. Además, los modelos de lenguaje pueden tener dificultades con la comprensión del contexto o la interpretación de conceptos abstractos, por lo que también pueden requerir conocimiento externo para mejorar su precisión.",
     "reference_answer": null,
     "metrics": {
       "has_sources": 0,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 81
+      "answer_length_words": 133
     }
   }
 ]

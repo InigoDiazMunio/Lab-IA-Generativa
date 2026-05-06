@@ -10,6 +10,7 @@ import os
 
 from langchain_chroma import Chroma
 from src.embeddings.embedder import get_embedding_model
+from src.embeddings.vector_store import DEFAULT_COLLECTION_NAME
 
 
 CHROMA_PATH = "data/embeddings/chroma_db"
@@ -21,14 +22,16 @@ def create_vectorstore(chunks, reset: bool = False):
     if os.path.exists(CHROMA_PATH):
         vectorstore = Chroma(
             persist_directory=CHROMA_PATH,
-            embedding_function=embedding_model
+            embedding_function=embedding_model,
+            collection_name=DEFAULT_COLLECTION_NAME,
         )
         vectorstore.add_documents(chunks)
     else:
         vectorstore = Chroma.from_documents(
             documents=chunks,
             embedding=embedding_model,
-            persist_directory=CHROMA_PATH
+            persist_directory=CHROMA_PATH,
+            collection_name=DEFAULT_COLLECTION_NAME,
         )
 
     return vectorstore
@@ -39,7 +42,8 @@ def load_vectorstore():
 
     return Chroma(
         persist_directory=CHROMA_PATH,
-        embedding_function=embedding_model
+        embedding_function=embedding_model,
+        collection_name=DEFAULT_COLLECTION_NAME,
     )
 
 

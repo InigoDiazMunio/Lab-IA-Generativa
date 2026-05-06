@@ -3,7 +3,7 @@
     "id": 1,
     "question": "¿Qué es Retrieval-Augmented Generation?",
     "category": "teoria",
-    "answer": "Retrieval-Augmented Generation (RAG) se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 3, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y adaptativa. En particular, según el fragmento 1, RAG se basa en la idea de que la recuperación de información puede mejorar la robustez de la generación de respuestas al ofrecer referencias contextuales adicionales a través de múltiples iteraciones de recuperación.",
+    "answer": "Retrieval-Augmented Generation (RAG) se refiere a un proceso que combina la recuperación de información con la generación de texto. Según el fragmento 3, RAG incluye tres tipos de procesos de mejora de la recuperación: iterativa, recursiva y adaptativa.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -29,17 +29,17 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 77,
+      "answer_length_words": 38,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0347,
-      "rougeL_vs_context": 0.027
+      "rouge1_vs_context": 0.0254,
+      "rougeL_vs_context": 0.0211
     }
   },
   {
     "id": 2,
     "question": "¿Qué problema intenta resolver un sistema RAG?",
     "category": "teoria",
-    "answer": "Un sistema RAG intenta resolver la pregunta de cómo mejorar su desempeño en diversas escenarios de aplicación. Según el Fragmento 1, el objetivo principal de esta evaluación es comprender y optimizar el rendimiento de los modelos RAG en diferentes escenarios de aplicación. Sin embargo, si se entiende que la pregunta busca saber qué problema específico resuelve un sistema RAG, la respuesta sería: Un sistema RAG intenta resolver problemas relacionados con la extracción de información, la generación de diálogo, búsqueda de código, etc. Según el Fragmento 1, A. Downstream Task.",
+    "answer": "Un sistema RAG intenta resolver la pregunta de cómo mejorar su desempeño en diversas escenarios de aplicación. Según el Fragmento 1, el objetivo principal de esta evaluación es comprender y optimizar el rendimiento de los modelos RAG en diferentes escenarios de aplicación. Sin embargo, si se entiende que la pregunta busca saber qué problema específico resuelve un sistema RAG, la respuesta sería: Un sistema RAG intenta resolver problemas de pregunta-respuesta (QA), incluyendo preguntas de una sola respuesta o múltiples respuestas, así como generación de diálogo y búsqueda de código. Según el Fragmento 1, A. Downstream Task.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -77,17 +77,17 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 89,
+      "answer_length_words": 96,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0394,
-      "rougeL_vs_context": 0.0286
+      "rouge1_vs_context": 0.0424,
+      "rougeL_vs_context": 0.0353
     }
   },
   {
     "id": 3,
     "question": "¿Qué significa combinar recuperación y generación en un sistema RAG?",
     "category": "teoria",
-    "answer": "Según el Fragmento 1, se menciona que los sistemas RAG pueden combinar recuperación con generación mediante la integración con ajustes finos. Esto sugiere que la combinación de recuperación y generación en un sistema RAG implica utilizar técnicas de recuperación para obtener información relevante y luego utilizar modelos de generación para crear texto a partir de esa información, todo ello dentro del marco de un sistema RAG.",
+    "answer": "Según el Fragmento 1, desarrollar estrategias especializadas para integrar la recuperación con modelos de generación de lenguaje es una necesidad que requiere más investigación y exploración en la robustez del RAG.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 5.pdf",
@@ -125,17 +125,17 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 66,
+      "answer_length_words": 31,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0174,
-      "rougeL_vs_context": 0.0174
+      "rouge1_vs_context": 0.0048,
+      "rougeL_vs_context": 0.0048
     }
   },
   {
     "id": 4,
     "question": "¿Qué diferencia hay entre un modelo con conocimiento paramétrico y un sistema con recuperación externa?",
     "category": "teoria",
-    "answer": "Un modelo con conocimiento paramétrico se refiere a un modelo que tiene una base de conocimientos pre-entrenada y cargada en su memoria. Por otro lado, un sistema con recuperación externa utiliza la información de una base de datos externa para generar respuestas. Según el fragmento 1, los modelos RAG (Retrieval-Augmented Generation) combinan componentes de memoria paramétricos y no-paramétricos pre-entrenados y cargados con conocimiento extenso. Sin embargo, la recuperación externa se refiere específicamente a la capacidad del modelo para acceder a una base de datos externa para obtener información relevante. En resumen, un modelo con conocimiento paramétrico tiene su propia base de conocimientos interna, mientras que un sistema con recuperación externa busca información en una base de datos externa.",
+    "answer": "No dispongo de esa información.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 1.pdf",
@@ -172,18 +172,18 @@
     "metrics": {
       "has_sources": 1,
       "is_empty": 0,
-      "mentions_no_info": 0,
-      "answer_length_words": 118,
+      "mentions_no_info": 1,
+      "answer_length_words": 5,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.0347,
-      "rougeL_vs_context": 0.0208
+      "rouge1_vs_context": 0.0,
+      "rougeL_vs_context": 0.0
     }
   },
   {
     "id": 5,
     "question": "¿Por qué un modelo de lenguaje puede necesitar conocimiento externo?",
     "category": "teoria",
-    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para acceder y manipular el conocimiento es limitada. Según el Fragmento 1, los modelos de lenguaje \"largely\" saben qué saben, pero no siempre pueden acceder a la información que necesitan. Además, según el Fragmento 2, aunque los modelos de lenguaje han demostrado almacenar conocimiento en sus parámetros y lograr resultados de vanguardia en tareas de NLP cuando se fine-tunean, su capacidad para acceder y manipular el conocimiento con precisión es limitada.",
+    "answer": "Un modelo de lenguaje puede necesitar conocimiento externo porque su capacidad para acceder y manipular el conocimiento es limitada. Según el Fragmento 1, los modelos de lenguaje \"saben\" lo que saben, pero no siempre pueden precisar o acceder a ese conocimiento cuando se les solicita. Además, según el Fragmento 2, su capacidad para realizar tareas intensivas en conocimiento es limitada y puede ser superada por arquitecturas específicas de tarea.",
     "sources": [
       {
         "source_file": "data\\raw\\paper 10.pdf",
@@ -221,10 +221,10 @@
       "has_sources": 1,
       "is_empty": 0,
       "mentions_no_info": 0,
-      "answer_length_words": 82,
+      "answer_length_words": 69,
       "faithfulness": 0.0,
-      "rouge1_vs_context": 0.011,
-      "rougeL_vs_context": 0.0073
+      "rouge1_vs_context": 0.0076,
+      "rougeL_vs_context": 0.0076
     }
   }
 ]
