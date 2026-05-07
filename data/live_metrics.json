@@ -300,5 +300,40 @@
       "faithfulness": 0.2692307692307692,
       "rouge1_vs_context": 0.2692307692307692
     }
+  },
+  {
+    "timestamp": "08/05/2026 00:38:06",
+    "question": "¿Qué tipos de RAG existen?",
+    "mode": "orquestador",
+    "rag_answer": "Existen tres tipos de RAG: Naive, Advanced y Modular. Según el Fragmento 1, estos representan un progreso en la evolución del marco de trabajo de RAG. El Fragmento 4 describe cada uno de ellos como una etapa en el desarrollo de RAG.",
+    "baseline_answer": "",
+    "rag_sources": [
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 15,
+        "content_preview": "sizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcases the evolution\nof RAG technologies and their application on many different\n",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "review of the state-of-the-art RAG methods, delineating\nits evolution through paradigms including naive RAG,\narXiv:2312.10997v5  [cs.CL]  27 Mar 2024",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 1,
+        "content_preview": "we categorize it into three stages: Naive RAG, Advanced\nRAG, and Modular RAG, as showed in Figure 3. Despite\nRAG method are cost-effective and surpass the performance\nof the native LLM, they also exhibit several limitations.\nThe development of Advanced RAG and Modular RAG is\na response to these spec",
+        "type": "texto"
+      }
+    ],
+    "rag_metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 42,
+      "faithfulness": 0.030303030303030304,
+      "rouge1_vs_context": 0.030303030303030304
+    }
   }
 ]

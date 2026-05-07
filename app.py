@@ -151,6 +151,19 @@ def ask():
             save_live_metrics(query, mode, result)
             return jsonify(result)
 
+        if mode == 'orquestador':
+            from src.agent.orchestrator import run_orchestrated
+            orch = run_orchestrated(query)
+            result['rag_answer']      = orch['answer']
+            result['rag_sources']     = deduplicate_sources(orch['sources'])
+            result['routed_to']       = orch['routed_to']
+            result['routing_reason']  = orch['routing_reason']
+            result['verdict']         = orch.get('verdict', '')
+            result['verdict_reason']  = orch.get('verdict_reason', '')
+            result['agent_steps']     = orch.get('agent_steps', [])
+            save_live_metrics(query, mode, result)
+            return jsonify(result)
+
         vs = get_vector_store()
 
         if mode in ('rag', 'ambos'):

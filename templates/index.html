@@ -147,6 +147,8 @@ textarea#query::placeholder{color:var(--t3)}
 .mbtn.active.m-ag{background:var(--ag-d);border-color:rgba(167,139,250,.35);color:var(--ag)}
 .mbtn.active.m-vrf{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35);color:var(--ok)}
 .m-vrf .mdot{background:var(--ok)}
+.mbtn.active.m-orc{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.35);color:#fb923c}
+.m-orc .mdot{background:#fb923c}
 .mdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .m-rag .mdot{background:var(--rag)}
 .m-bl .mdot{background:var(--bl)}
@@ -400,6 +402,10 @@ textarea#query::placeholder{color:var(--t3)}
 .verdict-bar.fail .verdict-txt{color:rgba(248,113,113,.8)}
 .attempts-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);margin-top:6px}
 .mb-vrf{background:rgba(52,211,153,.12);color:var(--ok);border:1px solid rgba(52,211,153,.25)}
+.mb-orc{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.25)}
+.route-bar{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;border:1px solid rgba(251,146,60,.25);background:rgba(251,146,60,.08);margin-top:12px}
+.route-txt{font-size:12.5px;line-height:1.6;color:rgba(251,146,60,.85)}
+.route-lbl{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;color:#fb923c}
 
 /* ── SECTION HEADER ── */
 .sec-hd{
@@ -529,8 +535,11 @@ textarea#query::placeholder{color:var(--t3)}
             <button class="mbtn m-ag" onclick="setMode('agente',this)">
               <span class="mdot"></span>Agente
             </button>
-            <button class="mbtn m-vrf" onclick="setMode('verificado',this)" style="grid-column:1/-1">
+            <button class="mbtn m-vrf" onclick="setMode('verificado',this)">
               <span class="mdot"></span>RAG + Verificador
+            </button>
+            <button class="mbtn m-orc" onclick="setMode('orquestador',this)">
+              <span class="mdot"></span>Orquestador
             </button>
           </div>
         </div>
@@ -737,7 +746,7 @@ var PANEL_META = {
 
 var MODE_LABELS = {
   rag:'RAG', baseline:'BASELINE', ambos:'AMBOS',
-  agente:'AGENTE', verificado:'RAG + VERIFICADOR'
+  agente:'AGENTE', verificado:'RAG + VERIFICADOR', orquestador:'ORQUESTADOR'
 };
 
 function goTab(name, el) {
@@ -822,6 +831,40 @@ function renderConsulta(data) {
       '<div class="acard-head"><span class="mbadge mb-ag">AGENTE</span><span class="acard-time">' + ts() + '</span></div>' +
       '<div class="acard-body"><div class="answer-txt">' + esc(data.rag_answer || 'Sin respuesta.') + '</div>' +
       stepsHtml(data.agent_steps || []) + srcHtml(data.rag_sources || []) + '</div></div>';
+    return;
+  }
+  if (curMode === 'orquestador') {
+    var routeLabels = {rag:'RAG', agente:'Agente', verificado:'RAG+Verificador', baseline:'Baseline'};
+    var routeLabel = routeLabels[data.routed_to] || data.routed_to || '?';
+    var routeHtml =
+      '<div class="route-bar">' +
+        '<div>' +
+          '<div class="route-lbl">Enrutado a · ' + esc(routeLabel) + '</div>' +
+          '<div class="route-txt">' + esc(data.routing_reason || '') + '</div>' +
+        '</div>' +
+      '</div>';
+    var extraHtml = '';
+    if (data.routed_to === 'verificado' && data.verdict) {
+      var pass = data.verdict === 'PASS';
+      extraHtml =
+        '<div class="verdict-bar ' + (pass ? 'pass' : 'fail') + '" style="margin-top:10px">' +
+          '<span class="verdict-ico">' + (pass ? '✓' : '✗') + '</span>' +
+          '<div>' +
+            '<div class="verdict-lbl">' + (pass ? 'Verificado · PASS' : 'Verificación · FAIL') + '</div>' +
+            '<div class="verdict-txt">' + esc(data.verdict_reason || '') + '</div>' +
+          '</div>' +
+        '</div>';
+    } else if (data.routed_to === 'agente') {
+      extraHtml = stepsHtml(data.agent_steps || []);
+    }
+    cont.innerHTML = '<div class="acard">' +
+      '<div class="acard-head"><span class="mbadge mb-orc">ORQUESTADOR</span><span class="acard-time">' + ts() + '</span></div>' +
+      '<div class="acard-body">' +
+        routeHtml +
+        '<div class="answer-txt" style="margin-top:12px">' + esc(data.rag_answer || 'Sin respuesta.') + '</div>' +
+        extraHtml +
+        srcHtml(data.rag_sources || []) +
+      '</div></div>';
     return;
   }
   if (curMode === 'verificado') {
