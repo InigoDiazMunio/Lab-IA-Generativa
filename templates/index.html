@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scholar RAG — Lab IA Generativa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:       #07070e;
+  --s0:       #0c0c18;
+  --s1:       #10101e;
+  --s2:       #161626;
+  --s3:       #1e1e30;
+  --bd:       rgba(255,255,255,.07);
+  --bd2:      rgba(255,255,255,.14);
+  --ind:      #6366f1;
+  --ind-l:    #818cf8;
+  --ind-d:    rgba(99,102,241,.14);
+  --ind-g:    rgba(99,102,241,.30);
+  --rag:      #22d3ee;
+  --rag-d:    rgba(34,211,238,.12);
+  --bl:       #fbbf24;
+  --bl-d:     rgba(251,191,36,.12);
+  --ag:       #a78bfa;
+  --ag-d:     rgba(167,139,250,.12);
+  --ok:       #34d399;
+  --err:      #f87171;
+  --t1:       #f1f5f9;
+  --t2:       #94a3b8;
+  --t3:       #475569;
+  --sw:       220px;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5;display:flex;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--t3)}
+a{color:inherit;text-decoration:none}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sw);flex-shrink:0;height:100vh;
+  background:var(--s0);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;z-index:50;
+}
+.sb-head{padding:18px 14px 14px;border-bottom:1px solid var(--bd)}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sb-logo-icon{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ind) 0%,#a78bfa 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.sb-logo-icon svg{width:17px;height:17px;color:#fff}
+.sb-logo-name{font-size:14px;font-weight:700;color:var(--t1);line-height:1.2}
+.sb-logo-sub{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.sb-status{
+  display:flex;align-items:center;gap:7px;margin-top:10px;
+  background:var(--s2);border:1px solid var(--bd);border-radius:6px;
+  padding:6px 10px;
+}
+.sb-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  background:var(--ok);box-shadow:0 0 6px var(--ok);
+  animation:pdot 2.5s ease-in-out infinite;
+}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.35}}
+.sb-status-txt{font-size:11px;color:var(--t2);font-family:'JetBrains Mono',monospace}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.nav-lbl{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;padding:4px 8px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:8px;cursor:pointer;transition:all .15s;
+  color:var(--t2);font-size:13.5px;font-weight:500;
+  user-select:none;position:relative;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--s2);color:var(--t1)}
+.nav-item.active{background:var(--ind-d);color:var(--ind-l)}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:16px;background:var(--ind);border-radius:0 2px 2px 0;
+}
+.nav-icon{width:17px;height:17px;flex-shrink:0;opacity:.75}
+.nav-item.active .nav-icon{opacity:1}
+.sb-foot{padding:10px 8px;border-top:1px solid var(--bd)}
+.sb-foot-txt{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;line-height:1.8;padding:6px 10px}
+
+/* ── MAIN ── */
+.main{flex:1;height:100vh;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.topbar{
+  height:52px;flex-shrink:0;background:var(--s0);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;padding:0 22px;gap:10px;
+}
+.tb-title{font-size:14px;font-weight:600;color:var(--t1)}
+.tb-sep{width:1px;height:16px;background:var(--bd2);flex-shrink:0}
+.tb-sub{font-size:12px;color:var(--t3)}
+.tb-spacer{flex:1}
+.tb-pill{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  padding:4px 9px;border-radius:4px;
+  background:var(--rag-d);color:var(--rag);border:1px solid rgba(34,211,238,.2);
+}
+.content-area{flex:1;overflow:hidden;position:relative}
+
+/* ── PANELS ── */
+.panel{display:none;height:100%}
+.panel.active{display:flex;flex-direction:column}
+.p-scroll{flex:1;overflow-y:auto}
+
+/* ── CONSULTA ── */
+#panel-consulta{flex-direction:row !important}
+.qs-left{
+  width:340px;min-width:280px;flex-shrink:0;
+  border-right:1px solid var(--bd);background:var(--s0);
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.qs-right{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.qs-scroll{flex:1;overflow-y:auto;padding:20px}
+.q-sec{padding:16px 14px;border-bottom:1px solid var(--bd)}
+.q-sec-lbl{font-size:10.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px}
+textarea#query{
+  width:100%;background:var(--s2);border:1px solid var(--bd2);
+  border-radius:9px;color:var(--t1);font-family:'Inter',sans-serif;
+  font-size:13.5px;padding:11px 13px;resize:none;outline:none;
+  line-height:1.6;transition:border-color .2s,box-shadow .2s;min-height:96px;
+}
+textarea#query:focus{border-color:var(--ind);box-shadow:0 0 0 3px var(--ind-d)}
+textarea#query::placeholder{color:var(--t3)}
+.q-hint{font-size:11px;color:var(--t3);margin-top:5px;font-family:'JetBrains Mono',monospace}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mbtn{
+  padding:8px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--s2);
+  color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;gap:6px;
+  font-family:'Inter',sans-serif;
+}
+.mbtn:hover{border-color:var(--bd2);color:var(--t1)}
+.mbtn.active.m-rag{background:var(--rag-d);border-color:rgba(34,211,238,.35);color:var(--rag)}
+.mbtn.active.m-bl{background:var(--bl-d);border-color:rgba(251,191,36,.35);color:var(--bl)}
+.mbtn.active.m-both{background:var(--ind-d);border-color:rgba(99,102,241,.35);color:var(--ind-l)}
+.mbtn.active.m-ag{background:var(--ag-d);border-color:rgba(167,139,250,.35);color:var(--ag)}
+.mdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.m-rag .mdot{background:var(--rag)}
+.m-bl .mdot{background:var(--bl)}
+.m-both .mdot{background:var(--ind-l)}
+.m-ag .mdot{background:var(--ag)}
+.btn-ask{
+  width:100%;padding:11px;background:var(--ind);color:#fff;
+  border:none;border-radius:9px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-ask:hover{background:#5457e0;box-shadow:0 4px 14px var(--ind-g);transform:translateY(-1px)}
+.btn-ask:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-clr{
+  width:100%;margin-top:6px;padding:8px;background:transparent;
+  color:var(--t3);border:1px solid var(--bd);border-radius:9px;
+  font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;
+  font-family:'Inter',sans-serif;
+}
+.btn-clr:hover{color:var(--t1);border-color:var(--bd2)}
+.sug{
+  padding:8px 10px;background:var(--s2);border:1px solid var(--bd);
+  border-radius:7px;font-size:12.5px;color:var(--t2);cursor:pointer;
+  transition:all .15s;line-height:1.4;margin-bottom:4px;
+}
+.sug:hover{border-color:var(--bd2);color:var(--t1);background:var(--s3)}
+
+/* ── LOADING BAR ── */
+.load-bar{
+  display:none;align-items:center;gap:9px;padding:12px 14px;
+  background:var(--s2);border:1px solid var(--bd);border-radius:9px;
+  font-size:13px;color:var(--t2);margin-bottom:16px;
+}
+.load-bar.show{display:flex}
+.spin{
+  width:15px;height:15px;border:2px solid var(--bd2);border-top-color:var(--ind);
+  border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── EMPTY STATE ── */
+.empty-st{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;min-height:260px;color:var(--t3);text-align:center;
+  padding:40px;gap:10px;
+}
+.empty-ico{
+  width:46px;height:46px;background:var(--s2);border:1px solid var(--bd);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:6px;
+}
+.empty-ico svg{width:22px;height:22px;color:var(--t3)}
+.empty-ttl{font-size:15px;font-weight:600;color:var(--t2)}
+.empty-dsc{font-size:13px;max-width:260px;line-height:1.65}
+
+/* ── ANSWER CARDS ── */
+.acard{
+  background:var(--s1);border:1px solid var(--bd);border-radius:12px;
+  overflow:hidden;margin-bottom:14px;animation:slideUp .22s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.acard-head{
+  padding:11px 15px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--bd);background:var(--s2);
+}
+.acard-body{padding:15px}
+.mbadge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;
+}
+.mb-rag{background:var(--rag-d);color:var(--rag);border:1px solid rgba(34,211,238,.2)}
+.mb-bl{background:var(--bl-d);color:var(--bl);border:1px solid rgba(251,191,36,.2)}
+.mb-ag{background:var(--ag-d);color:var(--ag);border:1px solid rgba(167,139,250,.2)}
+.mb-err{background:rgba(248,113,113,.1);color:var(--err);border:1px solid rgba(248,113,113,.2)}
+.acard-time{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-left:auto}
+.answer-txt{font-size:13.5px;line-height:1.8;color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.src-sec{margin-top:13px;padding-top:13px;border-top:1px solid var(--bd)}
+.src-lbl{font-size:10.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.src-chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;background:var(--s2);
+  border:1px solid var(--bd);border-radius:5px;padding:4px 8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t2);
+  transition:border-color .15s;
+}
+.chip:hover{border-color:var(--bd2);color:var(--t1)}
+.chip.vis{background:var(--rag-d);border-color:rgba(34,211,238,.25);color:var(--rag)}
+.steps-sec{margin-top:13px;padding-top:13px;border-top:1px solid var(--bd)}
+.step{
+  background:var(--s2);border:1px solid var(--bd);border-radius:7px;
+  padding:9px 12px;margin-bottom:6px;font-family:'JetBrains Mono',monospace;font-size:12px;
+}
+.step-tool{color:var(--ag);font-weight:500;margin-bottom:3px}
+.step-in{color:var(--t2)}
+.step-res{color:var(--t3);margin-top:3px}
+
+/* ── GRID 2 ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ── COMPARISON ── */
+.filter-bar{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  padding:12px 20px;border-bottom:1px solid var(--bd);background:var(--s0);
+  flex-wrap:wrap;
+}
+.flbl{font-size:12px;color:var(--t3);font-weight:500;margin-right:2px}
+.fbtn{
+  padding:5px 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;
+  color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;
+  font-family:'Inter',sans-serif;
+}
+.fbtn:hover{border-color:var(--bd2);color:var(--t1)}
+.fbtn.active{background:var(--ind-d);border-color:rgba(99,102,241,.35);color:var(--ind-l)}
+.clist{padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.ccard{background:var(--s1);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.ccard-head{
+  padding:11px 15px;display:flex;align-items:center;gap:10px;
+  background:var(--s2);border-bottom:1px solid var(--bd);
+}
+.cc-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);flex-shrink:0}
+.cc-q{font-size:13.5px;font-weight:500;color:var(--t1);flex:1}
+.cc-cat{
+  font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 7px;
+  border-radius:4px;background:var(--s3);color:var(--t3);flex-shrink:0;
+}
+.cc-body{display:grid;grid-template-columns:1fr 1fr}
+.cc-col{padding:13px 15px}
+.cc-col+.cc-col{border-left:1px solid var(--bd)}
+.cc-col-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.cc-txt{font-size:13px;line-height:1.7;color:var(--t2)}
+.rouge-w{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  padding:2px 7px;border-radius:4px;margin-left:auto;
+}
+.r-win{background:rgba(52,211,153,.1);color:var(--ok)}
+.r-lose{background:rgba(248,113,113,.1);color:var(--err)}
+
+/* ── METRICS ── */
+.m-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:11px;margin-bottom:22px}
+.mstat{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:15px}
+.mstat-lbl{font-size:10.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.mstat-val{font-size:28px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.mstat-sub{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:5px}
+.bar-row{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.bar-nm{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);width:90px;flex-shrink:0;text-align:right}
+.bar-tr{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bar-fi{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.fi-rag{background:var(--rag)}
+.fi-bl{background:var(--bl);opacity:.8}
+.fi-ind{background:var(--ind)}
+.bar-v{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t2);width:42px}
+.hist-item{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:9px}
+.hist-head{
+  padding:10px 14px;display:flex;align-items:center;justify-content:space-between;
+  background:var(--s2);border-bottom:1px solid var(--bd);gap:12px;
+}
+.hist-q{font-size:13px;font-weight:500;color:var(--t1);flex:1}
+.hist-ts{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);flex-shrink:0}
+.hist-body{padding:11px 14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hist-col-ttl{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.hist-mt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t3);line-height:1.9}
+
+/* ── INDEX PANEL ── */
+.idx-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px}
+.idx-full{grid-column:1/-1}
+.icard{background:var(--s1);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.icard-head{
+  padding:11px 15px;border-bottom:1px solid var(--bd);display:flex;
+  align-items:center;gap:8px;background:var(--s2);
+}
+.icard-ttl{font-size:13px;font-weight:600;color:var(--t1)}
+.icard-sub{font-size:11.5px;color:var(--t3);margin-left:auto;font-family:'JetBrains Mono',monospace}
+.icard-body{padding:15px}
+.idx-stat-row{display:flex;gap:10px;flex-wrap:wrap}
+.idx-st{
+  background:var(--s2);border:1px solid var(--bd);border-radius:8px;
+  padding:11px 14px;flex:1;min-width:120px;
+}
+.idx-st-lbl{font-size:10.5px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.idx-st-val{font-size:18px;font-weight:700}
+.doc-row{
+  display:flex;align-items:center;gap:10px;padding:9px 0;
+  border-bottom:1px solid var(--bd);
+}
+.doc-row:last-child{border-bottom:none}
+.doc-ico{
+  width:30px;height:30px;background:rgba(248,113,113,.1);
+  border:1px solid rgba(248,113,113,.2);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.doc-ico svg{width:15px;height:15px;color:var(--err)}
+.doc-inf{flex:1;min-width:0}
+.doc-nm{font-size:13px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-mt{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.upload-area{
+  border:2px dashed var(--bd2);border-radius:10px;padding:22px;
+  text-align:center;cursor:pointer;transition:all .2s;position:relative;
+}
+.upload-area:hover,.upload-area.drag-over{border-color:var(--ind);background:var(--ind-d)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-ico{
+  width:38px;height:38px;background:var(--s3);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 9px;
+}
+.up-ico svg{width:20px;height:20px;color:var(--t2)}
+.up-ttl{font-size:13px;font-weight:500;color:var(--t2);margin-bottom:3px}
+.up-hint{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.up-fn{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ind-l);margin-top:7px}
+.log-box{
+  display:none;background:var(--s0);border:1px solid var(--bd);border-radius:8px;
+  padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--t2);line-height:1.8;max-height:220px;overflow-y:auto;margin-top:11px;
+}
+.p-load{
+  display:none;align-items:center;gap:9px;padding:11px 13px;
+  background:var(--s2);border:1px solid var(--bd);border-radius:8px;
+  font-size:13px;color:var(--t2);margin-top:11px;
+}
+.p-load.show{display:flex}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:8px 14px;border-radius:8px;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;transition:all .15s;
+}
+.btn-p{background:var(--ind);color:#fff}
+.btn-p:hover{background:#5457e0;box-shadow:0 2px 10px var(--ind-g)}
+.btn-p:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn-g{background:transparent;color:var(--t2);border:1px solid var(--bd)}
+.btn-g:hover{border-color:var(--bd2);color:var(--t1)}
+.btn-g:disabled{opacity:.4;cursor:not-allowed}
+.btn-d{
+  background:transparent;color:var(--err);
+  border:1px solid rgba(248,113,113,.22);padding:5px 10px;font-size:11.5px;
+}
+.btn-d:hover{background:rgba(248,113,113,.08)}
+
+/* ── SECTION HEADER ── */
+.sec-hd{
+  padding:18px 20px 12px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.sec-ttl{font-size:15px;font-weight:600;color:var(--t1)}
+.sec-sub{font-size:12px;color:var(--t3);margin-top:2px}
+
+/* ── RAGAS SECTION ── */
+.ragas-sec{margin-top:22px}
+.sec-sub-lbl{
+  font-size:13px;font-weight:600;color:var(--t2);
+  padding:14px 20px 10px;border-bottom:1px solid var(--bd);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sw:58px}
+  .sb-logo-name,.sb-logo-sub,.sb-status-txt,.nav-item span,.sb-foot-txt{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .nav-item.active::before{display:none}
+  .sb-head{padding:12px 8px}
+  .qs-left{width:260px}
+  .cc-body,.hist-body,.g2{grid-template-columns:1fr}
+  .cc-col+.cc-col{border-left:none;border-top:1px solid var(--bd)}
+  .idx-layout{grid-template-columns:1fr}
+  .idx-full{grid-column:auto}
+}
+@media(max-width:640px){
+  .qs-left{width:100%;border-right:none;border-bottom:1px solid var(--bd);max-height:40vh}
+  #panel-consulta{flex-direction:column !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
+        </svg>
+      </div>
+      <div>
+        <div class="sb-logo-name">Scholar RAG</div>
+        <div class="sb-logo-sub">Lab IA Generativa</div>
+      </div>
+    </div>
+    <div class="sb-status">
+      <div class="sb-dot"></div>
+      <span class="sb-status-txt">llama3.1:8b · Ollama</span>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-lbl">Principal</div>
+    <div class="nav-item active" onclick="goTab('consulta',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/>
+      </svg>
+      <span>Consulta</span>
+    </div>
+    <div class="nav-item" onclick="goTab('comparacion',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75Zm6.75-5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 9.75 19.875v-12Zm6.75-3c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/>
+      </svg>
+      <span>Comparación</span>
+    </div>
+    <div class="nav-item" onclick="goTab('metricas',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.169.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/>
+      </svg>
+      <span>Métricas</span>
+    </div>
+    <div style="height:1px;background:var(--bd);margin:8px 0"></div>
+    <div class="nav-lbl">Sistema</div>
+    <div class="nav-item" onclick="goTab('indice',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/>
+      </svg>
+      <span>Índice</span>
+    </div>
+  </nav>
+
+  <div class="sb-foot">
+    <div class="sb-foot-txt">MiniLM-L12 · ChromaDB<br>cross-encoder · mmarco</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <span class="tb-title" id="tb-title">Consulta</span>
+    <span class="tb-sep"></span>
+    <span class="tb-sub" id="tb-sub">Pregunta a tus documentos académicos</span>
+    <span class="tb-spacer"></span>
+    <span class="tb-pill">RAG Multimodal</span>
+  </header>
+
+  <div class="content-area">
+
+    <!-- ── CONSULTA ── -->
+    <div id="panel-consulta" class="panel active">
+      <!-- Left: input -->
+      <div class="qs-left">
+        <div class="q-sec">
+          <div class="q-sec-lbl">Pregunta</div>
+          <textarea id="query" placeholder="¿Qué quieres saber sobre los documentos?" rows="4"></textarea>
+          <div class="q-hint">↵ Enter · Shift+↵ nueva línea</div>
+        </div>
+
+        <div class="q-sec">
+          <div class="q-sec-lbl">Modo</div>
+          <div class="mode-grid">
+            <button class="mbtn m-rag active" onclick="setMode('rag',this)">
+              <span class="mdot"></span>RAG
+            </button>
+            <button class="mbtn m-bl" onclick="setMode('baseline',this)">
+              <span class="mdot"></span>Baseline
+            </button>
+            <button class="mbtn m-both" onclick="setMode('ambos',this)">
+              <span class="mdot"></span>Ambos
+            </button>
+            <button class="mbtn m-ag" onclick="setMode('agente',this)">
+              <span class="mdot"></span>Agente
+            </button>
+          </div>
+        </div>
+
+        <div class="q-sec">
+          <button class="btn-ask" id="btn-ask" onclick="doAsk()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.5 2-20 7.5 8.5 4L21.5 2Zm0 0-9 13-1.5-4.5"/></svg>
+            Preguntar
+          </button>
+          <button class="btn-clr" onclick="clearQuery()">Limpiar</button>
+        </div>
+
+        <div class="q-sec">
+          <div class="q-sec-lbl">Ejemplos</div>
+          <div class="sug" onclick="setSug(this)">¿Qué es RAG?</div>
+          <div class="sug" onclick="setSug(this)">¿Qué tipos de RAG existen?</div>
+          <div class="sug" onclick="setSug(this)">¿Qué es BLIP-2?</div>
+          <div class="sug" onclick="setSug(this)">¿Qué es el Q-Former?</div>
+          <div class="sug" onclick="setSug(this)">¿Qué mide RAGAS?</div>
+          <div class="sug" onclick="setSug(this)">¿Qué ejemplos visuales hay en los papers?</div>
+        </div>
+      </div>
+
+      <!-- Right: results -->
+      <div class="qs-right">
+        <div class="qs-scroll" id="qs-scroll">
+          <div class="load-bar" id="load-ask">
+            <div class="spin"></div>
+            <span id="load-ask-txt">Consultando documentos...</span>
+          </div>
+          <div id="res-consulta">
+            <div class="empty-st">
+              <div class="empty-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m21.5 2-20 7.5 8.5 4L21.5 2Zm0 0-9 13-1.5-4.5"/>
+                </svg>
+              </div>
+              <div class="empty-ttl">Listo para responder</div>
+              <div class="empty-dsc">Escribe una pregunta, selecciona el modo y pulsa Preguntar.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPARACIÓN ── -->
+    <div id="panel-comparacion" class="panel">
+      <div class="filter-bar">
+        <span class="flbl">Filtrar:</span>
+        <button class="fbtn active" id="f-todas"         onclick="setFilter('todas',this)">Todas</button>
+        <button class="fbtn"        id="f-teoria"        onclick="setFilter('teoria',this)">Teoría</button>
+        <button class="fbtn"        id="f-multimodalidad" onclick="setFilter('multimodalidad',this)">Multimodal</button>
+        <button class="fbtn"        id="f-evaluacion"    onclick="setFilter('evaluacion',this)">Evaluación</button>
+        <button class="fbtn"        id="f-comparacion"   onclick="setFilter('comparacion',this)">Comparación</button>
+      </div>
+      <div class="p-scroll">
+        <div id="res-comp" class="clist">
+          <div class="empty-st">
+            <div class="empty-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75Zm6.75-5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 9.75 19.875v-12Zm6.75-3c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/>
+              </svg>
+            </div>
+            <div class="empty-ttl">Sin resultados</div>
+            <div class="empty-dsc">Ejecuta la comparación desde el panel Índice para ver los resultados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MÉTRICAS ── -->
+    <div id="panel-metricas" class="panel">
+      <div class="p-scroll">
+        <div id="res-metrics" style="padding:20px">
+          <div class="empty-st">
+            <div class="empty-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.169.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/>
+              </svg>
+            </div>
+            <div class="empty-ttl">Sin métricas</div>
+            <div class="empty-dsc">Haz una pregunta o ejecuta la evaluación para ver métricas aquí.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ÍNDICE ── -->
+    <div id="panel-indice" class="panel">
+      <div class="p-scroll">
+        <div id="indice-status" style="padding:18px 20px 0"></div>
+        <div class="idx-layout">
+
+          <!-- Documentos indexados -->
+          <div class="icard idx-full">
+            <div class="icard-head">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+              <span class="icard-ttl">Documentos indexados</span>
+              <span class="icard-sub" id="idx-summary"></span>
+            </div>
+            <div class="icard-body" id="indexed-docs-list">
+              <div style="font-size:13px;color:var(--t3);font-style:italic">Cargando...</div>
+            </div>
+          </div>
+
+          <!-- Añadir documento -->
+          <div class="icard">
+            <div class="icard-head">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.338-2.32 5.75 5.75 0 0 1 .364 11.095H6.75Z"/></svg>
+              <span class="icard-ttl">Añadir documento</span>
+            </div>
+            <div class="icard-body">
+              <p style="font-size:12.5px;color:var(--t3);margin-bottom:12px;line-height:1.6">
+                Sube un PDF para añadirlo al índice incrementalmente, sin regenerar embeddings existentes.
+              </p>
+              <div class="upload-area" id="upload-area">
+                <input type="file" id="pdf-upload" accept=".pdf" onchange="onFileSelected(this)">
+                <div class="up-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
+                </div>
+                <div class="up-ttl">Arrastra un PDF aquí</div>
+                <div class="up-hint">o haz clic para seleccionar</div>
+                <div class="up-fn" id="selected-file"></div>
+              </div>
+              <div style="margin-top:11px;display:flex;gap:8px">
+                <button class="btn btn-p" id="btn-add-doc" onclick="addDocument()" disabled>Añadir al índice</button>
+              </div>
+              <div class="p-load" id="load-add"><div class="spin"></div><span>Procesando documento...</span></div>
+              <div class="log-box" id="log-add"></div>
+            </div>
+          </div>
+
+          <!-- Reconstruir índice -->
+          <div class="icard">
+            <div class="icard-head">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
+              <span class="icard-ttl">Reconstruir índice</span>
+            </div>
+            <div class="icard-body">
+              <p style="font-size:12.5px;color:var(--t3);margin-bottom:14px;line-height:1.6">
+                Regenera el índice completo desde <code style="font-family:'JetBrains Mono',monospace;color:var(--ind-l);font-size:11px">data/raw/</code>. Borra todos los embeddings existentes.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-p" id="btn-idx-texto" onclick="buildIdx('texto')" style="width:100%">
+                  Reconstruir &middot; Solo texto
+                </button>
+                <button class="btn btn-g" id="btn-idx-multi" onclick="buildIdx('multimodal')" style="width:100%">
+                  Reconstruir &middot; Texto + Imágenes
+                </button>
+              </div>
+              <div class="p-load" id="load-idx">
+                <div class="spin"></div><span id="load-idx-txt">Construyendo índice...</span>
+              </div>
+              <div class="log-box" id="log-idx"></div>
+            </div>
+          </div>
+
+          <!-- Evaluación -->
+          <div class="icard idx-full">
+            <div class="icard-head">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.169.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+              <span class="icard-ttl">Evaluación RAG vs Baseline</span>
+            </div>
+            <div class="icard-body">
+              <p style="font-size:12.5px;color:var(--t3);margin-bottom:14px;line-height:1.6">
+                Ejecuta el dataset completo de evaluación (60 preguntas), calcula métricas ROUGE + RAGAS y guarda los resultados en <code style="font-family:'JetBrains Mono',monospace;color:var(--ind-l);font-size:11px">experiments/</code>.
+              </p>
+              <div class="g2" style="margin-bottom:14px">
+                <div class="idx-st">
+                  <div class="idx-st-lbl">RAG · ROUGE-1</div>
+                  <div class="idx-st-val" style="color:var(--rag)" id="cmp-rag-r1">—</div>
+                </div>
+                <div class="idx-st">
+                  <div class="idx-st-lbl">Baseline · ROUGE-1</div>
+                  <div class="idx-st-val" style="color:var(--bl)" id="cmp-bl-r1">—</div>
+                </div>
+              </div>
+              <button class="btn btn-p" id="btn-run-cmp" onclick="runCmp()">Ejecutar comparación</button>
+              <div class="p-load" id="load-cmp">
+                <div class="spin"></div><span>Procesando preguntas... puede tardar varios minutos.</span>
+              </div>
+              <div class="log-box" id="log-cmp"></div>
+            </div>
+          </div>
+
+        </div><!-- /idx-layout -->
+      </div><!-- /p-scroll -->
+    </div><!-- /panel-indice -->
+
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<script>
+var curMode = 'rag';
+var compData = [];
+var compFilter = 'todas';
+
+var PANEL_META = {
+  consulta:    {title:'Consulta',    sub:'Pregunta a tus documentos académicos'},
+  comparacion: {title:'Comparación', sub:'Resultados del dataset de evaluación'},
+  metricas:    {title:'Métricas',    sub:'ROUGE, Faithfulness y RAGAS'},
+  indice:      {title:'Índice',      sub:'Gestión de documentos y evaluación'}
+};
+
+function goTab(name, el) {
+  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active')});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  var meta = PANEL_META[name] || {};
+  document.getElementById('tb-title').textContent = meta.title || name;
+  document.getElementById('tb-sub').textContent   = meta.sub   || '';
+  if (name === 'metricas')    loadMetrics();
+  if (name === 'comparacion') loadComp();
+  if (name === 'indice')      loadIdxStatus();
+}
+
+function setMode(m, btn) {
+  curMode = m;
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+}
+
+function setSug(el) { document.getElementById('query').value = el.textContent; }
+
+function clearQuery() {
+  document.getElementById('query').value = '';
+  document.getElementById('res-consulta').innerHTML =
+    '<div class="empty-st">' +
+    '<div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.5 2-20 7.5 8.5 4L21.5 2Zm0 0-9 13-1.5-4.5"/></svg></div>' +
+    '<div class="empty-ttl">Listo para responder</div>' +
+    '<div class="empty-dsc">Escribe una pregunta, selecciona el modo y pulsa Preguntar.</div>' +
+    '</div>';
+}
+
+function setFilter(cat, btn) {
+  compFilter = cat;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderComp();
+}
+
+function doAsk() {
+  var q = document.getElementById('query').value.trim();
+  if (!q) return;
+  var btn = document.getElementById('btn-ask');
+  btn.disabled = true;
+  document.getElementById('load-ask').classList.add('show');
+  document.getElementById('res-consulta').innerHTML = '';
+
+  fetch('/ask', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({query:q, mode:curMode})
+  }).then(function(r){return r.json()}).then(function(data){
+    renderConsulta(data);
+  }).catch(function(){
+    document.getElementById('res-consulta').innerHTML =
+      '<div class="acard"><div class="acard-head"><span class="mbadge mb-err">ERROR</span></div>' +
+      '<div class="acard-body"><div class="answer-txt" style="color:var(--err)">Error al conectar con el servidor.</div></div></div>';
+  }).finally(function(){
+    btn.disabled = false;
+    document.getElementById('load-ask').classList.remove('show');
+  });
+}
+
+function ts() {
+  return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderConsulta(data) {
+  var cont = document.getElementById('res-consulta');
+  if (data.error) {
+    cont.innerHTML = '<div class="acard"><div class="acard-head"><span class="mbadge mb-err">ERROR</span></div>' +
+      '<div class="acard-body"><div class="answer-txt" style="color:var(--err)">' + esc(data.error) + '</div></div></div>';
+    return;
+  }
+  if (curMode === 'ambos') {
+    cont.innerHTML = buildGrid(data.rag_answer, data.rag_sources, data.baseline_answer);
+    return;
+  }
+  if (curMode === 'agente') {
+    cont.innerHTML = '<div class="acard">' +
+      '<div class="acard-head"><span class="mbadge mb-ag">AGENTE</span><span class="acard-time">' + ts() + '</span></div>' +
+      '<div class="acard-body"><div class="answer-txt">' + esc(data.rag_answer || 'Sin respuesta.') + '</div>' +
+      stepsHtml(data.agent_steps || []) + srcHtml(data.rag_sources || []) + '</div></div>';
+    return;
+  }
+  var isRag = curMode === 'rag';
+  var ans = isRag ? data.rag_answer : data.baseline_answer;
+  var src = isRag ? (data.rag_sources || []) : [];
+  cont.innerHTML = '<div class="acard">' +
+    '<div class="acard-head"><span class="mbadge ' + (isRag ? 'mb-rag' : 'mb-bl') + '">' + (isRag ? 'RAG' : 'BASELINE') + '</span>' +
+    '<span class="acard-time">' + ts() + '</span></div>' +
+    '<div class="acard-body"><div class="answer-txt">' + esc(ans || 'Sin respuesta.') + '</div>' +
+    srcHtml(src) + '</div></div>';
+}
+
+function buildGrid(ragAns, ragSrc, blAns) {
+  return '<div class="g2">' +
+    '<div class="acard"><div class="acard-head"><span class="mbadge mb-rag">RAG</span><span class="acard-time">' + ts() + '</span></div>' +
+    '<div class="acard-body"><div class="answer-txt">' + esc(ragAns || 'Sin respuesta.') + '</div>' + srcHtml(ragSrc || []) + '</div></div>' +
+    '<div class="acard"><div class="acard-head"><span class="mbadge mb-bl">BASELINE</span><span class="acard-time">' + ts() + '</span></div>' +
+    '<div class="acard-body"><div class="answer-txt">' + esc(blAns || 'Sin respuesta.') + '</div></div></div>' +
+    '</div>';
+}
+
+function stepsHtml(steps) {
+  if (!steps || !steps.length) return '';
+  var rows = steps.map(function(s,i){
+    return '<div class="step"><div class="step-tool">&#x2192; ' + (i+1) + '. ' + esc(s.tool) + '</div>' +
+      '<div class="step-in">Input: ' + esc(s.input) + '</div>' +
+      (s.result_preview ? '<div class="step-res">' + esc(s.result_preview.substring(0,200)) + '…</div>' : '') +
+      '</div>';
+  }).join('');
+  return '<div class="steps-sec"><div class="src-lbl">Pasos del agente</div>' + rows + '</div>';
+}
+
+function srcHtml(sources) {
+  if (!sources || !sources.length) return '';
+  var seen = new Set(), unique = [];
+  sources.forEach(function(s){
+    var k = s.source_file+'||'+s.page+'||'+(s.type||'text');
+    if (!seen.has(k)){seen.add(k);unique.push(s);}
+  });
+  var chips = unique.map(function(s){
+    var vis = s.type === 'image_caption';
+    return '<span class="chip' + (vis?' vis':'') + '">' +
+      (vis ? svgImg() : svgDoc()) + ' ' + esc(s.source_file) + ' · p.' + s.page + '</span>';
+  }).join('');
+  return '<div class="src-sec"><div class="src-lbl">Fuentes (' + unique.length + ')</div><div class="src-chips">' + chips + '</div></div>';
+}
+
+function svgDoc(){return '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>';}
+function svgImg(){return '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>';}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── COMPARISON ── */
+function loadComp() {
+  if (compData.length > 0) { renderComp(); return; }
+  fetch('/comparison').then(function(r){return r.json()}).then(function(d){
+    compData = d.error ? [] : d;
+    renderComp();
+  }).catch(function(){
+    document.getElementById('res-comp').innerHTML =
+      '<div class="empty-st"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg></div>' +
+      '<div class="empty-ttl">Sin resultados</div>' +
+      '<div class="empty-dsc">Ejecuta la comparación desde el panel Índice primero.</div></div>';
+  });
+}
+
+function renderComp() {
+  var cont = document.getElementById('res-comp');
+  var data = compFilter === 'todas' ? compData : compData.filter(function(d){return d.category === compFilter});
+  if (!data.length) {
+    cont.innerHTML = '<div class="empty-st"><div class="empty-ttl">Sin resultados en esta categoría</div></div>';
+    return;
+  }
+  cont.innerHTML = data.map(function(item){
+    var rm = item.rag_metrics || {}, bm = item.baseline_metrics || {};
+    var r1 = rm.rouge1_f1 || 0, b1 = bm.rouge1_f1 || 0;
+    var ragWins = r1 >= b1;
+    var seen = new Set(), uniq = [];
+    (item.rag_sources||[]).forEach(function(s){
+      var k=s.source_file+'||'+s.page+'||'+(s.type||'text');
+      if(!seen.has(k)){seen.add(k);uniq.push(s);}
+    });
+    var chips = uniq.map(function(s){
+      var vis=s.type==='image_caption';
+      return '<span class="chip'+(vis?' vis':'')+'">'+esc(s.source_file)+' p.'+s.page+'</span>';
+    }).join('');
+    return '<div class="ccard">' +
+      '<div class="ccard-head">' +
+        '<span class="cc-id">#' + item.id + '</span>' +
+        '<span class="cc-q">' + esc(item.question) + '</span>' +
+        '<span class="cc-cat">' + esc(item.category) + '</span>' +
+      '</div>' +
+      '<div class="cc-body">' +
+        '<div class="cc-col"><div class="cc-col-head">' +
+          '<span class="mbadge mb-rag">RAG</span>' +
+          '<span class="rouge-w ' + (ragWins?'r-win':'r-lose') + '">R1: ' + r1.toFixed(3) + '</span>' +
+        '</div>' +
+        '<div class="cc-txt">' + esc(item.rag_answer) + '</div>' +
+        (chips ? '<div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:5px">' + chips + '</div>' : '') +
+        '</div>' +
+        '<div class="cc-col"><div class="cc-col-head">' +
+          '<span class="mbadge mb-bl">Baseline</span>' +
+          '<span class="rouge-w ' + (!ragWins?'r-win':'r-lose') + '">R1: ' + b1.toFixed(3) + '</span>' +
+        '</div>' +
+        '<div class="cc-txt">' + esc(item.baseline_answer) + '</div>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+/* ── METRICS ── */
+function loadMetrics() {
+  fetch('/metrics').then(function(r){return r.json()}).then(function(data){
+    if (data.error) {
+      document.getElementById('res-metrics').innerHTML =
+        '<div class="empty-st"><div class="empty-ttl">Sin métricas</div>' +
+        '<div class="empty-dsc">Haz una pregunta o ejecuta la evaluación primero.</div></div>';
+      return;
+    }
+    renderMetrics(data.items || [], data.ragas || {});
+  }).catch(function(){
+    document.getElementById('res-metrics').innerHTML =
+      '<div class="empty-st"><div class="empty-ttl">Error al cargar métricas</div></div>';
+  });
+}
+
+function renderMetrics(items, ragas) {
+  var cont = document.getElementById('res-metrics');
+  var html = '';
+
+  if (items.length) {
+    var last = items[items.length-1];
+    var rag = last.rag_metrics || {}, bl = last.baseline_metrics || {};
+    html += '<div class="sec-hd"><div><div class="sec-ttl">Última consulta</div>' +
+      '<div class="sec-sub">' + esc(last.question) + ' · ' + esc(last.timestamp) + '</div></div></div>';
+    html += '<div style="padding:16px 20px">';
+    if (last.rag_answer) {
+      html += '<div class="m-grid">' +
+        mstat('RAG · Faithfulness', (rag.faithfulness||0).toFixed(3), 'var(--rag)') +
+        mstat('RAG · ROUGE-1 ctx',   (rag.rouge1_vs_context||0).toFixed(3), 'var(--rag)') +
+        mstat('RAG · Longitud',      (rag.answer_length_words||0), 'var(--rag)') +
+        mstat('RAG · Sin info',      ((rag.mentions_no_info||0)*100).toFixed(0)+'%', 'var(--rag)');
+      if (last.baseline_answer) {
+        html +=
+          mstat('BL · Longitud', (bl.answer_length_words||0), 'var(--bl)') +
+          mstat('BL · Sin info', ((bl.mentions_no_info||0)*100).toFixed(0)+'%', 'var(--bl)');
+      }
+      html += '</div>';
+      var r1=rag.rouge1_f1||0, r2=rag.rouge2_f1||0, rL=rag.rougeL_f1||0;
+      var b1=bl.rouge1_f1||0, b2=bl.rouge2_f1||0, bL=bl.rougeL_f1||0;
+      if (r1 || b1) {
+        html += '<div class="mstat" style="margin-bottom:14px">' +
+          '<div class="mstat-lbl">ROUGE · Comparativa</div>' +
+          barRow('RAG R-1', r1, 'fi-rag') + barRow('BL R-1', b1, 'fi-bl') +
+          barRow('RAG R-L', rL, 'fi-rag') + barRow('BL R-L', bL, 'fi-bl') +
+          '</div>';
+      }
+    }
+    html += '</div>';
+  }
+
+  if (ragas && ragas.n_questions) {
+    html += '<div class="sec-hd"><div class="sec-ttl">RAGAS</div></div>';
+    html += '<div style="padding:16px 20px"><div class="m-grid">' +
+      mstat('Faithfulness',       (ragas.faithfulness||0).toFixed(3),       'var(--ok)') +
+      mstat('Answer Relevancy',   (ragas.answer_relevancy||0).toFixed(3),   'var(--ok)') +
+      mstat('Context Precision',  (ragas.context_precision||0).toFixed(3),  'var(--ind-l)') +
+      mstat('Context Recall',     (ragas.context_recall||0).toFixed(3),     'var(--ind-l)') +
+      '</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--t3);margin-top:6px">' +
+      'Calculado sobre ' + ragas.n_questions + ' preguntas del dataset.</div></div>';
+  }
+
+  if (items.length) {
+    html += '<div class="sec-hd"><div class="sec-ttl">Histórico (' + items.length + ')</div></div>';
+    html += '<div style="padding:14px 20px">';
+    items.slice().reverse().forEach(function(item){
+      var rm=item.rag_metrics||{},bm=item.baseline_metrics||{};
+      html += '<div class="hist-item"><div class="hist-head">' +
+        '<span class="hist-q">' + esc(item.question) + '</span>' +
+        '<span class="hist-ts">' + esc(item.timestamp) + '</span></div>' +
+        '<div class="hist-body"><div>' +
+        '<div class="hist-col-ttl">RAG</div>' +
+        '<div class="hist-mt">' +
+        'faithfulness: ' + (rm.faithfulness||0).toFixed(3) + '\n' +
+        'rouge-1 ctx: ' + (rm.rouge1_vs_context||0).toFixed(3) + '\n' +
+        'longitud: ' + (rm.answer_length_words||0) + '\n' +
+        'sin info: ' + ((rm.mentions_no_info||0)*100).toFixed(0) + '%' +
+        '</div></div><div>' +
+        '<div class="hist-col-ttl">Baseline</div>' +
+        '<div class="hist-mt">' +
+        'longitud: ' + (bm.answer_length_words||0) + '\n' +
+        'sin info: ' + ((bm.mentions_no_info||0)*100).toFixed(0) + '%' +
+        '</div></div></div></div>';
+    });
+    html += '</div>';
+  }
+
+  if (!html) {
+    html = '<div class="empty-st"><div class="empty-ttl">Sin métricas</div>' +
+           '<div class="empty-dsc">Haz una pregunta o ejecuta la evaluación primero.</div></div>';
+  }
+  cont.innerHTML = html;
+}
+
+function mstat(lbl, val, color) {
+  return '<div class="mstat"><div class="mstat-lbl">' + lbl + '</div>' +
+    '<div class="mstat-val" style="color:' + color + '">' + val + '</div></div>';
+}
+
+function barRow(lbl, val, cls) {
+  return '<div class="bar-row"><span class="bar-nm">' + lbl + '</span>' +
+    '<div class="bar-tr"><div class="bar-fi ' + cls + '" style="width:' + Math.min(val*100,100).toFixed(1) + '%"></div></div>' +
+    '<span class="bar-v">' + val.toFixed(3) + '</span></div>';
+}
+
+/* ── INDEX STATUS ── */
+function loadIdxStatus() {
+  fetch('/index_status').then(function(r){return r.json()}).then(function(data){
+    var el = document.getElementById('indice-status');
+    var color = data.exists ? 'var(--ok)' : 'var(--err)';
+    var label = data.exists ? 'Disponible' : 'No existe';
+    var extra = data.exists
+      ? '<div class="idx-st"><div class="idx-st-lbl">Modificado</div><div style="font-size:13px;color:var(--t1);font-family:\'JetBrains Mono\',monospace;margin-top:3px">' + data.modified + '</div></div>' +
+        '<div class="idx-st"><div class="idx-st-lbl">Almacenamiento</div><div style="font-size:13px;color:var(--t1);font-family:\'JetBrains Mono\',monospace;margin-top:3px">' + data.type + '</div></div>'
+      : '';
+    el.innerHTML = '<div class="idx-stat-row">' +
+      '<div class="idx-st"><div class="idx-st-lbl">Estado</div>' +
+      '<div class="idx-st-val" style="color:' + color + '">' + label + '</div></div>' +
+      extra + '</div>';
+  });
+  loadIndexedSources();
+}
+
+function loadIndexedSources() {
+  fetch('/indexed_sources').then(function(r){return r.json()}).then(function(data){
+    var cont = document.getElementById('indexed-docs-list');
+    var sum  = document.getElementById('idx-summary');
+    if (data.error || !data.sources || !data.sources.length) {
+      cont.innerHTML = '<div style="font-size:13px;color:var(--t3);font-style:italic">No hay documentos indexados.</div>';
+      sum.textContent = '';
+      return;
+    }
+    sum.textContent = data.total_documents + ' docs · ' + data.total_chunks + ' chunks';
+    cont.innerHTML = data.sources.map(function(src){
+      return '<div class="doc-row">' +
+        '<div class="doc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></div>' +
+        '<div class="doc-inf"><div class="doc-nm">' + esc(src.source_file) + '</div>' +
+        '<div class="doc-mt">' + src.chunk_count + ' chunks · ' + src.pages.length + ' págs · ' + src.types.join(', ') + '</div></div>' +
+        '<button class="btn btn-d" onclick="deleteSource(\'' + src.source_file.replace(/\\/g,'\\\\').replace(/'/g,"\\'") + '\')">Eliminar</button>' +
+        '</div>';
+    }).join('');
+  }).catch(function(){
+    document.getElementById('indexed-docs-list').innerHTML =
+      '<div style="font-size:13px;color:var(--err)">Error al cargar documentos.</div>';
+  });
+}
+
+/* ── FILE UPLOAD ── */
+function onFileSelected(input) {
+  var fn = document.getElementById('selected-file');
+  var btn = document.getElementById('btn-add-doc');
+  if (input.files && input.files.length) {
+    fn.textContent = input.files[0].name;
+    btn.disabled = false;
+  } else {
+    fn.textContent = '';
+    btn.disabled = true;
+  }
+}
+
+// Drag & drop visual feedback
+document.addEventListener('DOMContentLoaded', function(){
+  var ua = document.getElementById('upload-area');
+  if (!ua) return;
+  ua.addEventListener('dragover', function(e){e.preventDefault();ua.classList.add('drag-over')});
+  ua.addEventListener('dragleave', function(){ua.classList.remove('drag-over')});
+  ua.addEventListener('drop', function(){ua.classList.remove('drag-over')});
+});
+
+function addDocument() {
+  var fi = document.getElementById('pdf-upload');
+  if (!fi.files || !fi.files.length) return;
+  var fd = new FormData();
+  fd.append('file', fi.files[0]);
+  var btn = document.getElementById('btn-add-doc');
+  btn.disabled = true;
+  document.getElementById('load-add').classList.add('show');
+  document.getElementById('log-add').style.display = 'none';
+  fetch('/add_document',{method:'POST',body:fd})
+    .then(function(r){return r.json()}).then(function(data){
+      var log = document.getElementById('log-add');
+      log.style.display = 'block';
+      log.innerHTML = data.error
+        ? '<span style="color:var(--err)">ERROR: ' + esc(data.error) + '</span>'
+        : data.log.replace(/\n/g,'<br>');
+      log.scrollTop = log.scrollHeight;
+      loadIdxStatus();
+      fi.value = '';
+      document.getElementById('selected-file').textContent = '';
+    }).catch(function(){
+      var log = document.getElementById('log-add');
+      log.style.display='block';
+      log.textContent='Error de conexión.';
+    }).finally(function(){
+      document.getElementById('load-add').classList.remove('show');
+      btn.disabled = true;
+    });
+}
+
+function deleteSource(src) {
+  if (!confirm('¿Eliminar "' + src + '" del índice?')) return;
+  fetch('/delete_source',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_file:src})})
+    .then(function(r){return r.json()}).then(function(data){
+      if (data.error) alert('Error: ' + data.error);
+      loadIndexedSources(); loadIdxStatus();
+    }).catch(function(){alert('Error de conexión.');});
+}
+
+function buildIdx(mode) {
+  ['btn-idx-texto','btn-idx-multi','btn-run-cmp'].forEach(function(id){
+    var el=document.getElementById(id); if(el)el.disabled=true;
+  });
+  document.getElementById('load-idx').classList.add('show');
+  document.getElementById('load-idx-txt').textContent = mode==='multimodal'
+    ? 'Construyendo índice multimodal con LLaVA... (10–20 min)'
+    : 'Construyendo índice de texto... (2–3 min)';
+  document.getElementById('log-idx').style.display = 'none';
+  fetch('/build_index',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:mode})})
+    .then(function(r){return r.json()}).then(function(data){
+      var log=document.getElementById('log-idx');
+      log.style.display='block';
+      log.innerHTML=data.log.replace(/\n/g,'<br>');
+      log.scrollTop=log.scrollHeight;
+      loadIdxStatus();
+    }).catch(function(){
+      var log=document.getElementById('log-idx');
+      log.style.display='block';log.textContent='Error al construir el índice.';
+    }).finally(function(){
+      document.getElementById('load-idx').classList.remove('show');
+      ['btn-idx-texto','btn-idx-multi','btn-run-cmp'].forEach(function(id){
+        var el=document.getElementById(id); if(el)el.disabled=false;
+      });
+    });
+}
+
+function runCmp() {
+  document.getElementById('btn-run-cmp').disabled = true;
+  document.getElementById('load-cmp').classList.add('show');
+  document.getElementById('log-cmp').style.display = 'none';
+  fetch('/run_comparison',{method:'POST'})
+    .then(function(r){return r.json()}).then(function(data){
+      var log=document.getElementById('log-cmp');
+      log.style.display='block';
+      log.innerHTML=data.log.replace(/\n/g,'<br>');
+      log.scrollTop=log.scrollHeight;
+      if (data.rag_rouge1 !== undefined) {
+        document.getElementById('cmp-rag-r1').textContent = data.rag_rouge1.toFixed(3);
+        document.getElementById('cmp-bl-r1').textContent  = data.bl_rouge1.toFixed(3);
+      }
+      compData = [];
+    }).catch(function(){
+      var log=document.getElementById('log-cmp');
+      log.style.display='block';log.textContent='Error al ejecutar la comparación.';
+    }).finally(function(){
+      document.getElementById('load-cmp').classList.remove('show');
+      document.getElementById('btn-run-cmp').disabled=false;
+    });
+}
+
+document.getElementById('query').addEventListener('keydown', function(e){
+  if (e.key==='Enter' && !e.shiftKey){e.preventDefault();doAsk();}
+});
+</script>
+</body>
+</html>
