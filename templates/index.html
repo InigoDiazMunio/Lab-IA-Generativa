@@ -145,6 +145,8 @@ textarea#query::placeholder{color:var(--t3)}
 .mbtn.active.m-bl{background:var(--bl-d);border-color:rgba(251,191,36,.35);color:var(--bl)}
 .mbtn.active.m-both{background:var(--ind-d);border-color:rgba(99,102,241,.35);color:var(--ind-l)}
 .mbtn.active.m-ag{background:var(--ag-d);border-color:rgba(167,139,250,.35);color:var(--ag)}
+.mbtn.active.m-vrf{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35);color:var(--ok)}
+.m-vrf .mdot{background:var(--ok)}
 .mdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .m-rag .mdot{background:var(--rag)}
 .m-bl .mdot{background:var(--bl)}
@@ -382,6 +384,23 @@ textarea#query::placeholder{color:var(--t3)}
 }
 .btn-d:hover{background:rgba(248,113,113,.08)}
 
+/* ── VERDICT BADGE ── */
+.verdict-bar{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 14px;
+  border-radius:8px;margin-top:13px;border:1px solid;
+}
+.verdict-bar.pass{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)}
+.verdict-bar.fail{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3)}
+.verdict-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+.verdict-txt{font-size:12.5px;line-height:1.6}
+.verdict-lbl{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px}
+.verdict-bar.pass .verdict-lbl{color:var(--ok)}
+.verdict-bar.fail .verdict-lbl{color:var(--err)}
+.verdict-bar.pass .verdict-txt{color:rgba(52,211,153,.8)}
+.verdict-bar.fail .verdict-txt{color:rgba(248,113,113,.8)}
+.attempts-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3);margin-top:6px}
+.mb-vrf{background:rgba(52,211,153,.12);color:var(--ok);border:1px solid rgba(52,211,153,.25)}
+
 /* ── SECTION HEADER ── */
 .sec-hd{
   padding:18px 20px 12px;border-bottom:1px solid var(--bd);
@@ -509,6 +528,9 @@ textarea#query::placeholder{color:var(--t3)}
             </button>
             <button class="mbtn m-ag" onclick="setMode('agente',this)">
               <span class="mdot"></span>Agente
+            </button>
+            <button class="mbtn m-vrf" onclick="setMode('verificado',this)" style="grid-column:1/-1">
+              <span class="mdot"></span>RAG + Verificador
             </button>
           </div>
         </div>
@@ -713,6 +735,11 @@ var PANEL_META = {
   indice:      {title:'Índice',      sub:'Gestión de documentos y evaluación'}
 };
 
+var MODE_LABELS = {
+  rag:'RAG', baseline:'BASELINE', ambos:'AMBOS',
+  agente:'AGENTE', verificado:'RAG + VERIFICADOR'
+};
+
 function goTab(name, el) {
   document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active')});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
@@ -795,6 +822,31 @@ function renderConsulta(data) {
       '<div class="acard-head"><span class="mbadge mb-ag">AGENTE</span><span class="acard-time">' + ts() + '</span></div>' +
       '<div class="acard-body"><div class="answer-txt">' + esc(data.rag_answer || 'Sin respuesta.') + '</div>' +
       stepsHtml(data.agent_steps || []) + srcHtml(data.rag_sources || []) + '</div></div>';
+    return;
+  }
+  if (curMode === 'verificado') {
+    var pass = data.verdict === 'PASS';
+    var verdictHtml =
+      '<div class="verdict-bar ' + (pass ? 'pass' : 'fail') + '">' +
+        '<span class="verdict-ico">' + (pass ? '✓' : '✗') + '</span>' +
+        '<div>' +
+          '<div class="verdict-lbl">' + (pass ? 'Verificado · PASS' : 'Verificación · FAIL') + '</div>' +
+          '<div class="verdict-txt">' + esc(data.verdict_reason || '') + '</div>' +
+          (data.attempts > 1
+            ? '<div class="attempts-note">Regeneraciones: ' + (data.attempts - 1) + '</div>'
+            : '') +
+        '</div>' +
+      '</div>';
+    cont.innerHTML = '<div class="acard">' +
+      '<div class="acard-head">' +
+        '<span class="mbadge mb-vrf">RAG + VERIFICADOR</span>' +
+        '<span class="acard-time">' + ts() + '</span>' +
+      '</div>' +
+      '<div class="acard-body">' +
+        '<div class="answer-txt">' + esc(data.rag_answer || 'Sin respuesta.') + '</div>' +
+        verdictHtml +
+        srcHtml(data.rag_sources || []) +
+      '</div></div>';
     return;
   }
   var isRag = curMode === 'rag';

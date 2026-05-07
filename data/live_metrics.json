@@ -236,5 +236,69 @@
       "faithfulness": 0.0625,
       "rouge1_vs_context": 0.0625
     }
+  },
+  {
+    "timestamp": "08/05/2026 00:09:06",
+    "question": "¿Qué tipos de RAG existen?",
+    "mode": "verificado",
+    "rag_answer": "Existen tres tipos de RAG: Naive, Advanced y Modular. Según el Fragmento 1, estos representan un progreso en la evolución de las tecnologías de RAG. El Fragmento 4 también menciona que se categorizan en estas tres etapas.",
+    "baseline_answer": "",
+    "rag_sources": [
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 15,
+        "content_preview": "sizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcases the evolution\nof RAG technologies and their application on many different\n",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "review of the state-of-the-art RAG methods, delineating\nits evolution through paradigms including naive RAG,\narXiv:2312.10997v5  [cs.CL]  27 Mar 2024",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 1,
+        "content_preview": "we categorize it into three stages: Naive RAG, Advanced\nRAG, and Modular RAG, as showed in Figure 3. Despite\nRAG method are cost-effective and surpass the performance\nof the native LLM, they also exhibit several limitations.\nThe development of Advanced RAG and Modular RAG is\na response to these spec",
+        "type": "texto"
+      }
+    ],
+    "rag_metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 37,
+      "faithfulness": 0.03225806451612903,
+      "rouge1_vs_context": 0.03225806451612903
+    }
+  },
+  {
+    "timestamp": "08/05/2026 00:19:30",
+    "question": "¿Qué es RAG?",
+    "mode": "verificado",
+    "rag_answer": "RAG se refiere a Retrieval-Augmentation-Generation. Según el Fragmento 1, RAG es un paradigma que \"synergistically merges LLMs’ intrinsic knowledge with the vast, dynamic repositories of external databases\".",
+    "baseline_answer": "",
+    "rag_sources": [
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 0,
+        "content_preview": "as a promising solution by incorporating knowledge from external\ndatabases. This enhances the accuracy and credibility of the\ngeneration, particularly for knowledge-intensive tasks, and allows\nfor continuous knowledge updates and integration of domain-\nspecific information. RAG synergistically merge",
+        "type": "texto"
+      },
+      {
+        "source_file": "data\\raw\\paper 5.pdf",
+        "page": 15,
+        "content_preview": "sizes RAG’s significant advancement in enhancing the capa-\nbilities of LLMs by integrating parameterized knowledge from\nlanguage models with extensive non-parameterized data from\nexternal knowledge bases. The survey showcases the evolution\nof RAG technologies and their application on many different\n",
+        "type": "texto"
+      }
+    ],
+    "rag_metrics": {
+      "has_sources": 1,
+      "is_empty": 0,
+      "mentions_no_info": 0,
+      "answer_length_words": 27,
+      "faithfulness": 0.2692307692307692,
+      "rouge1_vs_context": 0.2692307692307692
+    }
   }
 ]

@@ -140,6 +140,17 @@ def ask():
             save_live_metrics(query, mode, result)
             return jsonify(result)
 
+        if mode == 'verificado':
+            from src.agent.rag_graph import run_rag_verified
+            vr = run_rag_verified(query)
+            result['rag_answer']  = vr['answer']
+            result['rag_sources'] = deduplicate_sources(vr['sources'])
+            result['verdict']     = vr['verdict']
+            result['verdict_reason'] = vr['reason']
+            result['attempts']    = vr['attempts']
+            save_live_metrics(query, mode, result)
+            return jsonify(result)
+
         vs = get_vector_store()
 
         if mode in ('rag', 'ambos'):
