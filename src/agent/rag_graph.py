@@ -1,20 +1,3 @@
-"""
-Grafo RAG con agente verificador usando LangGraph.
-
-Arquitectura (patrón reflexión — tema 7.4 del curso):
-
-    START → retrieve_generate → verify ──► END  (si PASS o intentos agotados)
-                                    │
-                                    └──► retrieve_generate  (si FAIL y quedan intentos)
-
-Nodos:
-  · retrieve_generate : ejecuta el pipeline RAG existente (retrieval + reranking + LLM)
-  · verify            : LLM verifica si la respuesta está respaldada por el contexto
-
-El verificador usa structured output (patrón 7.6 del curso) para devolver
-un veredicto tipado: PASS | FAIL + razón.
-"""
-
 from typing import TypedDict, Literal
 
 from pydantic import BaseModel
@@ -23,37 +6,24 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, START, END
 
 
-MODEL     = "llama3.1:8b"
-MAX_ATTEMPTS = 2          # máximo de regeneraciones si el verificador falla
+MODEL        = "llama3.1:8b"
+MAX_ATTEMPTS = 2  # máximo de reintentos si el verificador dice FAIL
 
-
-# ══════════════════════════════════════════════════════════════════
-#  STATE  (patrón TypedDict del curso)
-# ══════════════════════════════════════════════════════════════════
 
 class RAGState(TypedDict):
-    question : str           # pregunta del usuario
-    context  : list          # fragmentos de texto recuperados (para el verificador)
-    sources  : list          # metadatos de fuentes
-    answer   : str           # respuesta generada por el LLM
-    verdict  : str           # "PASS" | "FAIL" | "PENDING"
-    reason   : str           # explicación del verificador
-    attempts : int           # contador de regeneraciones
+    question : str
+    context  : list   # texto de los docs recuperados, para que el verificador pueda comprobar
+    sources  : list
+    answer   : str
+    verdict  : str    # "PASS" | "FAIL" | "PENDING"
+    reason   : str
+    attempts : int
 
-
-# ══════════════════════════════════════════════════════════════════
-#  STRUCTURED OUTPUT  (patrón 7.6 — supervisor con Pydantic)
-# ══════════════════════════════════════════════════════════════════
 
 class VerificationResult(BaseModel):
     verdict : Literal["PASS", "FAIL"]
     reason  : str
 
-
-# ══════════════════════════════════════════════════════════════════
-#  NODO 1 — retrieve_generate
-#  Llama al pipeline RAG existente y extrae el contexto recuperado
-# ══════════════════════════════════════════════════════════════════
 
 def retrieve_generate(state: RAGState) -> dict:
     from src.evaluation.rag_pipeline import answer_with_rag_multimodal
@@ -64,7 +34,6 @@ def retrieve_generate(state: RAGState) -> dict:
         state["question"], vs, k=4
     )
 
-    # Extraemos el texto plano de los documentos recuperados para dárselo al verificador
     context = [
         doc.page_content if hasattr(doc, "page_content") else str(doc)
         for doc in retrieved_docs
@@ -77,11 +46,6 @@ def retrieve_generate(state: RAGState) -> dict:
         "attempts": state["attempts"] + 1,
     }
 
-
-# ══════════════════════════════════════════════════════════════════
-#  NODO 2 — verify
-#  Comprueba si la respuesta está respaldada por el contexto
-# ══════════════════════════════════════════════════════════════════
 
 _verify_system = SystemMessage(
     "Eres un verificador de respuestas en sistemas RAG. "
@@ -102,8 +66,9 @@ def verify(state: RAGState) -> dict:
         VerificationResult
     )
 
+    # limitamos a 600 chars por chunk para no pasarnos del contexto del modelo
     context_str = "\n\n".join(
-        f"[{i+1}] {chunk[:600]}"          # limitamos para no exceder contexto
+        f"[{i+1}] {chunk[:600]}"
         for i, chunk in enumerate(state["context"])
     )
 
@@ -117,17 +82,12 @@ def verify(state: RAGState) -> dict:
         result = llm.invoke([_verify_system, user_msg])
         return {"verdict": result.verdict, "reason": result.reason}
     except Exception as e:
-        # Fallback si structured output falla: marcamos PASS con aviso
+        # si falla el structured output, aceptamos la respuesta tal cual
         return {
             "verdict": "PASS",
             "reason" : f"Verificación automática no disponible ({type(e).__name__}).",
         }
 
-
-# ══════════════════════════════════════════════════════════════════
-#  EDGE CONDICIONAL  (patrón 7.4 — should_continue)
-#  Decide si regenerar o terminar
-# ══════════════════════════════════════════════════════════════════
 
 def route_after_verify(state: RAGState) -> Literal["retrieve_generate", "__end__"]:
     if state["verdict"] == "PASS":
@@ -136,10 +96,6 @@ def route_after_verify(state: RAGState) -> Literal["retrieve_generate", "__end__
         return END
     return "retrieve_generate"
 
-
-# ══════════════════════════════════════════════════════════════════
-#  CONSTRUCCIÓN DEL GRAFO  (patrón StateGraph del curso)
-# ══════════════════════════════════════════════════════════════════
 
 _builder = StateGraph(RAGState)
 _builder.add_node("retrieve_generate", retrieve_generate)
@@ -156,19 +112,8 @@ _builder.add_conditional_edges(
 rag_verified_graph = _builder.compile()
 
 
-# ══════════════════════════════════════════════════════════════════
-#  FUNCIÓN PÚBLICA
-# ══════════════════════════════════════════════════════════════════
-
 def run_rag_verified(query: str) -> dict:
-    """
-    Ejecuta el grafo RAG+verificador y devuelve:
-      answer   : respuesta final
-      sources  : fuentes usadas
-      verdict  : "PASS" | "FAIL"
-      reason   : explicación del verificador
-      attempts : número de veces que se regeneró la respuesta
-    """
+    """Ejecuta el grafo RAG+verificador y devuelve respuesta, fuentes, veredicto y número de intentos."""
     initial_state: RAGState = {
         "question" : query,
         "context"  : [],

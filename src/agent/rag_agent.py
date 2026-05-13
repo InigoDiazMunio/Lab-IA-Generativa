@@ -1,18 +1,3 @@
-"""
-Agente IA sobre el pipeline RAG existente.
-
-Usa create_react_agent (ReAct: Reason + Act) en lugar de create_tool_calling_agent
-porque ChatOllama de langchain_community no implementa bind_tools().
-ReAct funciona con cualquier LLM mediante un formato texto estructurado.
-
-El agente NO reemplaza el pipeline RAG — lo usa como herramienta, por lo que
-ambos modos (RAG lineal y Agente) son comparables en las mismas métricas.
-
-Herramientas:
-  - search_university_docs  : retrieval textual (ChromaDB + cross-encoder reranker)
-  - visual_memory_access    : búsqueda en captions de imágenes indexadas
-"""
-
 import re
 import glob
 import os
@@ -25,9 +10,6 @@ from langchain_community.chat_models import ChatOllama
 
 _VISUAL_KEYWORDS = {"Figure", "Fig.", "Table", "Diagram", "Equation", "figure", "fig.", "table", "diagram", "equation"}
 
-
-# ── Vector store compartido ───────────────────────────────────────────────────
-
 _cached_vs = None
 
 
@@ -38,8 +20,6 @@ def _get_vs():
         _cached_vs = load_vector_store("data/embeddings/chroma_db")
     return _cached_vs
 
-
-# ── Rastreador de fuentes ─────────────────────────────────────────────────────
 
 class _SourceTracker:
     def __init__(self):
@@ -68,12 +48,8 @@ class _SourceTracker:
 _tracker = _SourceTracker()
 
 
-# ── Deduplicador de llamadas ──────────────────────────────────────────────────
-
 class _CallDeduplicator:
-    """Detecta y bloquea llamadas repetidas a las mismas herramientas dentro de
-    una misma invocación del agente, evitando bucles de iteraciones idénticas."""
-
+    # evita que el agente llame la misma herramienta dos veces con la misma query
     def __init__(self):
         self._seen: dict[str, list[str]] = {}
 
@@ -104,7 +80,6 @@ _STOP_LOOP_MSG = (
     "Do NOT call any more tools."
 )
 
-# ── Herramienta 1: búsqueda textual ──────────────────────────────────────────
 
 @tool
 def search_university_docs(query: str) -> str:
@@ -123,11 +98,10 @@ def search_university_docs(query: str) -> str:
     try:
         vs = _get_vs()
 
-        # Traducir la query ES→EN antes del embedding Y del reranker.
-        # Los papers están en inglés; buscar en español produce baja similitud coseno.
+        # los papers están en inglés, así que traducimos antes del embedding
         eng_query = translate_query(query)
 
-        # k=20 para dar margen al reranker de encontrar docs de distintos papers.
+        # k=20 para dar más candidatos al reranker
         candidates = retrieve_context(vs, eng_query, k=20, translate=False)
 
         seen: set = set()
@@ -142,7 +116,6 @@ def search_university_docs(query: str) -> str:
                 seen.add(key)
                 unique.append(doc)
 
-        # top_k=5 para no descartar demasiado agresivamente tras ampliar candidatos
         retrieved = rank_retrieved_docs(unique, query=eng_query, top_k=5)
 
         if not retrieved:
@@ -159,9 +132,7 @@ def search_university_docs(query: str) -> str:
 
         result = "\n\n".join(parts)
 
-        # Pista de diversidad: si todos los fragmentos vienen del mismo paper,
-        # el agente puede reformular con términos técnicos en inglés para buscar
-        # en otros papers del índice.
+        # si todos los fragmentos son del mismo paper, animamos a buscar en inglés
         if len(source_papers) == 1:
             result += (
                 "\n\n[NARROW RESULT: All fragments are from the same paper. "
@@ -183,24 +154,16 @@ def search_university_docs(query: str) -> str:
         return f"Error en la búsqueda: {e}"
 
 
-# ── Helper: localizar imágenes en disco para un paper y página ───────────────
-
 def _find_images_for_page(source_file: str, page) -> list[str]:
-    """Devuelve rutas de imágenes en data/processed/images/{paper}/page_{N}_img_*.*
-
-    source_file puede ser un path completo como 'data\\raw\\paper 1.pdf'.
-    page debe ser el número de página legible (page_label), no el índice 0-based.
-    """
+    """Devuelve las rutas de imágenes de una página concreta del paper."""
     from pathlib import Path
-    paper_stem = Path(source_file.replace("\\", "/")).stem  # "paper 1.pdf" → "paper 1"
+    paper_stem = Path(source_file.replace("\\", "/")).stem
     base = os.path.join("data", "processed", "images", paper_stem)
     results = []
     for ext in (".png", ".jpeg", ".jpg"):
         results.extend(glob.glob(os.path.join(base, f"page_{page}_img_*{ext}")))
     return sorted(results)
 
-
-# ── Herramienta 2: búsqueda visual ───────────────────────────────────────────
 
 @tool
 def visual_memory_access(query: str) -> str:
@@ -226,7 +189,7 @@ def visual_memory_access(query: str) -> str:
         eng_query = translate_query(query)
         candidates = retrieve_context(vs, eng_query, k=12, translate=False)
 
-        # Prioridad 1: docs indexados como image_caption (índice multimodal construido)
+        # primero buscar docs indexados como image_caption (índice multimodal)
         visual_docs = [d for d in candidates if d.metadata.get("type") == "image_caption"]
 
         if visual_docs:
@@ -241,8 +204,7 @@ def visual_memory_access(query: str) -> str:
                 parts.append(f"[Figure {i}: {src}, p.{page}{img_note}]\n{doc.page_content.strip()}")
             return "\n\n".join(parts) + _VISUAL_DONE
 
-        # Prioridad 2 (fallback): buscar imágenes en disco a partir de los docs de texto
-        # más relevantes aunque no estén indexadas como image_caption
+        # fallback: buscar imágenes en disco si no hay índice multimodal construido
         text_docs = [d for d in candidates if d.metadata.get("type") != "image_caption"][:6]
         found = []
         for doc in text_docs:
@@ -274,14 +236,8 @@ def visual_memory_access(query: str) -> str:
         return f"Error en la búsqueda visual: {e}"
 
 
-# ── Prompt ReAct ──────────────────────────────────────────────────────────────
-# Los marcadores (Action:, Action Input:, Final Answer:) DEBEN estar en inglés
-# porque el AgentOutputParser de LangChain los busca literalmente.
-# CRÍTICO: No incluir "Observation:" en el ejemplo — el LLM lo rellenaría él mismo
-# (alucinando resultados) en lugar de esperar el resultado real de la herramienta.
-# Cada respuesta del LLM debe contener SOLO una de las dos opciones (A o B),
-# nunca las dos a la vez (eso causa OUTPUT_PARSING_FAILURE).
-
+# Los marcadores Action:/Final Answer: deben estar en inglés porque el parser los busca literalmente.
+# IMPORTANTE: no poner "Observation:" en el ejemplo o el LLM lo rellenaría alucinaría el resultado.
 _REACT_PROMPT = PromptTemplate.from_template(
     """You are a university assistant specialized in AI, RAG systems, and NLP.
 Your ONLY job is to answer in fluent, complete SPANISH using the retrieved information.
@@ -345,21 +301,9 @@ Thought:{agent_scratchpad}"""
 )
 
 
-# ── Handler de rescate de parseo ─────────────────────────────────────────────
-# Problema: llama3.1:8b genera la respuesta española correcta (con bullets,
-# traducida) pero omite el token "Final Answer:" que el parser de LangChain
-# necesita. El parser falla y consume iteraciones inútilmente.
-#
-# Solución en dos partes:
-# 1. _rescue_parse: handler que devuelve un string con instrucción clara.
-#    LangChain 0.3.x NO acepta AgentFinish como retorno del handler, así que
-#    solo devolvemos texto.
-# 2. _extract_from_log + run_agent: después de invoke(), revisamos action.log
-#    de los pasos _Exception — ahí LangChain guarda el output bruto del LLM
-#    que falló al parsear. Rescatamos el contenido desde ahí.
-
 def _rescue_parse(error) -> str:
-    """Devuelve instrucción concisa cuando el LLM genera respuesta sin 'Final Answer:'."""
+    # llama3.1:8b a veces genera la respuesta correcta pero sin "Final Answer:"
+    # LangChain no acepta AgentFinish aquí, solo podemos devolver texto de corrección
     raw = getattr(error, 'llm_output', '') or str(error)
     has_content = len(raw.strip()) > 100
     has_action = 'Action:' in raw and 'Action Input:' in raw
@@ -377,31 +321,21 @@ def _rescue_parse(error) -> str:
 
 
 def _extract_from_log(log: str) -> str | None:
-    """
-    Extrae una respuesta válida del log bruto de un paso _Exception.
-    LangChain guarda el output original del LLM en action.log cuando el parseo falla.
-    """
-    # Quitar línea Thought (en inglés o español)
+    # cuando el parser falla, LangChain guarda el output bruto en action.log — rescatamos de ahí
     body = re.sub(r'(?m)^(?:Thought|Pensamiento|Pensaré)[^\n]*\n*', '', log, count=1).strip()
-    # Si contiene "Final Answer:" extraer desde ahí
     fa_match = re.search(r'Final Answer\s*:\s*([\s\S]+)', body)
     if fa_match:
         body = fa_match.group(1)
-    # Limpiar marcadores internos y referencias
     body = re.split(r'\n*Fuentes\s*:', body, maxsplit=1)[0]
     body = re.sub(r'\[(?:STOP-LOOP|DONE|NARROW RESULT|VISUAL HINT)[^\]]*\]', '', body)
     body = re.sub(r'\[Source\s*\d*\s*:[^\]]*\]', '', body)
-    # Colapsar solo espacios/tabulaciones horizontales, nunca saltos de línea.
-    # Los \n son los delimitadores de los bullets (• item\n• item) — si los
-    # colapsamos aquí, el HTML renderizaría todo en una sola línea.
+    # solo colapsar espacios, no saltos de línea — los \n separan los bullets
     body = re.sub(r'[ \t]{2,}', ' ', body).strip()
 
     if len(body) > 30 and 'Action:' not in body and 'Action Input:' not in body:
         return body
     return None
 
-
-# ── AgentExecutor (singleton) ─────────────────────────────────────────────────
 
 _agent_executor: AgentExecutor | None = None
 _agent_memory: ConversationBufferWindowMemory | None = None
@@ -418,9 +352,7 @@ def get_agent_executor() -> AgentExecutor:
 
     agent = create_react_agent(llm, tools, _REACT_PROMPT)
 
-    # Ventana de memoria conversacional (k=3 intercambios).
-    # Almacena los últimos 3 pares pregunta/respuesta para dar contexto
-    # al agente en preguntas de seguimiento sin repetir búsquedas idénticas.
+    # k=3: recuerda los últimos 3 intercambios para preguntas de seguimiento
     _agent_memory = ConversationBufferWindowMemory(
         k=3,
         memory_key="chat_history",
@@ -448,46 +380,22 @@ def reset_agent():
     _agent_memory = None
 
 
-# ── Limpieza del texto de respuesta ──────────────────────────────────────────
-
 def _clean_answer(text: str) -> str:
-    """
-    Devuelve el texto de respuesta limpio:
-    - Sin bloques de fuentes (se devuelven por separado en 'sources')
-    - Sin referencias inline [Source N: ...]
-    - Sin señales internas [STOP-LOOP], [DONE], [NARROW RESULT]
-    - Sin prefijos de relleno generados por el fallback anterior
-    """
-    # Cortar todo lo que venga después de "Fuentes:" (con o sin salto previo)
+    # quitar bloque de fuentes, referencias inline y señales internas del pipeline
     text = re.split(r'\n*Fuentes\s*:', text, maxsplit=1)[0]
-    # Eliminar referencias inline [Source N: ...] — la segunda regex cubre ambos casos
     text = re.sub(r'\[Source\s*\d*\s*:[^\]]*\]', '', text)
-    # Eliminar señales internas del pipeline
     text = re.sub(r'\[(?:STOP-LOOP|DONE|NARROW RESULT|VISUAL HINT)[^\]]*\]', '', text)
-    # Eliminar prefijos de relleno tipo "La búsqueda ha concluido. Basándome en..."
     text = re.sub(
         r'^(?:La búsqueda ha concluido\.?\s*)?(?:Basándome en los fragmentos recuperados\s*[:.]?\s*)?',
         '', text, flags=re.IGNORECASE
     )
-    # Colapsar solo espacios/tabulaciones horizontales, preservar saltos de línea.
-    # Los \n delimitan los bullets — colapsarlos los fundiría en una sola línea.
+    # solo espacios y tabulaciones, no saltos de línea (los \n son los bullets)
     text = re.sub(r'[ \t]{2,}', ' ', text)
     return text.strip()
 
 
-# ── Punto de entrada público ──────────────────────────────────────────────────
-
 def run_agent(query: str) -> dict:
-    """
-    Ejecuta el agente y devuelve respuesta + fuentes + pasos.
-
-    Returns:
-        {
-          "answer":  str,            # texto limpio en español, sin marcas de fuente
-          "sources": list[dict],     # {source_file, page, content_preview, type}
-          "steps":   list[dict],     # {tool, input, result_preview}
-        }
-    """
+    """Ejecuta el agente y devuelve respuesta, fuentes y pasos."""
     _tracker.clear()
     _dedup.clear()
     executor = get_agent_executor()
@@ -496,10 +404,7 @@ def run_agent(query: str) -> dict:
         result = executor.invoke({"input": query})
         raw_answer = result.get("output", "")
 
-        # Si el agente no produjo Final Answer, intentar rescatar del log de _Exception.
-        # LangChain guarda el output bruto del LLM en action.log cuando el parser falla,
-        # por lo que podemos extraer la respuesta que el LLM generó correctamente pero
-        # sin el token "Final Answer:".
+        # si el agente no produjo Final Answer, intentar rescatar del log de _Exception
         if not raw_answer or "Agent stopped" in raw_answer:
             rescued = None
             for action, _ in result.get("intermediate_steps", []):
@@ -525,8 +430,7 @@ def run_agent(query: str) -> dict:
         steps = []
         for action, observation in result.get("intermediate_steps", []):
             tool_name = getattr(action, "tool", str(action))
-            # Filtrar pasos internos de rescate — no son acciones del agente
-            # sino artefactos del mecanismo handle_parsing_errors de LangChain.
+            # _Exception son artefactos del handle_parsing_errors, no pasos reales del agente
             if tool_name == "_Exception":
                 continue
             tool_input = getattr(action, "tool_input", "")

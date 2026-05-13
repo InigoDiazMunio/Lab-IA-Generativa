@@ -1,22 +1,3 @@
-"""
-Orquestador multi-agente usando LangGraph.
-
-Arquitectura (patrón supervisor — tema 7.6 del curso):
-
-    START → orchestrator ──► rag        ──► END
-                         ├──► agente    ──► END
-                         ├──► verificado──► END
-                         └──► baseline  ──► END
-
-El nodo orquestador analiza la pregunta y, mediante structured output
-(igual que el SupervisorDecision de 7.6), elige qué pipeline ejecutar:
-
-  · rag        → preguntas factuales sobre el contenido de los PDFs
-  · agente     → preguntas sobre imágenes / figuras / búsqueda iterativa
-  · verificado → preguntas donde la exactitud es crítica (usa RAG + verificador)
-  · baseline   → preguntas generales que no necesitan buscar en documentos
-"""
-
 from typing import TypedDict, Literal
 
 from pydantic import BaseModel
@@ -28,14 +9,10 @@ from langgraph.graph import StateGraph, START, END
 MODEL = "llama3.1:8b"
 
 
-# ══════════════════════════════════════════════════════════════════
-#  STATE
-# ══════════════════════════════════════════════════════════════════
-
 class OrchestratorState(TypedDict):
     question       : str
-    routed_to      : str    # agente elegido por el orquestador
-    routing_reason : str    # por qué lo eligió
+    routed_to      : str   # agente elegido por el supervisor
+    routing_reason : str
     answer         : str
     sources        : list
     verdict        : str
@@ -43,18 +20,10 @@ class OrchestratorState(TypedDict):
     agent_steps    : list
 
 
-# ══════════════════════════════════════════════════════════════════
-#  STRUCTURED OUTPUT  (patrón SupervisorDecision de 7.6)
-# ══════════════════════════════════════════════════════════════════
-
 class OrchestratorDecision(BaseModel):
     next   : Literal["rag", "agente", "verificado", "baseline"]
     reason : str
 
-
-# ══════════════════════════════════════════════════════════════════
-#  NODO ORQUESTADOR
-# ══════════════════════════════════════════════════════════════════
 
 _supervisor_prompt = SystemMessage(
     "Eres un supervisor de un sistema RAG multimodal sobre documentos académicos. "
@@ -78,16 +47,12 @@ def orchestrator(state: OrchestratorState) -> dict:
         decision = llm.invoke([_supervisor_prompt, HumanMessage(state["question"])])
         return {"routed_to": decision.next, "routing_reason": decision.reason}
     except Exception as e:
-        # Fallback: RAG por defecto si structured output falla
+        # si falla el structured output, RAG por defecto
         return {
             "routed_to"     : "rag",
             "routing_reason": f"Decisión por defecto ({type(e).__name__}).",
         }
 
-
-# ══════════════════════════════════════════════════════════════════
-#  NODOS DE CADA AGENTE
-# ══════════════════════════════════════════════════════════════════
 
 def rag_node(state: OrchestratorState) -> dict:
     from src.evaluation.rag_pipeline import answer_with_rag_multimodal
@@ -127,10 +92,6 @@ def baseline_node(state: OrchestratorState) -> dict:
     return {"answer": answer_without_rag(state["question"]), "sources": []}
 
 
-# ══════════════════════════════════════════════════════════════════
-#  CONSTRUCCIÓN DEL GRAFO  (patrón supervisor 7.6)
-# ══════════════════════════════════════════════════════════════════
-
 _builder = StateGraph(OrchestratorState)
 
 _builder.add_node("orchestrator", orchestrator)
@@ -141,7 +102,6 @@ _builder.add_node("baseline",     baseline_node)
 
 _builder.add_edge(START, "orchestrator")
 
-# Edge condicional desde el supervisor (igual que en 7.6)
 _builder.add_conditional_edges(
     "orchestrator",
     lambda state: state["routed_to"],
@@ -161,21 +121,8 @@ _builder.add_edge("baseline",    END)
 orchestrator_graph = _builder.compile()
 
 
-# ══════════════════════════════════════════════════════════════════
-#  FUNCIÓN PÚBLICA
-# ══════════════════════════════════════════════════════════════════
-
 def run_orchestrated(query: str) -> dict:
-    """
-    Ejecuta el grafo con orquestador y devuelve:
-      answer         : respuesta final
-      sources        : fuentes usadas
-      routed_to      : agente elegido ("rag" | "agente" | "verificado" | "baseline")
-      routing_reason : explicación de la decisión del orquestador
-      verdict        : "PASS" | "FAIL" | "" (solo si routed_to == "verificado")
-      verdict_reason : explicación del verificador (si aplica)
-      agent_steps    : pasos del agente ReAct (si aplica)
-    """
+    """Ejecuta el orquestador completo y devuelve respuesta + metadatos de enrutamiento."""
     initial: OrchestratorState = {
         "question"      : query,
         "routed_to"     : "",
